@@ -1,0 +1,9 @@
+{
+  "extends": ["4catalyzer", "prettier"],
+  "plugins": ["prettier"],
+  "parser": "babel-eslint",
+  "rules": {
+    "prettier/prettier": "error"
+  }
+}
+
