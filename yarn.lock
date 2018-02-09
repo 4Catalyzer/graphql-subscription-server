@@ -2,14 +2,13 @@
 # yarn lockfile v1
 
 
-"@4c/babel-preset-4catalyzer@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@4c/babel-preset-4catalyzer/-/babel-preset-4catalyzer-1.0.0.tgz#9b6e3df592314cdb02cd03b2e5d83008dbcb0283"
+"@4c/babel-preset-4catalyzer@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@4c/babel-preset-4catalyzer/-/babel-preset-4catalyzer-1.1.0.tgz#8823d013437f15d1648ee2e446e687d269d726b5"
   dependencies:
     "@babel/plugin-proposal-class-properties" "^7.0.0-beta.38"
     "@babel/plugin-proposal-export-default-from" "^7.0.0-beta.38"
     "@babel/plugin-proposal-export-namespace-from" "^7.0.0-beta.38"
-    "@babel/plugin-proposal-object-rest-spread" "^7.0.0-beta.38"
     "@babel/plugin-syntax-dynamic-import" "^7.0.0-beta.38"
     "@babel/preset-env" "^7.0.0-beta.38"
     "@babel/preset-react" "^7.0.0-beta.38"
@@ -252,7 +251,7 @@
   dependencies:
     "@babel/plugin-syntax-export-namespace-from" "7.0.0-beta.39"
 
-"@babel/plugin-proposal-object-rest-spread@7.0.0-beta.39", "@babel/plugin-proposal-object-rest-spread@^7.0.0-beta.38":
+"@babel/plugin-proposal-object-rest-spread@7.0.0-beta.39":
   version "7.0.0-beta.39"
   resolved "https://registry.yarnpkg.com/@babel/plugin-proposal-object-rest-spread/-/plugin-proposal-object-rest-spread-7.0.0-beta.39.tgz#ea4d6ea974a364028e5074b1abe6505924d179a3"
   dependencies:

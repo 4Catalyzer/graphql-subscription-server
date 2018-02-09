@@ -8,7 +8,7 @@
   "modules": "es/index/js",
   "scripts": {
     "build":
-      "rm -rf lib es && BABEL_ENV= babel src --out-dir lib && BABEL_ENV=esm babel src --out-dir es",
+      "rm -rf lib es && babel src --out-dir lib && BABEL_ENV=esm babel src --out-dir es",
     "check": "flow check",
     "lint": "eslint . && npm run check",
     "precommit": "lint-staged",
@@ -29,7 +29,7 @@
     ]
   },
   "devDependencies": {
-    "@4c/babel-preset-4catalyzer": "^1.0.0",
+    "@4c/babel-preset-4catalyzer": "^1.1.0",
     "@babel/cli": "^7.0.0-beta.39",
     "@babel/core": "^7.0.0-beta.38",
     "@babel/plugin-proposal-async-generator-functions": "^7.0.0-beta.39",

@@ -5,7 +5,7 @@ module.exports = {
       {
         target: 'node',
         useBuiltIns: 'usage',
-        modules: process.BABEL_ENV !== 'esm' ? 'commonjs' : false
+        modules: process.env.BABEL_ENV !== 'esm' ? 'commonjs' : false
       }
     ],
     '@babel/flow',
