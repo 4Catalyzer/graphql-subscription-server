@@ -1,19 +1,21 @@
 {
   "name": "@4c/graphql-subscription-server",
   "version": "0.0.1",
-  "main": "lib/index.js",
   "author": "4Catalyzer",
   "license": "MIT",
   "private": false,
+  "main": "lib/index.js",
+  "modules": "es/index/js",
   "scripts": {
     "build":
       "rm -rf lib es && BABEL_ENV= babel src --out-dir lib && BABEL_ENV=esm babel src --out-dir es",
     "check": "flow check",
-    "lint": "eslint .",
+    "lint": "eslint . && npm run check",
     "precommit": "lint-staged",
     "prepublishOnly": "npm run test && npm run build",
     "test": "npm run lint"
   },
+
   "prettier": {
     "printWidth": 79,
     "singleQuote": true,
