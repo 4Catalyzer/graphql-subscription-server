@@ -72,7 +72,7 @@ export default class TenantSocketConnection {
     expSeconds: number,
     tenants: { [tenantId: string]: number },
   };
-  renewTimer: ?number;
+  renewTimer: ?TimeoutID = null;
 
   constructor(config: ServerConfig) {
     this.config = config;
@@ -211,7 +211,10 @@ export default class TenantSocketConnection {
   };
 
   handleDisconnect = () => {
-    clearTimeout(this.renewTimer);
+    if (this.renewTimer) {
+      clearTimeout(this.renewTimer);
+    }
+
     this.subscriptions.forEach(async subscriptionPromise => {
       const subscription = await subscriptionPromise;
 

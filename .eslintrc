@@ -1,7 +1,6 @@
 {
-  "extends": ["4catalyzer", "prettier"],
+  "extends": ["4catalyzer-flow", "prettier", "prettier/flowtype"],
   "plugins": ["prettier"],
-  "parser": "babel-eslint",
   "rules": {
     "prettier/prettier": "error"
   }
