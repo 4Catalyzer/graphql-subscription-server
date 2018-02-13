@@ -5,10 +5,9 @@ import express from 'express';
 import type { ClientOpts } from 'redis';
 import type { GraphQLSchema } from 'graphql';
 import { promisify } from 'util';
-import TenantSocketConnection, {
-  type Credentials,
-  type Context,
-} from './TenantSocketConnection';
+
+import AuthorizedSocketConnection from './AuthorizedSocketConnection';
+import type { ICredentialsManager } from './CredentialManager';
 import RedisSubscriber from './RedisSubscriber';
 
 type SocketIoServer = {
@@ -16,27 +15,26 @@ type SocketIoServer = {
   close(cb: any): void,
 };
 
-type SubscriptionServerConfig = {|
+export type SubscriptionServerConfig<TContext, TCredentials> = {|
   path: string,
-  fetchCredentials: (
-    context: Context,
-    authorization: string,
-  ) => Promise<Credentials>,
   defaultParseMessage: any,
   hasPermission: any,
   maxSubscriptionsPerConnection: number,
   gracePeriodSeconds: number,
-  createContext: (request: any) => Context,
+  createContext: (request: any) => TContext,
+  createCredentialsManager: (
+    context: TContext,
+  ) => ICredentialsManager<TCredentials>,
   redisConfiguration: ClientOpts,
   schema: GraphQLSchema,
 |};
 
-export default class SubscriptionServer {
-  config: SubscriptionServerConfig;
+export default class SubscriptionServer<TContext, TCredentials> {
+  config: SubscriptionServerConfig<TContext, TCredentials>;
   io: SocketIoServer;
   redis: RedisSubscriber;
 
-  constructor(config: SubscriptionServerConfig) {
+  constructor(config: SubscriptionServerConfig<TContext, TCredentials>) {
     this.config = config;
     this.io = new IoServer({
       serveClient: false,
@@ -50,17 +48,17 @@ export default class SubscriptionServer {
       Object.assign(request, socket.request);
 
       const context = config.createContext(request);
+      const credentialsManager = config.createCredentialsManager(context);
 
       // eslint-disable-next-line no-new
-      new TenantSocketConnection({
+      new AuthorizedSocketConnection({
         redis: this.redis,
         context,
         socket,
+        credentialsManager,
         schema: this.config.schema,
-        fetchCredentials: this.config.fetchCredentials,
         defaultParseMessage: this.config.defaultParseMessage,
         hasPermission: this.config.hasPermission,
-        gracePeriodSeconds: this.config.gracePeriodSeconds,
       });
     });
   }

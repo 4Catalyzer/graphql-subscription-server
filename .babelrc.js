@@ -1,3 +1,9 @@
+let modules = process.env.BABEL_ENV !== 'esm' ? 'commonjs' : false;
+
+if (process.env.NODE_ENV === 'test') {
+  modules = 'commonjs';
+}
+
 module.exports = {
   presets: [
     [
@@ -5,13 +11,10 @@ module.exports = {
       {
         target: 'node',
         useBuiltIns: 'usage',
-        modules: process.env.BABEL_ENV !== 'esm' ? 'commonjs' : false
-      }
+        modules,
+      },
     ],
     '@babel/flow',
   ],
-  plugins: [
-    '@babel/proposal-async-generator-functions'
-  ]
-}
-
+  plugins: ['@babel/proposal-async-generator-functions'],
+};

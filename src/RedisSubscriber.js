@@ -3,7 +3,7 @@
 import redis from 'redis';
 import { promisify } from 'util';
 
-import { AsyncQueue } from './asyncUtils';
+import { AsyncQueue } from './AsyncUtils';
 
 type Channel = string;
 
