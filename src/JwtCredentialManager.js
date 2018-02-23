@@ -15,28 +15,28 @@ export type JwtCredentialsManagerConfig<TCredentials> = {|
 
 const SECONDS_TO_MS = 1000;
 
-class JwtCredentialsManager<TCreds: JwtCredentials>
-  implements ICredentialsManager<TCreds> {
-  config: JwtCredentialsManagerConfig<TCreds>;
-  credentials: TCreds;
+class JwtCredentialsManager<TCredentials: JwtCredentials>
+  implements ICredentialsManager<TCredentials> {
+  config: JwtCredentialsManagerConfig<TCredentials>;
+  credentials: TCredentials;
   token: ?string;
   renewTimer: ?TimeoutID;
 
-  constructor(config: JwtCredentialsManagerConfig<TCreds>) {
+  constructor(config: JwtCredentialsManagerConfig<TCredentials>) {
     this.config = config;
     this.token = null;
     this.credentials = config.initialCredentials;
   }
 
-  getCredentials(): TCreds {
+  getCredentials(): TCredentials {
     return this.credentials;
   }
 
   getCredentialsFromAuthorization(
     // eslint-disable-next-line no-unused-vars
     authorization: string,
-  ): TCreds | Promise<TCreds> {
-    throw new Error('Not implemented');
+  ): TCredentials | Promise<TCredentials> {
+    throw new Error('JwtCredentialManager: Not implemented');
   }
 
   async authenticate(token: string) {
@@ -59,7 +59,7 @@ class JwtCredentialsManager<TCreds: JwtCredentials>
   async _update() {
     const { token, config } = this;
     if (token == null) {
-      throw new Error('unauthenticated');
+      throw new Error('JwtCredentialManager: Unauthenticated');
     }
 
     this.credentials = await this.getCredentialsFromAuthorization(token);
@@ -70,14 +70,16 @@ class JwtCredentialsManager<TCreds: JwtCredentials>
   }
 
   _scheduleRenewal() {
-    const deltaMS = this.credentials.exp * SECONDS_TO_MS - Date.now();
-    const deltaMSAdjusted = Math.max(
+    // TODO: need to handle cases where the returned token is
+    // already expired or about to expire
+    const deltaMs = this.credentials.exp * SECONDS_TO_MS - Date.now();
+    const deltaMsAdjusted = Math.max(
       0,
-      deltaMS - this.config.gracePeriod * SECONDS_TO_MS,
+      deltaMs - this.config.gracePeriod * SECONDS_TO_MS,
     );
 
     if (this.renewTimer) clearTimeout(this.renewTimer);
-    this.renewTimer = setTimeout(() => this._update(), deltaMSAdjusted);
+    this.renewTimer = setTimeout(() => this._update(), deltaMsAdjusted);
   }
 }
 
