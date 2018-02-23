@@ -1,0 +1,8 @@
+{
+  "extends": ["4catalyzer-flow", "prettier", "prettier/flowtype"],
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": "error"
+  }
+}
+

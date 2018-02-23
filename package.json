@@ -1,0 +1,59 @@
+{
+  "name": "@4c/graphql-subscription-server",
+  "version": "0.0.1",
+  "author": "4Catalyzer",
+  "license": "MIT",
+  "private": false,
+  "main": "lib/index.js",
+  "modules": "es/index/js",
+  "scripts": {
+    "build":
+      "rm -rf lib es && babel src --out-dir lib && BABEL_ENV=esm babel src --out-dir es",
+    "check": "flow check",
+    "lint": "eslint . && npm run check",
+    "precommit": "lint-staged",
+    "prepublishOnly": "npm run test && npm run build",
+    "test": "npm run lint"
+  },
+
+  "prettier": {
+    "printWidth": 79,
+    "singleQuote": true,
+    "trailingComma": "all"
+  },
+  "lint-staged": {
+    "*.js": ["eslint --fix", "git add"],
+    "*.{json,css,md}": [
+      "prettier --write --ignore-path .eslintignore",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "@4c/babel-preset-4catalyzer": "^1.1.0",
+    "@babel/cli": "^7.0.0-beta.39",
+    "@babel/core": "^7.0.0-beta.38",
+    "@babel/plugin-proposal-async-generator-functions": "^7.0.0-beta.39",
+    "@babel/preset-flow": "^7.0.0-beta.39",
+    "babel-eslint": "^8.2.1",
+    "eslint": "^4.16.0",
+    "eslint-config-4catalyzer": "^0.3.3",
+    "eslint-config-4catalyzer-flow": "^0.3.3",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-flowtype": "^2.43.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-prettier": "^2.5.0",
+    "flow-bin": "^0.65.0",
+    "graphql": "^0.13.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^6.1.0",
+    "prettier": "^1.10.2"
+  },
+  "peerDependencies": {
+    "graphql": "^0.12.3"
+  },
+  "dependencies": {
+    "express": "^4.16.2",
+    "redis": "^2.8.0",
+    "socket.io": "^2.0.4"
+  }
+}
