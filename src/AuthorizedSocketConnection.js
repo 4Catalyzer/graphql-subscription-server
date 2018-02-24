@@ -8,21 +8,9 @@ import {
 } from 'graphql';
 import IoServer from 'socket.io';
 
-import * as asyncUtils from './asyncUtils';
+import * as AsyncUtils from './AsyncUtils';
+import type { CredentialsManager } from './CredentialsManager';
 import type RedisSubscriber from './RedisSubscriber';
-
-type HttpApi = {
-  setToken(token: ?string): void,
-};
-
-export type Credentials = {
-  expSeconds: number,
-  tenants: { [tenantId: string]: number },
-};
-
-export type Context = {
-  httpApi: HttpApi,
-};
 
 type Subscription = {
   id: string,
@@ -34,49 +22,34 @@ type MaybeSubscription = Promise<
   AsyncIterator<ExecutionResult> | ExecutionResult,
 >;
 
-type ServerConfig = {|
+export type AuthorizedSocketOptions<TContext, TCredentials> = {|
   socket: IoServer.socket,
   redis: RedisSubscriber,
-  context: { httpApi: HttpApi },
   schema: GraphQLSchema,
-  hasPermission: (data: any, socketCredentials: Credentials) => boolean,
+  context: TContext,
+  credentialsManager: CredentialsManager<TCredentials>,
+  hasPermission: (data: any, credentials: TCredentials) => boolean,
   defaultParseMessage: (data: string) => any,
   maxSubscriptionsPerConnection?: number,
-  gracePeriodSeconds: number,
-  fetchCredentials: (
-    context: Context,
-    authorization: string,
-  ) => Promise<Credentials>,
 |};
-
-const SECONDS_TO_MS = 1000;
 
 const acknowledge = cb => {
   if (cb) cb();
 };
 
-function isExpired(expSeconds: ?number): boolean {
-  return expSeconds != null && !!(Date.now() > expSeconds * SECONDS_TO_MS);
-}
-
-// TenantSocketConnection manages a single socket connection for a single user.
+// AuthorizedSocketConnection manages a socket connection for a single user.
 // Includes
 //  - authorization,
 //  - authentication,
 //  - and some rudimentary connection constraints (max connections).
-export default class TenantSocketConnection {
-  config: ServerConfig;
+export default class AuthorizedSocketConnection<TContext, TCredentials> {
+  config: AuthorizedSocketOptions<TContext, TCredentials>;
 
   subscriptions: Map<string, MaybeSubscription>;
-  credentials: {
-    expSeconds: number,
-    tenants: { [tenantId: string]: number },
-  };
   renewTimer: ?TimeoutID = null;
 
-  constructor(config: ServerConfig) {
+  constructor(config: AuthorizedSocketOptions<TContext, TCredentials>) {
     this.config = config;
-    this.credentials = { expSeconds: 0, tenants: {} };
     this.subscriptions = new Map();
     this.config.socket
       .on('authenticate', this.handleAuthenticate)
@@ -85,40 +58,21 @@ export default class TenantSocketConnection {
       .on('disconnect', this.handleDisconnect);
   }
 
-  isAuthenticated = () =>
-    this.credentials.tenants && !isExpired(this.credentials.expSeconds);
+  getCredentials(): TCredentials {
+    return this.config.credentialsManager.getCredentials();
+  }
 
   isAuthorized = (data: any) =>
     !!(
-      this.isAuthenticated() &&
-      this.config.hasPermission(data, this.credentials)
+      this.config.credentialsManager.isAuthenticated() &&
+      this.config.hasPermission(data, this.getCredentials())
     );
 
-  scheduleRenew(implicitToken: string) {
-    const deltaMS = this.credentials.expSeconds * SECONDS_TO_MS - Date.now();
-    const deltaMSAdjusted = Math.max(
-      0,
-      deltaMS - this.config.gracePeriodSeconds * SECONDS_TO_MS,
-    );
-    this.renewTimer = setTimeout(() => {
-      this.handleAuthenticate(implicitToken);
-    }, deltaMSAdjusted);
-  }
-
-  async updateCredentials(implicitToken: string) {
-    this.credentials = await this.config.fetchCredentials(
-      this.config.context,
-      implicitToken,
-    );
-  }
-
-  handleAuthenticate = async (implicitToken: string, cb?: Function) => {
+  handleAuthenticate = async (authorization: string, cb?: Function) => {
     try {
-      await this.updateCredentials(implicitToken);
-      this.scheduleRenew(implicitToken);
+      await this.config.credentialsManager.authenticate(authorization);
     } catch (err) {
-      this.credentials = { tenants: {}, expSeconds: 0 };
-      this.config.socket.emit('app_error', { code: 'invalid_token' });
+      this.config.socket.emit('app_error', { code: 'invalid_authorization' });
     }
     acknowledge(cb);
   };
@@ -156,14 +110,14 @@ export default class TenantSocketConnection {
       document: parse(query),
       variableValues: variables,
       contextValue: {
-        httpApi: this.config.context.httpApi,
+        ...this.config.context,
         subscribe: async (
           channel,
           parseMessage = this.config.defaultParseMessage,
         ) => {
           const source = this.config.redis.subscribe(channel);
-          const parsed = asyncUtils.map(source, parseMessage);
-          const filtered = asyncUtils.filter(parsed, this.isAuthorized);
+          const parsed = AsyncUtils.map(source, parseMessage);
+          const filtered = AsyncUtils.filter(parsed, this.isAuthorized);
           return filtered;
         },
       },
