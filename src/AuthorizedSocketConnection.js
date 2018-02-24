@@ -9,8 +9,8 @@ import {
 import IoServer from 'socket.io';
 
 import * as AsyncUtils from './AsyncUtils';
+import type { CredentialsManager } from './CredentialsManager';
 import type RedisSubscriber from './RedisSubscriber';
-import type { ICredentialsManager } from './CredentialManager';
 
 type Subscription = {
   id: string,
@@ -22,12 +22,12 @@ type MaybeSubscription = Promise<
   AsyncIterator<ExecutionResult> | ExecutionResult,
 >;
 
-type ServerConfig<TContext, TCredentials> = {|
+export type AuthorizedSocketOptions<TContext, TCredentials> = {|
   socket: IoServer.socket,
   redis: RedisSubscriber,
   schema: GraphQLSchema,
   context: TContext,
-  credentialsManager: ICredentialsManager<TCredentials>,
+  credentialsManager: CredentialsManager<TCredentials>,
   hasPermission: (data: any, credentials: TCredentials) => boolean,
   defaultParseMessage: (data: string) => any,
   maxSubscriptionsPerConnection?: number,
@@ -43,12 +43,12 @@ const acknowledge = cb => {
 //  - authentication,
 //  - and some rudimentary connection constraints (max connections).
 export default class AuthorizedSocketConnection<TContext, TCredentials> {
-  config: ServerConfig<TContext, TCredentials>;
+  config: AuthorizedSocketOptions<TContext, TCredentials>;
 
   subscriptions: Map<string, MaybeSubscription>;
   renewTimer: ?TimeoutID = null;
 
-  constructor(config: ServerConfig<TContext, TCredentials>) {
+  constructor(config: AuthorizedSocketOptions<TContext, TCredentials>) {
     this.config = config;
     this.subscriptions = new Map();
     this.config.socket

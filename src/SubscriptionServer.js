@@ -7,7 +7,7 @@ import type { GraphQLSchema } from 'graphql';
 import { promisify } from 'util';
 
 import AuthorizedSocketConnection from './AuthorizedSocketConnection';
-import type { ICredentialsManager } from './CredentialManager';
+import type { CredentialsManager } from './CredentialsManager';
 import RedisSubscriber from './RedisSubscriber';
 
 type SocketIoServer = {
@@ -24,7 +24,7 @@ export type SubscriptionServerConfig<TContext, TCredentials> = {|
   createContext: (request: any) => TContext,
   createCredentialsManager: (
     context: TContext,
-  ) => ICredentialsManager<TCredentials>,
+  ) => CredentialsManager<TCredentials>,
   redisConfiguration: ClientOpts,
   schema: GraphQLSchema,
 |};

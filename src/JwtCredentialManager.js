@@ -1,5 +1,5 @@
 /* @flow */
-import type { ICredentialsManager } from './CredentialManager';
+import type { CredentialsManager } from './CredentialsManager';
 
 type Seconds = number;
 
@@ -16,7 +16,7 @@ export type JwtCredentialsManagerConfig<TCredentials> = {|
 const SECONDS_TO_MS = 1000;
 
 class JwtCredentialsManager<TCredentials: JwtCredentials>
-  implements ICredentialsManager<TCredentials> {
+  implements CredentialsManager<TCredentials> {
   config: JwtCredentialsManagerConfig<TCredentials>;
   credentials: TCredentials;
   token: ?string;
