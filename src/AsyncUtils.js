@@ -36,12 +36,26 @@ export class AsyncQueue {
   iterable: AsyncGenerator<any, void, void>;
 
   constructor(unsubscribe: () => void) {
-    this.unsubscribe = unsubscribe;
+    let cleanedUp = false;
+    this.unsubscribe = () => {
+      if (cleanedUp) return;
+      cleanedUp = true;
+      unsubscribe();
+    };
 
     this.values = [];
     this.createPromise();
 
     this.iterable = this.createIterable();
+    const baseReturn = this.iterable.return;
+
+    // $FlowFixMe return doesn't always reach the finally block
+    Object.defineProperty(this.iterable, 'return', {
+      value: (...args) => {
+        this.unsubscribe();
+        return baseReturn.apply(this.iterable, args);
+      },
+    });
   }
 
   createPromise() {

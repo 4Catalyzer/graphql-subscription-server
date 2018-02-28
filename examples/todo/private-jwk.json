@@ -1,0 +1,9 @@
+{
+  "kty": "RSA",
+  "d": "SaSEM8RCZrbSS9_2nSjxpEAtyrt4xULciMDpOgvGS0Qkk5R0r7jYVmoS_Rns2mbJwKr2k4tsV8lKdHbhEkY4zvgGE-kZa_HAdsVI7Au9n1wqxBwP1Bvfpae0xUdKXpuMcCkREv-s0-J7tCyzw2fGHtx6SO6lJqBJCE4cI1U94p50GOUDOFocbH5eA-Mr3AmMNTGHp8Kw6ZMa55BiIQA0pkAzPYsUzQXNqG0dTwUxrExhvtdwDJK6vVtTC7psrtH1VjpDVZ1j3wZNNP_j27KPqPfbgWRiBri3FeCNATcinKHgi-l4FlDoUBa-peO6vOXyNnEjsmBc3tj66ZaTo1MFAQ",
+  "e": "AQAB",
+  "use": "sig",
+  "kid": "graphql-subscriptions-test-key",
+  "alg": "RS256",
+  "n": "skAydC-PQB2VmfwDwTcq0qvyVj2HD21HBXWs0zsw0Ny2g58b6ZZomgYQe0Ml5fBhy8cwIUzPbqzbLjCwLItuhQ6IVqyokj1142MfNrF2-Le_QXRVBRCjZQJ7L_SmnNsA56iSs80EiL-qSdPThntOT6wgk23Y8csgCeaNO0ayND0LeM7DXyKcftT9VDV8njesdbjM4oEOA472bqyERpX7hQNN6EzRHF5K6z1jxnQuWB6ywoXnxFG9C5Jm24Nxd5KoGIZetqh-Cv1k83nw0Ljv5tqifKjPB1nyLSFl1fElPSIoX8DG7Mynwk_ElffTbaGF1ONZ2HhP2egIdVexFUceLQ"
+}

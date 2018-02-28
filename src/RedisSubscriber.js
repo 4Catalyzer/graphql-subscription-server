@@ -3,17 +3,24 @@
 import redis from 'redis';
 import { promisify } from 'util';
 
-import { AsyncQueue } from './AsyncUtils';
+import { AsyncQueue, map } from './AsyncUtils';
+import type { Subscriber } from './Subscriber';
 
 type Channel = string;
 
-export default class RedisSubscriber {
+type RedisConfigOptions = redis.ClientOpts & {
+  parseMessage?: (data: string) => any,
+};
+
+export default class RedisSubscriber implements Subscriber {
   redis: redis.RedisClient;
+  _parseMessage: (data: string) => any;
   _queues: Map<Channel, Set<AsyncQueue>>;
 
-  constructor(redisConfig: redis.ClientOpts) {
+  constructor({ parseMessage, ...redisConfig }: RedisConfigOptions = {}) {
     this.redis = redis.createClient(redisConfig);
     this._queues = new Map();
+    this._parseMessage = parseMessage;
 
     this.redis.on('message', (channel, message) => {
       const queues = this._queues.get(channel);
@@ -24,7 +31,10 @@ export default class RedisSubscriber {
     });
   }
 
-  subscribe(channel: Channel) {
+  subscribe(
+    channel: Channel,
+    parseMessage: (data: string) => any = this._parseMessage,
+  ) {
     let channelQueues = this._queues.get(channel);
 
     if (!channelQueues) {
@@ -46,7 +56,9 @@ export default class RedisSubscriber {
     });
 
     channelQueues.add(queue);
-    return queue.iterable;
+    if (!parseMessage) return queue.iterable;
+
+    return map(queue.iterable, parseMessage);
   }
 
   async close() {

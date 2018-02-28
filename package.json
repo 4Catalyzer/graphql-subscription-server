@@ -6,9 +6,11 @@
   "private": false,
   "main": "lib/index.js",
   "modules": "es/index/js",
+  "files": ["lib", "es"],
   "scripts": {
+    "clean": "rm -rf lib es",
     "build":
-      "babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__",
+      "npm run clean && babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__",
     "check": "flow check",
     "lint":
       "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css,md}'",

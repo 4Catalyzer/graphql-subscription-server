@@ -18,6 +18,40 @@ describe('RedisSubscriber', () => {
     await client.close();
   });
 
+  it('should accept parseMessage', async () => {
+    const channel = 'whatever';
+    const client = new RedisSubscriber({ parseMessage: d => JSON.parse(d) });
+
+    const sub = client.subscribe(channel);
+
+    client.redis.publish(channel, '[1,2,3]');
+
+    const step = await sub.next();
+
+    expect(step.value).toEqual([1, 2, 3]);
+
+    await client.close();
+  });
+
+  it('should accept parseMessage per channel', async () => {
+    const channel = 'whatever';
+    const client = new RedisSubscriber();
+
+    const subA = client.subscribe(channel, d => JSON.parse(d));
+    const subB = client.subscribe('another');
+
+    client.redis.publish(channel, '[1,2,3]');
+    client.redis.publish('another', '[1,2,3]');
+
+    const stepA = await subA.next();
+    const stepB = await subB.next();
+
+    expect(stepA.value).toEqual([1, 2, 3]);
+    expect(stepB.value).toEqual('[1,2,3]');
+
+    await client.close();
+  });
+
   it('should remove subscribers', async () => {
     const channel = 'channel';
     const client = new RedisSubscriber();

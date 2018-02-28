@@ -1,11 +1,13 @@
 /* @flow */
 
-import { parse, subscribe } from 'graphql';
-import type { ExecutionResult, GraphQLSchema } from 'graphql';
+import {
+  parse,
+  subscribe,
+  type ExecutionResult,
+  type GraphQLSchema,
+} from 'graphql';
 import IoServer from 'socket.io';
 
-import * as AsyncUtils from './AsyncUtils';
-import type { CredentialsManager } from './CredentialsManager';
 import type { Subscriber } from './Subscriber';
 
 type Subscription = {
@@ -18,13 +20,11 @@ type MaybeSubscription = Promise<
   AsyncIterator<ExecutionResult> | ExecutionResult,
 >;
 
-export type AuthorizedSocketOptions<TContext, TCredentials> = {|
+export type SocketOptions<TContext> = {|
   socket: IoServer.socket,
   subscriber: Subscriber,
   schema: GraphQLSchema,
   context: TContext,
-  credentialsManager: CredentialsManager<TCredentials>,
-  hasPermission: (data: any, credentials: TCredentials) => boolean,
   maxSubscriptionsPerConnection?: number,
 |};
 
@@ -37,39 +37,23 @@ const acknowledge = cb => {
 //  - authorization,
 //  - authentication,
 //  - and some rudimentary connection constraints (max connections).
-export default class AuthorizedSocketConnection<TContext, TCredentials> {
-  config: AuthorizedSocketOptions<TContext, TCredentials>;
+export default class SocketConnection<TContext> {
+  config: SocketOptions<TContext>;
 
   subscriptions: Map<string, MaybeSubscription>;
 
-  constructor(config: AuthorizedSocketOptions<TContext, TCredentials>) {
+  constructor(config: SocketOptions<TContext>) {
     this.config = config;
     this.subscriptions = new Map();
     this.config.socket
-      .on('authenticate', this.handleAuthenticate)
       .on('subscribe', this.handleSubscribe)
       .on('unsubscribe', this.handleUnsubscribe)
       .on('disconnect', this.handleDisconnect);
   }
 
-  getCredentials(): TCredentials {
-    return this.config.credentialsManager.getCredentials();
+  subscribe(...args: any[]) {
+    return this.config.subscriber.subscribe(...args);
   }
-
-  isAuthorized = (data: any) =>
-    !!(
-      this.config.credentialsManager.isAuthenticated() &&
-      this.config.hasPermission(data, this.getCredentials())
-    );
-
-  handleAuthenticate = async (authorization: string, cb?: Function) => {
-    try {
-      await this.config.credentialsManager.authenticate(authorization);
-    } catch (err) {
-      this.config.socket.emit('app_error', { code: 'invalid_authorization' });
-    }
-    acknowledge(cb);
-  };
 
   // A User requests a subscription
   handleSubscribe = async (
@@ -105,11 +89,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       variableValues: variables,
       contextValue: {
         ...this.config.context,
-        subscribe: async (...args) => {
-          const source = this.config.subscriber.subscribe(...args);
-          const filtered = AsyncUtils.filter(source, this.isAuthorized);
-          return filtered;
-        },
+        subscribe: (...args) => this.subscribe(...args),
       },
     });
 
@@ -154,9 +134,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     this.subscriptions.delete(id);
   };
 
-  handleDisconnect = async () => {
-    await this.config.credentialsManager.unauthenticate();
-
+  handleDisconnect = () => {
     this.subscriptions.forEach(async subscriptionPromise => {
       const subscription = await subscriptionPromise;
 
