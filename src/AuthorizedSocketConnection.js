@@ -1,11 +1,7 @@
 /* @flow */
 
-import {
-  parse,
-  subscribe,
-  type ExecutionResult,
-  type GraphQLSchema,
-} from 'graphql';
+import { parse, subscribe } from 'graphql';
+import type { ExecutionResult, GraphQLSchema } from 'graphql';
 import IoServer from 'socket.io';
 
 import * as AsyncUtils from './AsyncUtils';
