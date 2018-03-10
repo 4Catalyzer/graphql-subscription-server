@@ -11,7 +11,7 @@ describe('RedisSubscriber', () => {
 
     client.redis.publish(channel, 'foo');
 
-    const step = await sub.next();
+    const step = await sub.iterable.next();
 
     expect(step.value).toEqual('foo');
 
@@ -26,7 +26,7 @@ describe('RedisSubscriber', () => {
 
     client.redis.publish(channel, '[1,2,3]');
 
-    const step = await sub.next();
+    const step = await sub.iterable.next();
 
     expect(step.value).toEqual([1, 2, 3]);
 
@@ -43,8 +43,8 @@ describe('RedisSubscriber', () => {
     client.redis.publish(channel, '[1,2,3]');
     client.redis.publish('another', '[1,2,3]');
 
-    const stepA = await subA.next();
-    const stepB = await subB.next();
+    const stepA = await subA.iterable.next();
+    const stepB = await subB.iterable.next();
 
     expect(stepA.value).toEqual([1, 2, 3]);
     expect(stepB.value).toEqual('[1,2,3]');
@@ -63,12 +63,12 @@ describe('RedisSubscriber', () => {
 
     let count = 0;
     for (
-      let s = await sub.next();
+      let s = await sub.iterable.next();
       !s.done;
-      s = await sub.next() // eslint-disable-line no-await-in-loop
+      s = await sub.iterable.next() // eslint-disable-line no-await-in-loop
     ) {
       count++;
-      sub.return();
+      await sub.iterable.return();
       if (count === 2) throw new Error('Should not hit here');
     }
 

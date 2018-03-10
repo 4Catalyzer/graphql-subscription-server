@@ -15,12 +15,9 @@
     babel-plugin-dev-expression "^0.2.1"
     babel-plugin-react-intl "^2.3.0"
 
-"@4c/graphql-subscription-server@file:../..":
-  version "0.0.1"
-  dependencies:
-    express "^4.16.2"
-    redis "^2.8.0"
-    socket.io "^2.0.4"
+"@4c/graphql-subscription-server@link:../..":
+  version "0.0.0"
+  uid ""
 
 "@babel/code-frame@7.0.0-beta.40":
   version "7.0.0-beta.40"

@@ -5,6 +5,11 @@ import type EventEmitter from 'events';
 import { AsyncQueue } from './AsyncUtils';
 import type { Subscriber } from './Subscriber';
 
+/**
+ * A subscriber over a standard EventEmitter. Events are pushed as
+ * they received, passing through, the _first_ argument of the event handler.
+ * Events are listened to at the time of subscription, meaning only event past then will be received.
+ */
 export default class EventSubscriber implements Subscriber {
   emitter: EventEmitter;
 
@@ -20,11 +25,11 @@ export default class EventSubscriber implements Subscriber {
   _listen(event: string) {
     if (this._listeners.has(event)) return;
 
-    const listener = (...args) => {
+    const listener = data => {
       const queues = this._queues.get(event);
       if (!queues) return;
       queues.forEach(queue => {
-        queue.push(args);
+        queue.push(data);
       });
     };
 
@@ -54,7 +59,7 @@ export default class EventSubscriber implements Subscriber {
     eventQueues.add(queue);
     this._listen(event);
 
-    return queue.iterable;
+    return queue;
   }
 
   async close() {

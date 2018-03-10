@@ -60,7 +60,7 @@ type Credentials = JwtCredentials & {
 
 class CredentialManager extends JwtCredentialManager<Credentials> {
   getCredentialsFromAuthorization(token) {
-    const header = jwt.decode(token, { complete: true });
+    const { header } = jwt.decode(token, { complete: true });
     const jwkSet = require('./jwk-set.json');
 
     const jwk = jwkSet.keys.find(k => k.kid === header.kid);
@@ -76,7 +76,8 @@ class CredentialManager extends JwtCredentialManager<Credentials> {
             reject(err);
             return;
           }
-          resolve({ user: payload.sub, exp: jwt.exp });
+
+          resolve({ user: payload.sub, exp: payload.exp });
         },
       );
     });
@@ -95,6 +96,13 @@ const subscriptionServer = new SubscriptionServer({
       enableTokenRenewal: false,
       initialCredentials: { user: null, exp: 0 },
     }),
+  logger(level, message, meta) {
+    console.log(
+      `${level}: ${message} ${
+        meta ? `\n\n${JSON.stringify(meta, null, 2)}` : ''
+      }`,
+    );
+  },
 });
 
 subscriptionServer.attach(server);

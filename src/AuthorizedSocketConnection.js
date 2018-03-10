@@ -8,6 +8,12 @@ import * as AsyncUtils from './AsyncUtils';
 import type { CredentialsManager } from './CredentialsManager';
 import type { Subscriber } from './Subscriber';
 
+export type Logger = (
+  level: 'info' | 'debug',
+  message: string,
+  meta: {},
+) => mixed;
+
 type Subscription = {
   id: string,
   query: string,
@@ -26,6 +32,7 @@ export type AuthorizedSocketOptions<TContext, TCredentials> = {|
   credentialsManager: CredentialsManager<TCredentials>,
   hasPermission: (data: any, credentials: TCredentials) => boolean,
   maxSubscriptionsPerConnection?: number,
+  logger?: Logger,
 |};
 
 const acknowledge = cb => {
@@ -51,7 +58,9 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       .on('unsubscribe', this.handleUnsubscribe)
       .on('disconnect', this.handleDisconnect);
   }
-
+  log(...args: any[]) {
+    if (this.config.logger) this.config.logger(...args);
+  }
   getCredentials(): TCredentials {
     return this.config.credentialsManager.getCredentials();
   }
@@ -107,8 +116,23 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         ...this.config.context,
         subscribe: async (...args) => {
           const source = this.config.subscriber.subscribe(...args);
-          const filtered = AsyncUtils.filter(source, this.isAuthorized);
-          return filtered;
+          const filtered = AsyncUtils.filter(
+            source.iterable,
+            this.isAuthorized,
+          );
+
+          return {
+            next: () => filtered.next(),
+            throw: err => filtered.throw(err),
+            return: async () => {
+              await source.close();
+              if (filtered.return) await filtered.return();
+            },
+            // $FlowFixMe
+            [Symbol.asyncIterator]() {
+              return this;
+            },
+          };
         },
       },
     });

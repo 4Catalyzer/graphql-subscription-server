@@ -6,7 +6,7 @@ const key = fs.readFileSync(`${__dirname}/private-key.pem`);
 
 const token = jwt.sign({ sub: 'Jimmy' }, key, {
   algorithm: 'RS256',
-  expiresIn: '10 hours',
+  expiresIn: '100 hours',
   keyid: 'graphql-subscriptions-test-key',
 });
 

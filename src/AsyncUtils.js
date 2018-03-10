@@ -30,32 +30,24 @@ export async function* filter<T>(
 
 export class AsyncQueue {
   values: any[];
+  cleanedUp: boolean = false;
   promise: Promise<void>;
   unsubscribe: () => void;
   resolvePromise: () => void;
   iterable: AsyncGenerator<any, void, void>;
 
   constructor(unsubscribe: () => void) {
-    let cleanedUp = false;
-    this.unsubscribe = () => {
-      if (cleanedUp) return;
-      cleanedUp = true;
-      unsubscribe();
-    };
-
     this.values = [];
+    this.unsubscribe = unsubscribe;
     this.createPromise();
 
     this.iterable = this.createIterable();
-    const baseReturn = this.iterable.return;
+  }
 
-    // $FlowFixMe return doesn't always reach the finally block
-    Object.defineProperty(this.iterable, 'return', {
-      value: (...args) => {
-        this.unsubscribe();
-        return baseReturn.apply(this.iterable, args);
-      },
-    });
+  close(): void | Promise<void> {
+    if (this.cleanedUp) return;
+    this.cleanedUp = true;
+    this.unsubscribe();
   }
 
   createPromise() {
@@ -77,7 +69,7 @@ export class AsyncQueue {
         this.createPromise();
       }
     } finally {
-      this.unsubscribe();
+      await this.close();
     }
   }
 
