@@ -32,14 +32,16 @@ export default class AddTodoSubscription extends Subscription {
   }
 
   getConfigs() {
-    return [{
-      type: 'RANGE_ADD',
-      parentName: 'viewer',
-      parentID: this.props.viewer.id,
-      connectionName: 'todos',
-      edgeName: 'todoEdge',
-      rangeBehaviors: () => 'append',
-    }];
+    return [
+      {
+        type: 'RANGE_ADD',
+        parentName: 'viewer',
+        parentID: this.props.viewer.id,
+        connectionName: 'todos',
+        edgeName: 'todoEdge',
+        rangeBehaviors: () => 'append',
+      },
+    ];
   }
 
   getVariables() {

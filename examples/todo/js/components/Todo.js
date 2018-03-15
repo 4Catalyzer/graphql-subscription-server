@@ -32,7 +32,7 @@ class Todo extends React.Component {
     isEditing: false,
   };
 
-  _handleCompleteChange = (e) => {
+  _handleCompleteChange = e => {
     const { relay, todo, viewer } = this.props;
     relay.commitUpdate(
       new ChangeTodoStatusMutation({
@@ -60,22 +60,18 @@ class Todo extends React.Component {
     this._removeTodo();
   };
 
-  _handleTextInputSave = (text) => {
+  _handleTextInputSave = text => {
     this._setEditMode(false);
     const { relay, todo } = this.props;
-    relay.commitUpdate(
-      new RenameTodoMutation({ todo, text }),
-    );
+    relay.commitUpdate(new RenameTodoMutation({ todo, text }));
   };
 
   _removeTodo() {
     const { relay, todo, viewer } = this.props;
-    relay.commitUpdate(
-      new RemoveTodoMutation({ todo, viewer }),
-    );
+    relay.commitUpdate(new RemoveTodoMutation({ todo, viewer }));
   }
 
-  _setEditMode = (shouldEdit) => {
+  _setEditMode = shouldEdit => {
     this.setState({ isEditing: shouldEdit });
   };
 
@@ -93,27 +89,29 @@ class Todo extends React.Component {
   }
 
   render() {
+    const { todo } = this.props;
     return (
       <li
         className={classNames({
-          completed: this.props.todo.complete,
+          completed: todo.complete,
           editing: this.state.isEditing,
         })}
       >
         <div className="view">
-          <input
-            checked={this.props.todo.complete}
-            className="toggle"
-            onChange={this._handleCompleteChange}
-            type="checkbox"
-          />
-          <label onDoubleClick={this._handleLabelDoubleClick}>
-            {this.props.todo.text}
+          <label
+            htmlFor={`todo-input-${todo.id}`}
+            onDoubleClick={this._handleLabelDoubleClick}
+          >
+            <input
+              checked={todo.complete}
+              className="toggle"
+              id={`todo-input-${todo.id}`}
+              onChange={this._handleCompleteChange}
+              type="checkbox"
+            />
+            {todo.text}
           </label>
-          <button
-            className="destroy"
-            onClick={this._handleDestroyClick}
-          />
+          <button className="destroy" onClick={this._handleDestroyClick} />
         </div>
         {this.state.isEditing && this.renderTextInput()}
       </li>

@@ -14,8 +14,7 @@ import React from 'react';
 import Relay from 'react-relay/classic';
 import { IndexLink, Link } from 'react-router';
 
-import RemoveCompletedTodosMutation
-  from '../mutations/RemoveCompletedTodosMutation';
+import RemoveCompletedTodosMutation from '../mutations/RemoveCompletedTodosMutation';
 
 class TodoListFooter extends React.Component {
   static propTypes = {
@@ -41,17 +40,26 @@ class TodoListFooter extends React.Component {
     return (
       <footer className="footer">
         <span className="todo-count">
-          <strong>{numRemainingTodos}</strong> item{numRemainingTodos === 1 ? '' : 's'} left
+          <strong>{numRemainingTodos}</strong> item{numRemainingTodos === 1
+            ? ''
+            : 's'}{' '}
+          left
         </span>
         <ul className="filters">
           <li>
-            <IndexLink to="/" activeClassName="selected">All</IndexLink>
+            <IndexLink to="/" activeClassName="selected">
+              All
+            </IndexLink>
           </li>
           <li>
-            <Link to="/active" activeClassName="selected">Active</Link>
+            <Link to="/active" activeClassName="selected">
+              Active
+            </Link>
           </li>
           <li>
-            <Link to="/completed" activeClassName="selected">Completed</Link>
+            <Link to="/completed" activeClassName="selected">
+              Completed
+            </Link>
           </li>
         </ul>
         {numCompletedTodos > 0 && (

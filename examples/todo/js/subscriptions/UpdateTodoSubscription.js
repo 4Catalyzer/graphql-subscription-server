@@ -29,12 +29,14 @@ export default class UpdateTodoSubscription extends Subscription {
   }
 
   getConfigs() {
-    return [{
-      type: 'FIELDS_CHANGE',
-      fieldIDs: {
-        todo: this.props.todo.id,
+    return [
+      {
+        type: 'FIELDS_CHANGE',
+        fieldIDs: {
+          todo: this.props.todo.id,
+        },
       },
-    }];
+    ];
   }
 
   getVariables() {

@@ -45,13 +45,15 @@ export default class RemoveTodoMutation extends Relay.Mutation {
     `;
   }
   getConfigs() {
-    return [{
-      type: 'NODE_DELETE',
-      parentName: 'viewer',
-      parentID: this.props.viewer.id,
-      connectionName: 'todos',
-      deletedIDFieldName: 'deletedTodoId',
-    }];
+    return [
+      {
+        type: 'NODE_DELETE',
+        parentName: 'viewer',
+        parentID: this.props.viewer.id,
+        connectionName: 'todos',
+        deletedIDFieldName: 'deletedTodoId',
+      },
+    ];
   }
   getVariables() {
     return {
@@ -61,9 +63,10 @@ export default class RemoveTodoMutation extends Relay.Mutation {
   getOptimisticResponse() {
     const viewerPayload = { id: this.props.viewer.id };
     if (this.props.viewer.completedCount != null) {
-      viewerPayload.completedCount = this.props.todo.complete === true ?
-        this.props.viewer.completedCount - 1 :
-        this.props.viewer.completedCount;
+      viewerPayload.completedCount =
+        this.props.todo.complete === true
+          ? this.props.viewer.completedCount - 1
+          : this.props.viewer.completedCount;
     }
     if (this.props.viewer.totalCount != null) {
       viewerPayload.totalCount = this.props.viewer.totalCount - 1;

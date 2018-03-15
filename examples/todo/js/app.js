@@ -17,10 +17,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {
   applyRouterMiddleware,
-  IndexRoute,
-  Route,
-  Router,
   useRouterHistory,
+  Router,
+  Route,
+  IndexRoute,
 } from 'react-router';
 import useRelay from 'react-router-relay';
 import RelaySubscriptions from 'relay-subscriptions';
@@ -41,7 +41,7 @@ network.setToken(
 
 environment.injectNetworkLayer(network);
 
-const mountNode = document.getElementById('root');
+const mountNode = document.getElementById('root'); // eslint-disable-line
 
 ReactDOM.render(
   <Router

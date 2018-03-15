@@ -22,7 +22,7 @@ class TodoList extends React.Component {
     relay: React.PropTypes.object.isRequired,
   };
 
-  _handleMarkAllChange = (e) => {
+  _handleMarkAllChange = e => {
     const { relay, viewer } = this.props;
     relay.commitUpdate(
       new MarkAllTodosMutation({
@@ -40,14 +40,13 @@ class TodoList extends React.Component {
 
     return (
       <section className="main">
-        <input
-          checked={numTodos === numCompletedTodos}
-          className="toggle-all"
-          onChange={this._handleMarkAllChange}
-          type="checkbox"
-        />
         <label htmlFor="toggle-all">
-          Mark all as complete
+          <input
+            checked={numTodos === numCompletedTodos}
+            className="toggle-all"
+            onChange={this._handleMarkAllChange}
+            type="checkbox"
+          />Mark all as complete
         </label>
         <ul className="todo-list">
           {viewer.todos.edges.map(edge => (

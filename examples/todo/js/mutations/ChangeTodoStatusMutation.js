@@ -44,13 +44,15 @@ export default class ChangeTodoStatusMutation extends Relay.Mutation {
     `;
   }
   getConfigs() {
-    return [{
-      type: 'FIELDS_CHANGE',
-      fieldIDs: {
-        todo: this.props.todo.id,
-        viewer: this.props.viewer.id,
+    return [
+      {
+        type: 'FIELDS_CHANGE',
+        fieldIDs: {
+          todo: this.props.todo.id,
+          viewer: this.props.viewer.id,
+        },
       },
-    }];
+    ];
   }
   getVariables() {
     return {
@@ -61,9 +63,9 @@ export default class ChangeTodoStatusMutation extends Relay.Mutation {
   getOptimisticResponse() {
     const viewerPayload = { id: this.props.viewer.id };
     if (this.props.viewer.completedCount != null) {
-      viewerPayload.completedCount = this.props.complete ?
-        this.props.viewer.completedCount + 1 :
-        this.props.viewer.completedCount - 1;
+      viewerPayload.completedCount = this.props.complete
+        ? this.props.viewer.completedCount + 1
+        : this.props.viewer.completedCount - 1;
     }
     return {
       todo: {

@@ -18,5 +18,5 @@ import { printSchema } from 'graphql/utilities';
 
 fs.writeFileSync(
   path.join(__dirname, '../data/schema.graphql'),
-  printSchema(schema)
+  printSchema(schema),
 );

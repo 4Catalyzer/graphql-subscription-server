@@ -27,7 +27,7 @@ import SubscriptionServer from '@4c/graphql-subscription-server/lib/Subscription
 import EventSubscriber from '@4c/graphql-subscription-server/lib/EventSubscriber';
 import JwtCredentialManager, {
   type JwtCredentials,
-} from '@4c/graphql-subscription-server/lib/JwtCredentialManager';
+} from '@4c/graphql-subscription-server/lib/JwtCredentialsManager';
 import database from './data/database';
 
 import { schema } from './data/schema';
@@ -35,7 +35,7 @@ import { schema } from './data/schema';
 const APP_PORT = 3000;
 const GRAPHQL_PORT = 8080;
 
-const createContext = _ => ({
+const createContext = () => ({
   database,
 });
 
@@ -46,12 +46,12 @@ const server = http.createServer(graphQLApp);
 
 graphQLApp.use(
   '/graphql',
-  graphQLHTTP(req => ({
+  graphQLHTTP({
     schema,
-    context: createContext(req),
     pretty: true,
     graphiql: true,
-  })),
+    context: createContext(),
+  }),
 );
 
 type Credentials = JwtCredentials & {
@@ -61,7 +61,7 @@ type Credentials = JwtCredentials & {
 class CredentialManager extends JwtCredentialManager<Credentials> {
   getCredentialsFromAuthorization(token) {
     const { header } = jwt.decode(token, { complete: true });
-    const jwkSet = require('./jwk-set.json');
+    const jwkSet = require('./jwk-set.json'); // eslint-disable-line global-require
 
     const jwk = jwkSet.keys.find(k => k.kid === header.kid);
     if (!jwk) return this.config.initialCredentials;
@@ -96,9 +96,9 @@ const subscriptionServer = new SubscriptionServer({
       enableTokenRenewal: false,
       initialCredentials: { user: null, exp: 0 },
     }),
-  logger(level, message, meta) {
+  createLogger: (group = '') => (level, message, meta) => {
     console.log(
-      `${level}: ${message} ${
+      `${level}:${group && ` [${group}]`} ${message} ${
         meta ? `\n\n${JSON.stringify(meta, null, 2)}` : ''
       }`,
     );

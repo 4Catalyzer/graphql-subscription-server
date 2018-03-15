@@ -27,11 +27,9 @@ class TodoApp extends React.Component {
     children: React.PropTypes.node.isRequired,
   };
 
-  _handleTextInputSave = (text) => {
+  _handleTextInputSave = text => {
     const { relay, viewer } = this.props;
-    relay.commitUpdate(
-      new AddTodoMutation({ viewer, text }),
-    );
+    relay.commitUpdate(new AddTodoMutation({ viewer, text }));
   };
 
   render() {
@@ -42,9 +40,7 @@ class TodoApp extends React.Component {
       <div>
         <section className="todoapp">
           <header className="header">
-            <h1>
-              todos
-            </h1>
+            <h1>todos</h1>
             <TodoTextInput
               autoFocus
               className="new-todo"
@@ -55,21 +51,13 @@ class TodoApp extends React.Component {
 
           {children}
 
-          {hasTodos && (
-            <TodoListFooter
-              todos={viewer.todos}
-              viewer={viewer}
-            />
-          )}
+          {hasTodos && <TodoListFooter todos={viewer.todos} viewer={viewer} />}
         </section>
         <footer className="info">
+          <p>Double-click to edit a todo</p>
           <p>
-            Double-click to edit a todo
-          </p>
-          <p>
-            Created by the <a href="https://facebook.github.io/relay/">
-              Relay team
-            </a>
+            Created by the{' '}
+            <a href="https://facebook.github.io/relay/">Relay team</a>
           </p>
           <p>
             Part of <a href="http://todomvc.com">TodoMVC</a>
