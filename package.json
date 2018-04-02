@@ -35,35 +35,33 @@
   },
   "jest": {
     "roots": ["<rootDir>/test"],
-    "setupFiles": ["@babel/polyfill"],
     "testEnvironment": "node"
   },
   "devDependencies": {
-    "@4c/babel-preset-4catalyzer": "^1.2.1",
-    "@babel/cli": "^7.0.0-beta.41",
-    "@babel/core": "^7.0.0-beta.41",
-    "@babel/plugin-proposal-async-generator-functions": "^7.0.0-beta.41",
-    "@babel/polyfill": "^7.0.0-beta.41",
-    "@babel/preset-flow": "^7.0.0-beta.41",
+    "@4c/babel-preset-4catalyzer": "^1.3.0",
+    "@babel/cli": "^7.0.0-beta.43",
+    "@babel/core": "^7.0.0-beta.40",
+    "@babel/polyfill": "^7.0.0-beta.43",
+    "@babel/preset-flow": "^7.0.0-beta.43",
     "babel-core": "^7.0.0-0",
     "babel-eslint": "^8.2.2",
-    "babel-jest": "^23.0.0-alpha.0",
-    "eslint": "^4.18.2",
+    "babel-jest": "^22.4.3",
+    "eslint": "^4.19.1",
     "eslint-config-4catalyzer": "^0.4.1",
     "eslint-config-4catalyzer-flow": "^0.4.1",
     "eslint-config-4catalyzer-flow-react": "^0.4.1",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-flowtype": "^2.46.1",
-    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-import": "^2.10.0",
     "eslint-plugin-jest": "^21.15.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-prettier": "^2.5.0",
     "eslint-plugin-react": "^7.7.0",
-    "flow-bin": "^0.67.1",
-    "graphql": "^0.13.1",
+    "flow-bin": "^0.69.0",
+    "graphql": "^0.13.2",
     "husky": "^0.14.3",
-    "jest": "^22.4.2",
-    "lint-staged": "^7.0.0",
+    "jest": "^22.4.3",
+    "lint-staged": "^7.0.2",
     "prettier": "^1.11.1",
     "redis-mock": "^0.21.0"
   },
@@ -73,6 +71,6 @@
   "dependencies": {
     "express": "^4.16.3",
     "redis": "^2.8.0",
-    "socket.io": "^2.0.4"
+    "socket.io": "^2.1.0"
   }
 }

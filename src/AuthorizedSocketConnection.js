@@ -16,7 +16,7 @@ type Subscription = {
 };
 
 type MaybeSubscription = Promise<
-  AsyncIterator<ExecutionResult> | ExecutionResult,
+  AsyncGenerator<ExecutionResult, void, void> | ExecutionResult,
 >;
 
 export type AuthorizedSocketOptions<TContext, TCredentials> = {|
@@ -121,23 +121,9 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         ...this.config.context,
         subscribe: async (...args) => {
           const source = this.config.subscriber.subscribe(...args);
-          const filtered = AsyncUtils.filter(
-            source.iterable,
-            this.isAuthorized,
-          );
+          const filtered = AsyncUtils.filter(source, this.isAuthorized);
 
-          return {
-            next: () => filtered.next(),
-            throw: err => filtered.throw(err),
-            return: async () => {
-              await source.close();
-              if (filtered.return) await filtered.return();
-            },
-            // $FlowFixMe
-            [Symbol.asyncIterator]() {
-              return this;
-            },
-          };
+          return filtered;
         },
       },
     });
@@ -164,13 +150,8 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
     acknowledge(cb);
 
-    const subscription: AsyncIterator<ExecutionResult> = (result: any);
-    for (
-      let step = await subscription.next();
-      !step.done;
-      step = await subscription.next() // eslint-disable-line no-await-in-loop
-    ) {
-      const payload = step.value;
+    const subscription: AsyncIterable<ExecutionResult> = (result: any);
+    for await (const payload of subscription) {
       this.log('debug', `processing subscription update`, {
         id,
         payload,

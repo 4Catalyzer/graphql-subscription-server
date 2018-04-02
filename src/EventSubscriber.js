@@ -45,21 +45,23 @@ export default class EventSubscriber implements Subscriber {
       this._queues.set(event, eventQueues);
     }
 
-    const queue = new AsyncQueue(() => {
-      const innerQueues = this._queues.get(event);
-      if (!innerQueues) return;
+    const queue = new AsyncQueue({
+      setup: () => this._listen(event),
+      teardown: () => {
+        const innerQueues = this._queues.get(event);
+        if (!innerQueues) return;
 
-      innerQueues.delete(queue);
+        innerQueues.delete(queue);
 
-      if (!innerQueues.size) {
-        this._queues.delete(event);
-      }
+        if (!innerQueues.size) {
+          this._queues.delete(event);
+        }
+      },
     });
 
     eventQueues.add(queue);
-    this._listen(event);
 
-    return queue;
+    return queue.iterable;
   }
 
   async close() {
