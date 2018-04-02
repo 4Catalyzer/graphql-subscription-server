@@ -14,7 +14,7 @@ type RedisConfigOptions = redis.ClientOpts & {
 
 export default class RedisSubscriber implements Subscriber {
   redis: redis.RedisClient;
-  _parseMessage: (data: string) => any;
+  _parseMessage: ?(data: string) => any;
   _queues: Map<Channel, Set<AsyncQueue>>;
   _channels: Set<string>;
 
@@ -38,9 +38,10 @@ export default class RedisSubscriber implements Subscriber {
     this._channels.add(channel);
     this.redis.subscribe(channel);
   }
+
   subscribe(
     channel: Channel,
-    parseMessage: (data: string) => any = this._parseMessage,
+    parseMessage: ?(data: string) => any = this._parseMessage,
   ) {
     let channelQueues = this._queues.get(channel);
 

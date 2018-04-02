@@ -9,7 +9,7 @@ import { promisify } from 'util';
 import AuthorizedSocketConnection from './AuthorizedSocketConnection';
 import type { CredentialsManager } from './CredentialsManager';
 import type { Subscriber } from './Subscriber';
-import type { Logger, LoggerFactory } from './Logger';
+import type { Logger, CreateLogger } from './Logger';
 
 type SocketIoServer = {
   attach(any): void,
@@ -22,7 +22,7 @@ export type SubscriptionServerConfig<TContext, TCredentials> = {|
   subscriber: Subscriber,
   server: Server,
   maxSubscriptionsPerConnection?: number,
-  createLogger?: LoggerFactory,
+  createLogger?: CreateLogger,
   createContext?: (request: any) => TContext,
   createCredentialsManager: (
     context?: TContext,
@@ -39,7 +39,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
   subscriber: Subscriber;
 
   constructor(config: SubscriptionServerConfig<TContext, TCredentials>) {
-    const createLogger: LoggerFactory =
+    const createLogger: CreateLogger =
       config.createLogger || defaultCreateLogger;
 
     this.log = createLogger('@4c/SubscriptionServer::Server');

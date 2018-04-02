@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "start": "babel-node server.js",
+    "check": "flow check",
     "update-schema": "babel-node tools/updateSchema.js"
   },
   "dependencies": {

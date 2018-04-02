@@ -1,14 +1,6 @@
 /* @flow */
 /* eslint-disable no-await-in-loop */
 
-// $FlowFixMe
-const SymbolAsyncIterator = Symbol.asyncIterator;
-
-export function getIterator<T>(iterable: AsyncIterable<T>): AsyncIterator<T> {
-  // $FlowFixMe
-  return iterable[SymbolAsyncIterator]();
-}
-
 export async function* map<T, U>(
   iterable: AsyncIterable<T>,
   mapper: (value: T) => U,
@@ -23,7 +15,7 @@ export async function* filter<T>(
   predicate: (value: T) => boolean,
 ): AsyncGenerator<T, void, void> {
   for await (const value of iterable) {
-    if (predicate((value: any))) yield value;
+    if (predicate(value)) yield value;
   }
 }
 
@@ -34,7 +26,7 @@ export type AsyncQueueOptions = {
 
 export class AsyncQueue {
   values: any[];
-  cleanedUp: boolean = false;
+  closed: boolean = false;
   promise: Promise<void>;
   options: AsyncQueueOptions;
   resolvePromise: () => void;
@@ -49,8 +41,8 @@ export class AsyncQueue {
   }
 
   close(): void | Promise<void> {
-    if (this.cleanedUp) return;
-    this.cleanedUp = true;
+    if (this.closed) return;
+    this.closed = true;
     if (this.options.teardown) this.options.teardown();
   }
 
@@ -65,7 +57,7 @@ export class AsyncQueue {
       if (setup) await setup();
 
       while (true) {
-        await this.promise; // eslint-disable-line no-unused-expressions
+        await this.promise;
 
         for (const value of this.values) {
           yield value;

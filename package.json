@@ -5,7 +5,7 @@
   "license": "MIT",
   "private": false,
   "main": "lib/index.js",
-  "modules": "es/index/js",
+  "modules": "es/index.js",
   "files": ["lib", "es"],
   "scripts": {
     "clean": "rm -rf lib es",

@@ -7,7 +7,7 @@ import IoServer from 'socket.io';
 import * as AsyncUtils from './AsyncUtils';
 import type { CredentialsManager } from './CredentialsManager';
 import type { Subscriber } from './Subscriber';
-import type { Logger, LoggerFactory } from './Logger';
+import type { Logger, CreateLogger } from './Logger';
 
 type Subscription = {
   id: string,
@@ -27,7 +27,7 @@ export type AuthorizedSocketOptions<TContext, TCredentials> = {|
   credentialsManager: CredentialsManager<TCredentials>,
   hasPermission: (data: any, credentials: TCredentials) => boolean,
   maxSubscriptionsPerConnection?: number,
-  createLogger: LoggerFactory,
+  createLogger: CreateLogger,
 |};
 
 const acknowledge = cb => {
@@ -85,7 +85,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     cb?: Function,
   ) => {
     if (this.subscriptions.has(id)) {
-      this.log('debug', `Duplicate subscription attempted`, { id });
+      this.log('debug', 'Duplicate subscription attempted', { id });
 
       this.config.socket.emit('app_error', {
         code: 'invalid_id.duplicate',
@@ -100,7 +100,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       this.config.maxSubscriptionsPerConnection != null &&
       this.subscriptions.size >= this.config.maxSubscriptionsPerConnection
     ) {
-      this.log('error', `Max Subscription limit reached`, {
+      this.log('error', 'Max Subscription limit reached', {
         maxSubscriptionsPerConnection: this.config
           .maxSubscriptionsPerConnection,
       });
@@ -152,7 +152,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
     const subscription: AsyncIterable<ExecutionResult> = (result: any);
     for await (const payload of subscription) {
-      this.log('debug', `processing subscription update`, {
+      this.log('debug', 'processing subscription update', {
         id,
         payload,
       });
@@ -165,12 +165,12 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     if (subscription && typeof subscription.return === 'function') {
       subscription.return();
     }
-    this.log('debug', `Client unsubscribed`, { id });
+    this.log('debug', 'Client unsubscribed', { id });
     this.subscriptions.delete(id);
   };
 
   handleDisconnect = async () => {
-    this.log('debug', `Client disconnected`);
+    this.log('debug', 'Client disconnected');
     await this.config.credentialsManager.unauthenticate();
 
     this.subscriptions.forEach(async subscriptionPromise => {

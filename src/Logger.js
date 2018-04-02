@@ -10,4 +10,4 @@ export type LogLevels =
 
 export type Logger = (level: LogLevels, message: string, meta?: {}) => void;
 
-export type LoggerFactory = (group?: string) => Logger;
+export type CreateLogger = (group?: string) => Logger;
