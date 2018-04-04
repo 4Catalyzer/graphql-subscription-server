@@ -1,13 +1,22 @@
 /* @flow */
 
-import { parse, subscribe } from 'graphql';
-import type { ExecutionResult, GraphQLSchema } from 'graphql';
+import { parse, subscribe, validate, specifiedRules } from 'graphql';
+import type {
+  ExecutionResult,
+  GraphQLSchema,
+  ValidationContext,
+} from 'graphql';
 import IoServer from 'socket.io';
 
 import * as AsyncUtils from './AsyncUtils';
 import type { CredentialsManager } from './CredentialsManager';
 import type { Subscriber } from './Subscriber';
 import type { Logger, CreateLogger } from './Logger';
+
+export type ValidationRuleCreater = ({
+  variables: Object,
+  query: string,
+}) => $ReadOnlyArray<Array<(context: ValidationContext) => any>>;
 
 type Subscription = {
   id: string,
@@ -28,6 +37,7 @@ export type AuthorizedSocketOptions<TContext, TCredentials> = {|
   hasPermission: (data: any, credentials: TCredentials) => boolean,
   maxSubscriptionsPerConnection?: number,
   createLogger: CreateLogger,
+  makeValidationRules: ?ValidationRuleCreater,
 |};
 
 const acknowledge = cb => {
@@ -61,6 +71,10 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     return this.config.credentialsManager.getCredentials();
   }
 
+  emitError(error: {| code: string, data?: any |}) {
+    this.config.socket.emit('app_error', error);
+  }
+
   isAuthorized = (data: any) =>
     !!(
       this.config.credentialsManager.isAuthenticated() &&
@@ -74,7 +88,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       await this.config.credentialsManager.authenticate(authorization);
     } catch (err) {
       this.log('error', err.message, err);
-      this.config.socket.emit('app_error', { code: 'invalid_authorization' });
+      this.emitError({ code: 'invalid_authorization' });
     }
     acknowledge(cb);
   };
@@ -84,18 +98,6 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     { id, query, variables }: Subscription,
     cb?: Function,
   ) => {
-    if (this.subscriptions.has(id)) {
-      this.log('debug', 'Duplicate subscription attempted', { id });
-
-      this.config.socket.emit('app_error', {
-        code: 'invalid_id.duplicate',
-        detail: id,
-      });
-
-      acknowledge(cb);
-      return;
-    }
-
     if (
       this.config.maxSubscriptionsPerConnection != null &&
       this.subscriptions.size >= this.config.maxSubscriptionsPerConnection
@@ -104,49 +106,84 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         maxSubscriptionsPerConnection: this.config
           .maxSubscriptionsPerConnection,
       });
-      this.config.socket.emit('app_error', {
+      this.emitError({
         code: 'subscribe_failed.subscription_limit',
       });
-
       acknowledge(cb);
       this.config.socket.disconnect();
       return;
     }
 
-    const subscriptionPromise = subscribe({
-      schema: this.config.schema,
-      document: parse(query),
-      variableValues: variables,
-      contextValue: {
-        ...this.config.context,
-        subscribe: (...args) => {
-          const source = this.config.subscriber.subscribe(...args);
-          return AsyncUtils.filter(source, this.isAuthorized);
-        },
-      },
-    });
-
-    this.subscriptions.set(id, subscriptionPromise);
-
     let result;
     try {
-      result = await subscriptionPromise;
-    } catch (err) {
-      this.subscriptions.delete(id);
-      throw err;
-    }
+      if (this.subscriptions.has(id)) {
+        this.log('debug', 'Duplicate subscription attempted', { id });
 
-    if (result.errors != null) {
-      this.subscriptions.delete(id);
-      this.config.socket.emit('app_error', {
-        code: 'subscribe_failed.gql_error',
-        // $FlowFixMe
-        data: result.errors,
+        this.emitError({
+          code: 'invalid_id.duplicate',
+          data: id,
+        });
+
+        return;
+      }
+
+      const documentAST = parse(query);
+      const validationRules = [
+        ...specifiedRules,
+        ...(this.config.makeValidationRules
+          ? this.config.makeValidationRules({ query, variables })
+          : []),
+      ];
+      const validationErrors = validate(
+        this.config.schema,
+        documentAST,
+        validationRules,
+      );
+
+      if (validationErrors.length) {
+        this.emitError({
+          code: 'subscribe_failed.document_error',
+          data: validationErrors,
+        });
+        return;
+      }
+
+      const subscriptionPromise = subscribe({
+        schema: this.config.schema,
+        document: documentAST,
+        variableValues: variables,
+        contextValue: {
+          ...this.config.context,
+          subscribe: async (...args) => {
+            const source = this.config.subscriber.subscribe(...args);
+            const filtered = AsyncUtils.filter(source, this.isAuthorized);
+
+            return filtered;
+          },
+        },
       });
-      return;
-    }
 
-    acknowledge(cb);
+      this.subscriptions.set(id, subscriptionPromise);
+
+      try {
+        result = await subscriptionPromise;
+      } catch (err) {
+        this.subscriptions.delete(id);
+        throw err;
+      }
+
+      if (result.errors != null) {
+        this.subscriptions.delete(id);
+        this.emitError({
+          code: 'subscribe_failed.gql_error',
+          // $FlowFixMe
+          data: result.errors,
+        });
+        return;
+      }
+    } finally {
+      acknowledge(cb);
+    }
 
     const subscription: AsyncIterable<ExecutionResult> = (result: any);
     for await (const payload of subscription) {
