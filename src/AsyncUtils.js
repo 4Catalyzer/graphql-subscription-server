@@ -1,47 +1,49 @@
 /* @flow */
 /* eslint-disable no-await-in-loop */
 
-function getIterator<T>(iterable: AsyncIterable<T>): AsyncIterator<T> {
-  // $FlowFixMe
-  return iterable[Symbol.asyncIterator]();
-}
-
 export async function* map<T, U>(
-  iter: AsyncIterable<T>,
+  iterable: AsyncIterable<T>,
   mapper: (value: T) => U,
 ): AsyncGenerator<U, void, void> {
-  const it = getIterator(iter);
-
-  for (let step = await it.next(); !step.done; step = await it.next()) {
-    yield mapper(step.value);
+  for await (const value of iterable) {
+    yield mapper(value);
   }
 }
 
 export async function* filter<T>(
-  iter: AsyncIterable<T>,
+  iterable: AsyncIterable<T>,
   predicate: (value: T) => boolean,
 ): AsyncGenerator<T, void, void> {
-  const it = getIterator(iter);
-
-  for (let step = await it.next(); !step.done; step = await it.next()) {
-    if (predicate((step.value: any))) yield step.value;
+  for await (const value of iterable) {
+    if (predicate(value)) yield value;
   }
 }
 
+export type AsyncQueueOptions = {
+  setup?: () => void,
+  teardown?: () => void,
+};
+
 export class AsyncQueue {
   values: any[];
+  closed: boolean = false;
   promise: Promise<void>;
-  unsubscribe: () => void;
+  options: AsyncQueueOptions;
   resolvePromise: () => void;
   iterable: AsyncGenerator<any, void, void>;
 
-  constructor(unsubscribe: () => void) {
-    this.unsubscribe = unsubscribe;
-
+  constructor(options?: AsyncQueueOptions = {}) {
     this.values = [];
+    this.options = options;
     this.createPromise();
 
-    this.iterable = this.createIterable();
+    this.iterable = this.createIterable(options.setup);
+  }
+
+  close(): void | Promise<void> {
+    if (this.closed) return;
+    this.closed = true;
+    if (this.options.teardown) this.options.teardown();
   }
 
   createPromise() {
@@ -50,10 +52,12 @@ export class AsyncQueue {
     });
   }
 
-  async *createIterable(): AsyncGenerator<any, void, void> {
+  async *createIterable(setup: ?() => void): AsyncGenerator<any, void, void> {
     try {
+      if (setup) await setup();
+
       while (true) {
-        await this.promise; // eslint-disable-line no-unused-expressions
+        await this.promise;
 
         for (const value of this.values) {
           yield value;
@@ -63,7 +67,7 @@ export class AsyncQueue {
         this.createPromise();
       }
     } finally {
-      this.unsubscribe();
+      await this.close();
     }
   }
 

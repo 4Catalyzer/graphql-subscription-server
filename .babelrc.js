@@ -1,6 +1,7 @@
 let modules = process.env.BABEL_ENV !== 'esm' ? 'commonjs' : false;
+let TEST = process.env.NODE_ENV === 'test';
 
-if (process.env.NODE_ENV === 'test') {
+if (TEST) {
   modules = 'commonjs';
 }
 
@@ -10,11 +11,10 @@ module.exports = {
       '@4c/4catalyzer',
       {
         target: 'node',
-        useBuiltIns: 'usage',
+        useBuiltIns: TEST ? 'usage' : false,
         modules,
       },
     ],
     '@babel/flow',
   ],
-  plugins: ['@babel/proposal-async-generator-functions'],
 };

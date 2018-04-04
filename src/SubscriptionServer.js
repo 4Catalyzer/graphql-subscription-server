@@ -2,13 +2,14 @@
 
 import IoServer from 'socket.io';
 import express from 'express';
-import type { ClientOpts } from 'redis';
+import type { Server } from 'http';
 import type { GraphQLSchema } from 'graphql';
 import { promisify } from 'util';
 
 import AuthorizedSocketConnection from './AuthorizedSocketConnection';
 import type { CredentialsManager } from './CredentialsManager';
-import RedisSubscriber from './RedisSubscriber';
+import type { Subscriber } from './Subscriber';
+import type { Logger, CreateLogger } from './Logger';
 
 type SocketIoServer = {
   attach(any): void,
@@ -17,24 +18,32 @@ type SocketIoServer = {
 
 export type SubscriptionServerConfig<TContext, TCredentials> = {|
   path: string,
-  defaultParseMessage: any,
-  hasPermission: any,
-  maxSubscriptionsPerConnection: number,
-  gracePeriodSeconds: number,
-  createContext: (request: any) => TContext,
-  createCredentialsManager: (
-    context: TContext,
-  ) => CredentialsManager<TCredentials>,
-  redisConfiguration: ClientOpts,
   schema: GraphQLSchema,
+  subscriber: Subscriber,
+  server: Server,
+  maxSubscriptionsPerConnection?: number,
+  createLogger?: CreateLogger,
+  createContext?: (request: any) => TContext,
+  createCredentialsManager: (
+    context?: TContext,
+  ) => CredentialsManager<TCredentials>,
+  hasPermission: (data: any, credentials: TCredentials) => boolean,
 |};
 
+const defaultCreateLogger = () => () => {};
+
 export default class SubscriptionServer<TContext, TCredentials> {
+  log: Logger;
   config: SubscriptionServerConfig<TContext, TCredentials>;
   io: SocketIoServer;
-  redis: RedisSubscriber;
+  subscriber: Subscriber;
 
   constructor(config: SubscriptionServerConfig<TContext, TCredentials>) {
+    const createLogger: CreateLogger =
+      config.createLogger || defaultCreateLogger;
+
+    this.log = createLogger('@4c/SubscriptionServer::Server');
+
     this.config = config;
     this.io = new IoServer({
       serveClient: false,
@@ -44,32 +53,31 @@ export default class SubscriptionServer<TContext, TCredentials> {
     });
 
     this.io.on('connection', socket => {
+      this.log('debug', 'New Socket connection made');
       const request = Object.create((express: any).request);
       Object.assign(request, socket.request);
 
-      const context = config.createContext(request);
+      const context = config.createContext && config.createContext(request);
       const credentialsManager = config.createCredentialsManager(context);
 
       // eslint-disable-next-line no-new
       new AuthorizedSocketConnection({
-        redis: this.redis,
         context,
         socket,
         credentialsManager,
         schema: this.config.schema,
-        defaultParseMessage: this.config.defaultParseMessage,
+        subscriber: this.config.subscriber,
         hasPermission: this.config.hasPermission,
+        createLogger: this.config.createLogger || defaultCreateLogger,
       });
     });
   }
 
   attach(httpServer: any) {
-    this.redis = new RedisSubscriber(this.config.redisConfiguration);
     this.io.attach(httpServer);
   }
 
   async close() {
     await promisify((...args) => this.io.close(...args))();
-    await this.redis.close();
   }
 }
