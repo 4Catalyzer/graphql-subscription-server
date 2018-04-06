@@ -75,11 +75,23 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     this.config.socket.emit('app_error', error);
   }
 
-  isAuthorized = (data: any) =>
-    !!(
-      this.config.credentialsManager.isAuthenticated() &&
-      this.config.hasPermission(data, this.getCredentials())
+  isAuthorized = (data: any) => {
+    const isAuthenticated = this.config.credentialsManager.isAuthenticated();
+    const credentials = this.getCredentials();
+
+    const isAuthorized = !!(
+      isAuthenticated && this.config.hasPermission(data, credentials)
     );
+    if (!isAuthorized) {
+      this.log('info', 'unauthorized', {
+        payload: data,
+        isAuthenticated,
+        credentials,
+      });
+    }
+
+    return isAuthorized;
+  };
 
   handleAuthenticate = async (authorization: string, cb?: Function) => {
     try {
@@ -185,9 +197,9 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
     const subscription: AsyncIterable<ExecutionResult> = (result: any);
     for await (const payload of subscription) {
-      this.log('debug', 'processing subscription update', {
-        id,
+      this.log('info', 'emit', {
         payload,
+        credentials: this.getCredentials(),
       });
       this.config.socket.emit('subscription update', { id, ...payload });
     }
