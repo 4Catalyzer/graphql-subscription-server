@@ -6,18 +6,21 @@
   "private": false,
   "main": "lib/index.js",
   "modules": "es/index.js",
-  "files": [
-    "lib",
-    "es"
-  ],
+  "files": ["lib", "es"],
   "scripts": {
     "clean": "rm -rf lib es",
-    "build": "npm run clean && babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__",
+    "build":
+      "npm run clean && babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__ && npm run build:flow",
+    "build:flow":
+      "for file in $(find ./src -name '*.js' -not -path '*/__tests__*'); do cp \"$file\" `echo \"$file\" | sed 's/\\/src\\//\\/lib\\//g'`.flow; cp \"$file\" `echo \"$file\" | sed 's/\\/src\\//\\/es\\//g'`.flow; done",
     "check": "flow check",
-    "lint": "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css,md}'",
-    "format": "eslint . --fix && prettier --write --ignore-path .eslintignore '**/*.{json,css,md}'",
+    "lint":
+      "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css,md}'",
+    "format":
+      "eslint . --fix && prettier --write --ignore-path .eslintignore '**/*.{json,css,md}'",
     "precommit": "lint-staged",
     "prepublishOnly": "npm run test && npm run build",
+
     "test": "npm run lint && jest",
     "tdd": "jest --watch"
   },
@@ -27,19 +30,14 @@
     "trailingComma": "all"
   },
   "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ],
+    "*.js": ["eslint --fix", "git add"],
     "*.{json,css,md}": [
       "prettier --write --ignore-path .eslintignore",
       "git add"
     ]
   },
   "jest": {
-    "roots": [
-      "<rootDir>/test"
-    ],
+    "roots": ["<rootDir>/test"],
     "testEnvironment": "node"
   },
   "devDependencies": {
