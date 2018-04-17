@@ -154,11 +154,9 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         variableValues: variables,
         contextValue: {
           ...this.config.context,
-          subscribe: async (...args) => {
+          subscribe: (...args) => {
             const source = this.config.subscriber.subscribe(...args);
-            const filtered = AsyncUtils.filter(source, this.isAuthorized);
-
-            return filtered;
+            return AsyncUtils.filter(source, this.isAuthorized);
           },
         },
       });
