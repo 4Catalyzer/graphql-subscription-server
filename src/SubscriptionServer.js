@@ -2,7 +2,6 @@
 
 import IoServer from 'socket.io';
 import express from 'express';
-import type { Server } from 'http';
 import type { GraphQLSchema } from 'graphql';
 import { promisify } from 'util';
 
@@ -21,7 +20,6 @@ export type SubscriptionServerConfig<TContext, TCredentials> = {|
   path: string,
   schema: GraphQLSchema,
   subscriber: Subscriber,
-  server: Server,
   maxSubscriptionsPerConnection?: number,
   createLogger?: CreateLogger,
   createContext?: (request: any) => TContext,
