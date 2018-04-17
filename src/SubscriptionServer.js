@@ -2,11 +2,11 @@
 
 import IoServer from 'socket.io';
 import express from 'express';
-import type { Server } from 'http';
 import type { GraphQLSchema } from 'graphql';
 import { promisify } from 'util';
 
 import AuthorizedSocketConnection from './AuthorizedSocketConnection';
+import type { MakeValidationRules } from './AuthorizedSocketConnection';
 import type { CredentialsManager } from './CredentialsManager';
 import type { Subscriber } from './Subscriber';
 import type { Logger, CreateLogger } from './Logger';
@@ -20,7 +20,6 @@ export type SubscriptionServerConfig<TContext, TCredentials> = {|
   path: string,
   schema: GraphQLSchema,
   subscriber: Subscriber,
-  server: Server,
   maxSubscriptionsPerConnection?: number,
   createLogger?: CreateLogger,
   createContext?: (request: any) => TContext,
@@ -28,6 +27,7 @@ export type SubscriptionServerConfig<TContext, TCredentials> = {|
     context?: TContext,
   ) => CredentialsManager<TCredentials>,
   hasPermission: (data: any, credentials: TCredentials) => boolean,
+  makeValidationRules?: MakeValidationRules,
 |};
 
 const defaultCreateLogger = () => () => {};
@@ -69,6 +69,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
         subscriber: this.config.subscriber,
         hasPermission: this.config.hasPermission,
         createLogger: this.config.createLogger || defaultCreateLogger,
+        makeValidationRules: this.config.makeValidationRules,
       });
     });
   }
