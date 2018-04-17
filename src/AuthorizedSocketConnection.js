@@ -104,7 +104,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         this.config.maxSubscriptionsPerConnection != null &&
         this.subscriptions.size >= this.config.maxSubscriptionsPerConnection
       ) {
-        this.log('error', 'Max Subscription limit reached', {
+        this.log('debug', 'Max Subscription limit reached', {
           maxSubscriptionsPerConnection: this.config
             .maxSubscriptionsPerConnection,
         });
