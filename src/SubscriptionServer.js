@@ -6,7 +6,7 @@ import type { GraphQLSchema } from 'graphql';
 import { promisify } from 'util';
 
 import AuthorizedSocketConnection from './AuthorizedSocketConnection';
-import type { ValidationRuleCreater } from './AuthorizedSocketConnection';
+import type { MakeValidationRules } from './AuthorizedSocketConnection';
 import type { CredentialsManager } from './CredentialsManager';
 import type { Subscriber } from './Subscriber';
 import type { Logger, CreateLogger } from './Logger';
@@ -27,7 +27,7 @@ export type SubscriptionServerConfig<TContext, TCredentials> = {|
     context?: TContext,
   ) => CredentialsManager<TCredentials>,
   hasPermission: (data: any, credentials: TCredentials) => boolean,
-  makeValidationRules?: ValidationRuleCreater,
+  makeValidationRules?: MakeValidationRules,
 |};
 
 const defaultCreateLogger = () => () => {};

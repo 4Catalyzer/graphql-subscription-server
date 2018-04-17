@@ -13,7 +13,7 @@ import type { CredentialsManager } from './CredentialsManager';
 import type { Subscriber } from './Subscriber';
 import type { Logger, CreateLogger } from './Logger';
 
-export type ValidationRuleCreater = ({
+export type MakeValidationRules = ({
   variables: Object,
   query: string,
 }) => $ReadOnlyArray<Array<(context: ValidationContext) => any>>;
@@ -37,7 +37,7 @@ export type AuthorizedSocketOptions<TContext, TCredentials> = {|
   hasPermission: (data: any, credentials: TCredentials) => boolean,
   maxSubscriptionsPerConnection?: number,
   createLogger: CreateLogger,
-  makeValidationRules: ?ValidationRuleCreater,
+  makeValidationRules: ?MakeValidationRules,
 |};
 
 const acknowledge = cb => {
