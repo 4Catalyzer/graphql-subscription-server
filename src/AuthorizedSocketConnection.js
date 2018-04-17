@@ -98,24 +98,22 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     { id, query, variables }: Subscription,
     cb?: Function,
   ) => {
-    if (
-      this.config.maxSubscriptionsPerConnection != null &&
-      this.subscriptions.size >= this.config.maxSubscriptionsPerConnection
-    ) {
-      this.log('error', 'Max Subscription limit reached', {
-        maxSubscriptionsPerConnection: this.config
-          .maxSubscriptionsPerConnection,
-      });
-      this.emitError({
-        code: 'subscribe_failed.subscription_limit',
-      });
-      acknowledge(cb);
-      this.config.socket.disconnect();
-      return;
-    }
-
     let result;
     try {
+      if (
+        this.config.maxSubscriptionsPerConnection != null &&
+        this.subscriptions.size >= this.config.maxSubscriptionsPerConnection
+      ) {
+        this.log('error', 'Max Subscription limit reached', {
+          maxSubscriptionsPerConnection: this.config
+            .maxSubscriptionsPerConnection,
+        });
+        this.emitError({
+          code: 'subscribe_failed.subscription_limit',
+        });
+        return;
+      }
+
       if (this.subscriptions.has(id)) {
         this.log('debug', 'Duplicate subscription attempted', { id });
 
