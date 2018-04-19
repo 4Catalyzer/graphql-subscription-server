@@ -1,3 +1,11 @@
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.2.0...v0.3.0) (2018-04-19)
+
+
+### Features
+
+* Standarize error handling for subscription limits ([#14](https://github.com/4Catalyzer/graphql-subscription-server/issues/14)) ([a07172b](https://github.com/4Catalyzer/graphql-subscription-server/commit/a07172b))
+
 <a name="0.2.0"></a>
 # [0.2.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.1.1...v0.2.0) (2018-04-18)
 
