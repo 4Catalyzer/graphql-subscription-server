@@ -10,6 +10,9 @@
     "lib",
     "es"
   ],
+  "engines": {
+    "node": ">= 10"
+  },
   "scripts": {
     "clean": "rm -rf lib es",
     "build": "npm run clean && babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__ && npm run build:flow",

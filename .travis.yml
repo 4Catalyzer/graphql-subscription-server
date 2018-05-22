@@ -3,7 +3,7 @@ cache: 'yarn'
 notifications:
   email: false
 node_js:
-  - 'stable'
+  - '10'
 after_success:
   - yarn semantic-release
 branches:
