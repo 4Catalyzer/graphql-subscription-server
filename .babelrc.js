@@ -11,7 +11,9 @@ module.exports = {
       '@4c/4catalyzer',
       {
         target: 'node',
-        useBuiltIns: TEST ? 'usage' : false,
+        targets: { node: '10' },
+        useBuiltIns: false,
+        exclude: ['proposal-async-generator-functions'], // https://github.com/babel/babel/pull/8003
         modules,
       },
     ],

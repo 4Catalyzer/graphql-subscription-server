@@ -35,9 +35,7 @@ const history = useRouterHistory(createHashHistory)({ queryKey: false });
 const environment = new RelaySubscriptions.Environment();
 const network = new NetworkLayer('/graphql');
 
-network.setToken(
-  'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImdyYXBocWwtc3Vic2NyaXB0aW9ucy10ZXN0LWtleSJ9.eyJzdWIiOiJKaW1teSIsImlhdCI6MTUyMDcwMjYwNiwiZXhwIjoxNTIxMDYyNjA2fQ.rC1Tmxhk7OTKoCJ_MGaX3EI4QxL-DuFpx8XaurCkrrB6U7FpNgvUElSUjBK60DWtYHN4At8MSGeBHYB94ax3LIbJfXOqDhpGdpFJvCkhSQSM3ivZXir40UXP2pXBxvwSuu7TTQZmKW9PAPgQVkw854HIPVDkB2x9LIC4O1d3jOlTKJS3_88myuDaqW5eLevcIxvCzPanf0nZQVNhBUVgJGAwkkbzyyRvuL-lEgkjY1rN9XKSDNt1LlykWv51kpcKmg_AT9K0LvCKruSwlsrAv7ktWIbLN1b2pxqNdI6nIaVZNZbxY6eSqmCoofu8_KIwrGPxwVG5O3ewfQo8DtEczg',
-);
+network.setToken(require('../token.json').token);
 
 environment.injectNetworkLayer(network);
 
@@ -54,7 +52,7 @@ ReactDOM.render(
       <IndexRoute
         component={TodoList}
         queries={ViewerQueries}
-        prepareParams={() => ({ status: 'any' })}
+        prepareParams={params => ({ ...params, status: 'any' })}
       />
       <Route path=":status" component={TodoList} queries={ViewerQueries} />
     </Route>
