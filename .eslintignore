@@ -2,6 +2,6 @@
 /flow-typed/**
 lib/
 es/
-examples/
+examples/*/token.json
 package.json
 CHANGELOG.md

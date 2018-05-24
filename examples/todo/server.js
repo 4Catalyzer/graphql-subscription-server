@@ -25,7 +25,7 @@ import WebpackDevServer from 'webpack-dev-server';
 
 import SubscriptionServer from '@4c/graphql-subscription-server/lib/SubscriptionServer';
 import EventSubscriber from '@4c/graphql-subscription-server/lib/EventSubscriber';
-import JwtCredentialManager, {
+import JwtCredentialsManager, {
   type JwtCredentials,
 } from '@4c/graphql-subscription-server/lib/JwtCredentialsManager';
 import database from './data/database';
@@ -58,13 +58,13 @@ type Credentials = JwtCredentials & {
   user: ?string,
 };
 
-class CredentialManager extends JwtCredentialManager<Credentials> {
+class CredentialsManager extends JwtCredentialsManager<Credentials> {
   getCredentialsFromAuthorization(token) {
     const { header } = jwt.decode(token, { complete: true });
     const jwkSet = require('./jwk-set.json'); // eslint-disable-line global-require
 
     const jwk = jwkSet.keys.find(k => k.kid === header.kid);
-    if (!jwk) return this.config.initialCredentials;
+    if (!jwk) return null;
 
     return new Promise((resolve, reject) => {
       jwt.verify(
@@ -85,17 +85,13 @@ class CredentialManager extends JwtCredentialManager<Credentials> {
 }
 
 const subscriptionServer = new SubscriptionServer({
-  schema,
-  createContext,
   path: '/subscriptions',
+  schema,
   subscriber: new EventSubscriber(database),
-  hasPermission: () => true,
   createCredentialsManager: () =>
-    new CredentialManager({
-      gracePeriod: 10,
-      enableTokenRenewal: false,
-      initialCredentials: { user: null, exp: 0 },
-    }),
+    new CredentialsManager({ tokenExpirationMarginSeconds: null }),
+  hasPermission: () => true,
+  createContext,
   createLogger: (group = '') => (level, message, meta) => {
     console.log(
       `${level}:${group && ` [${group}]`} ${message} ${

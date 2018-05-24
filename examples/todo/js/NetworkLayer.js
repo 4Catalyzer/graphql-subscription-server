@@ -11,6 +11,7 @@ export default class NetworkLayer extends Relay.DefaultNetworkLayer {
     this.token = null;
     this.client = new SubscriptionClient();
   }
+
   setToken(token) {
     if (token) {
       this._init.headers = {
