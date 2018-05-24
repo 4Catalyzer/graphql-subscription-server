@@ -1,19 +1,26 @@
 /* @flow */
 
-import { parse, subscribe, validate, specifiedRules } from 'graphql';
+import {
+  createSourceEventStream,
+  execute,
+  GraphQLError,
+  parse,
+  specifiedRules,
+  validate,
+} from 'graphql';
 import type {
   ExecutionResult,
   GraphQLSchema,
   ValidationContext,
 } from 'graphql';
-import IoServer from 'socket.io';
+import type IoServer from 'socket.io';
 
 import * as AsyncUtils from './AsyncUtils';
 import type { CredentialsManager } from './CredentialsManager';
-import type { Subscriber } from './Subscriber';
 import type { Logger, CreateLogger } from './Logger';
+import type { Subscriber } from './Subscriber';
 
-export type MakeValidationRules = ({
+export type CreateValidationRules = ({
   variables: Object,
   query: string,
 }) => $ReadOnlyArray<Array<(context: ValidationContext) => any>>;
@@ -28,64 +35,65 @@ type MaybeSubscription = Promise<
   AsyncGenerator<ExecutionResult, void, void> | ExecutionResult,
 >;
 
-export type AuthorizedSocketOptions<TContext, TCredentials> = {|
-  socket: IoServer.socket,
-  subscriber: Subscriber,
+type AuthorizedSocketOptions<TContext, TCredentials> = {|
   schema: GraphQLSchema,
-  context: TContext,
+  subscriber: Subscriber,
   credentialsManager: CredentialsManager<TCredentials>,
   hasPermission: (data: any, credentials: TCredentials) => boolean,
-  maxSubscriptionsPerConnection?: number,
+  createContext: ?(credentials: ?TCredentials) => TContext,
+  maxSubscriptionsPerConnection: ?number,
+  createValidationRules: ?CreateValidationRules,
   createLogger: CreateLogger,
-  makeValidationRules: ?MakeValidationRules,
 |};
 
 const acknowledge = cb => {
   if (cb) cb();
 };
 
-// AuthorizedSocketConnection manages a socket connection for a single user.
-// Includes
-//  - authorization,
-//  - authentication,
-//  - and some rudimentary connection constraints (max connections).
+/**
+ * AuthorizedSocketConnection manages a socket connection for a single user.
+ *
+ * It includes:
+ * - Authorization
+ * - Authentication
+ * - Rudimentary connection constraints (max connections)
+ */
 export default class AuthorizedSocketConnection<TContext, TCredentials> {
+  socket: IoServer.socket;
   config: AuthorizedSocketOptions<TContext, TCredentials>;
 
   log: Logger;
   subscriptions: Map<string, MaybeSubscription>;
 
-  constructor(config: AuthorizedSocketOptions<TContext, TCredentials>) {
-    this.log = config.createLogger('@4c/SubscriptionServer::AuthorizedSocket');
-
+  constructor(
+    socket: IoServer.socket,
+    config: AuthorizedSocketOptions<TContext, TCredentials>,
+  ) {
+    this.socket = socket;
     this.config = config;
+
+    this.log = config.createLogger('@4c/SubscriptionServer::AuthorizedSocket');
     this.subscriptions = new Map();
-    this.config.socket
+
+    this.socket
       .on('authenticate', this.handleAuthenticate)
       .on('subscribe', this.handleSubscribe)
       .on('unsubscribe', this.handleUnsubscribe)
       .on('disconnect', this.handleDisconnect);
   }
 
-  getCredentials(): TCredentials {
-    return this.config.credentialsManager.getCredentials();
-  }
-
   emitError(error: {| code: string, data?: any |}) {
-    this.config.socket.emit('app_error', error);
+    this.socket.emit('app_error', error);
   }
 
   isAuthorized = (data: any) => {
-    const isAuthenticated = this.config.credentialsManager.isAuthenticated();
-    const credentials = this.getCredentials();
+    const credentials = this.config.credentialsManager.getCredentials();
+    const isAuthorized =
+      !!credentials && this.config.hasPermission(data, credentials);
 
-    const isAuthorized = !!(
-      isAuthenticated && this.config.hasPermission(data, credentials)
-    );
     if (!isAuthorized) {
       this.log('info', 'unauthorized', {
         payload: data,
-        isAuthenticated,
         credentials,
       });
     }
@@ -95,28 +103,33 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
   handleAuthenticate = async (authorization: string, cb?: Function) => {
     try {
-      this.log('debug', 'Authenticating Socket connection');
+      this.log('debug', 'authenticating connection');
 
       await this.config.credentialsManager.authenticate(authorization);
     } catch (err) {
       this.log('error', err.message, err);
       this.emitError({ code: 'invalid_authorization' });
     }
+
     acknowledge(cb);
   };
 
-  // A User requests a subscription
+  /**
+   * Handle user requesting a subscription.
+   */
   handleSubscribe = async (
     { id, query, variables }: Subscription,
     cb?: Function,
   ) => {
-    let result;
+    let document;
+    let resultOrStream;
+
     try {
       if (
         this.config.maxSubscriptionsPerConnection != null &&
         this.subscriptions.size >= this.config.maxSubscriptionsPerConnection
       ) {
-        this.log('debug', 'Max Subscription limit reached', {
+        this.log('debug', 'subscription limit reached', {
           maxSubscriptionsPerConnection: this.config
             .maxSubscriptionsPerConnection,
         });
@@ -127,7 +140,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       }
 
       if (this.subscriptions.has(id)) {
-        this.log('debug', 'Duplicate subscription attempted', { id });
+        this.log('debug', 'duplicate subscription attempted', { id });
 
         this.emitError({
           code: 'invalid_id.duplicate',
@@ -137,16 +150,16 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         return;
       }
 
-      const documentAST = parse(query);
+      document = parse(query);
       const validationRules = [
         ...specifiedRules,
-        ...(this.config.makeValidationRules
-          ? this.config.makeValidationRules({ query, variables })
+        ...(this.config.createValidationRules
+          ? this.config.createValidationRules({ query, variables })
           : []),
       ];
       const validationErrors = validate(
         this.config.schema,
-        documentAST,
+        document,
         validationRules,
       );
 
@@ -158,48 +171,68 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         return;
       }
 
-      const subscriptionPromise = subscribe({
-        schema: this.config.schema,
-        document: documentAST,
-        variableValues: variables,
-        contextValue: {
-          ...this.config.context,
-          subscribe: (...args) => {
-            const source = this.config.subscriber.subscribe(...args);
-            return AsyncUtils.filter(source, this.isAuthorized);
-          },
+      const sourcePromise = createSourceEventStream(
+        this.config.schema,
+        document,
+        null,
+        {
+          subscribe: (...args) =>
+            AsyncUtils.filter(
+              this.config.subscriber.subscribe(...args),
+              this.isAuthorized,
+            ),
         },
-      });
+        variables,
+      );
 
-      this.subscriptions.set(id, subscriptionPromise);
+      this.subscriptions.set(id, sourcePromise);
 
       try {
-        result = await subscriptionPromise;
+        resultOrStream = await sourcePromise;
       } catch (err) {
         this.subscriptions.delete(id);
         throw err;
       }
 
-      if (result.errors != null) {
+      if (resultOrStream.errors != null) {
         this.subscriptions.delete(id);
         this.emitError({
           code: 'subscribe_failed.gql_error',
           // $FlowFixMe
-          data: result.errors,
+          data: resultOrStream.errors,
         });
+
         return;
       }
     } finally {
       acknowledge(cb);
     }
 
-    const subscription: AsyncIterable<ExecutionResult> = (result: any);
-    for await (const payload of subscription) {
-      this.log('info', 'emit', {
-        payload,
-        credentials: this.getCredentials(),
-      });
-      this.config.socket.emit('subscription update', { id, ...payload });
+    const stream: AsyncIterable<mixed> = (resultOrStream: any);
+
+    for await (const payload of stream) {
+      const credentials = this.config.credentialsManager.getCredentials();
+
+      let response;
+      try {
+        response = await execute(
+          this.config.schema,
+          document,
+          payload,
+          this.config.createContext && this.config.createContext(credentials),
+          variables,
+        );
+      } catch (e) {
+        if (e instanceof GraphQLError) {
+          response = { errors: [e] };
+        } else {
+          throw e;
+        }
+      }
+
+      this.log('info', 'emit', { response, credentials });
+
+      this.socket.emit('subscription update', { id, ...response });
     }
   };
 
@@ -208,12 +241,12 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     if (subscription && typeof subscription.return === 'function') {
       subscription.return();
     }
-    this.log('debug', 'Client unsubscribed', { id });
+    this.log('debug', 'client unsubscribed', { id });
     this.subscriptions.delete(id);
   };
 
   handleDisconnect = async () => {
-    this.log('debug', 'Client disconnected');
+    this.log('debug', 'client disconnected');
     await this.config.credentialsManager.unauthenticate();
 
     this.subscriptions.forEach(async subscriptionPromise => {

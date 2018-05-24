@@ -11,7 +11,7 @@ export default class SubscriptionClient {
     this.requests = new Map();
 
     this.socket.on('app_error', err => {
-      console.log(err);
+      console.log(err); // eslint-disable-line no-console
     });
 
     this.socket.on('connect', () => {

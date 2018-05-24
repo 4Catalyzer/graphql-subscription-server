@@ -7,80 +7,102 @@ export type JwtCredentials = {
   exp: Seconds,
 };
 
-export type JwtCredentialsManagerConfig<TCredentials> = {|
-  enableTokenRenewal: ?boolean, // default: true
-  gracePeriod: Seconds,
-  initialCredentials: TCredentials,
+export type JwtCredentialsManagerConfig = {|
+  tokenExpirationMarginSeconds: Seconds | null,
 |};
 
 const SECONDS_TO_MS = 1000;
 
-class JwtCredentialsManager<TCredentials: JwtCredentials>
+export default class JwtCredentialsManager<TCredentials: JwtCredentials>
   implements CredentialsManager<TCredentials> {
-  config: JwtCredentialsManagerConfig<TCredentials>;
-  credentials: TCredentials;
-  token: ?string;
-  renewTimer: ?TimeoutID;
+  config: JwtCredentialsManagerConfig;
 
-  constructor(config: JwtCredentialsManagerConfig<TCredentials>) {
+  token: ?string;
+  credentials: ?TCredentials;
+
+  renewHandle: ?TimeoutID;
+
+  constructor(config: JwtCredentialsManagerConfig) {
     this.config = config;
+
     this.token = null;
-    this.credentials = config.initialCredentials;
+    this.credentials = null;
   }
 
-  getCredentials(): TCredentials {
-    return this.credentials;
+  getCredentials(): ?TCredentials {
+    const { credentials } = this;
+    if (credentials && Date.now() >= credentials.exp * SECONDS_TO_MS) {
+      return null;
+    }
+
+    return credentials;
   }
 
   getCredentialsFromAuthorization(
     // eslint-disable-next-line no-unused-vars
     authorization: string,
-  ): TCredentials | Promise<TCredentials> {
-    throw new Error('JwtCredentialManager: Not implemented');
+  ): ?TCredentials | Promise<?TCredentials> {
+    throw new Error('JwtCredentialManager: not implemented');
   }
 
   async authenticate(token: string) {
     this.token = token;
-    await this._update();
+    await this.updateCredentials();
   }
 
   async unauthenticate() {
-    if (this.renewTimer) clearTimeout(this.renewTimer);
+    if (this.renewHandle) {
+      clearTimeout(this.renewHandle);
+    }
 
     this.token = null;
-    this.credentials = this.config.initialCredentials;
+    this.credentials = null;
   }
 
-  isAuthenticated() {
-    const { exp } = this.credentials;
-    return !!(Date.now() < exp * SECONDS_TO_MS);
-  }
-
-  async _update() {
-    const { token, config } = this;
+  async updateCredentials() {
+    const { token } = this;
     if (token == null) {
       throw new Error('JwtCredentialManager: Unauthenticated');
     }
 
-    this.credentials = await this.getCredentialsFromAuthorization(token);
+    const credentials = await this.getCredentialsFromAuthorization(token);
 
-    if (config.enableTokenRenewal !== false) {
-      this._scheduleRenewal();
+    // Avoid race conditions with multiple updates.
+    if (this.token !== token) {
+      return;
     }
+
+    this.credentials = credentials;
+
+    // TODO: Don't schedule renewal if the new credentials are expired or
+    // almost expired.
+    this.scheduleRenewCredentials();
   }
 
-  _scheduleRenewal() {
-    // TODO: need to handle cases where the returned token is
-    // already expired or about to expire
-    const deltaMs = this.credentials.exp * SECONDS_TO_MS - Date.now();
+  scheduleRenewCredentials() {
+    if (this.renewHandle) {
+      clearTimeout(this.renewHandle);
+    }
+
+    const { tokenExpirationMarginSeconds } = this.config;
+    if (tokenExpirationMarginSeconds === null) {
+      return;
+    }
+
+    const { credentials } = this;
+    if (!credentials) {
+      return;
+    }
+
+    const deltaMs = credentials.exp * SECONDS_TO_MS - Date.now();
     const deltaMsAdjusted = Math.max(
       0,
-      deltaMs - this.config.gracePeriod * SECONDS_TO_MS,
+      deltaMs - tokenExpirationMarginSeconds * SECONDS_TO_MS,
     );
 
-    if (this.renewTimer) clearTimeout(this.renewTimer);
-    this.renewTimer = setTimeout(() => this._update(), deltaMsAdjusted);
+    this.renewHandle = setTimeout(
+      () => this.updateCredentials(),
+      deltaMsAdjusted,
+    );
   }
 }
-
-export default JwtCredentialsManager;

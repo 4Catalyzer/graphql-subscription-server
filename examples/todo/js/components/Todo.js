@@ -98,17 +98,17 @@ class Todo extends React.Component {
         })}
       >
         <div className="view">
+          <input
+            checked={todo.complete}
+            className="toggle"
+            id={`todo-input-${todo.id}`}
+            onChange={this._handleCompleteChange}
+            type="checkbox"
+          />
           <label
             htmlFor={`todo-input-${todo.id}`}
             onDoubleClick={this._handleLabelDoubleClick}
           >
-            <input
-              checked={todo.complete}
-              className="toggle"
-              id={`todo-input-${todo.id}`}
-              onChange={this._handleCompleteChange}
-              type="checkbox"
-            />
             {todo.text}
           </label>
           <button className="destroy" onClick={this._handleDestroyClick} />
