@@ -33,13 +33,17 @@ export default class RedisSubscriber implements Subscriber {
     });
   }
 
-  _subscribeToChannel(channel: string) {
-    if (this._channels.has(channel)) return;
-    this._channels.add(channel);
-    this.redis.subscribe(channel);
+  _redisSubscribe(channel: string) {
+    return promisify(cb => this.redis.subscribe(channel, cb))();
   }
 
-  subscribe(
+  async _subscribeToChannel(channel: string) {
+    if (this._channels.has(channel)) return;
+    this._channels.add(channel);
+    await this._redisSubscribe(channel);
+  }
+
+  async subscribe(
     channel: Channel,
     parseMessage: ?(data: string) => any = this._parseMessage,
   ) {
@@ -48,11 +52,12 @@ export default class RedisSubscriber implements Subscriber {
     if (!channelQueues) {
       channelQueues = new Set();
       this._queues.set(channel, channelQueues);
-      this.redis.subscribe(channel);
+      await this._redisSubscribe(channel);
     }
 
+    await this._subscribeToChannel(channel);
+
     const queue = new AsyncQueue({
-      setup: () => this._subscribeToChannel(channel),
       teardown: () => {
         const innerQueues = this._queues.get(channel);
         if (!innerQueues) return;
