@@ -11,7 +11,7 @@ export async function* map<T, U>(
 }
 
 export async function* filter<T>(
-  iterable: Promise<AsyncIterable<T>>,
+  iterable: AsyncIterable<T>,
   predicate: (value: T) => boolean,
 ): AsyncGenerator<T, void, void> {
   for await (const value of await iterable) {
