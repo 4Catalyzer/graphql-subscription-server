@@ -37,7 +37,7 @@ export default class EventSubscriber implements Subscriber {
     this._listeners.set(event, listener);
   }
 
-  async subscribe(event: string) {
+  subscribe(event: string) {
     let eventQueues = this._queues.get(event);
 
     if (!eventQueues) {

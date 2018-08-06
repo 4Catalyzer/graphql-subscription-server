@@ -55,9 +55,8 @@ export default class RedisSubscriber implements Subscriber {
       await this._redisSubscribe(channel);
     }
 
-    await this._subscribeToChannel(channel);
-
     const queue = new AsyncQueue({
+      setup: () => this._subscribeToChannel(channel),
       teardown: () => {
         const innerQueues = this._queues.get(channel);
         if (!innerQueues) return;
@@ -73,9 +72,11 @@ export default class RedisSubscriber implements Subscriber {
     });
 
     channelQueues.add(queue);
-    if (!parseMessage) return queue.iterable;
 
-    return map(queue.iterable, parseMessage);
+    const iterable = await queue.iterable;
+    if (!parseMessage) return iterable;
+
+    return map(iterable, parseMessage);
   }
 
   async close() {

@@ -14,13 +14,13 @@ export async function* filter<T>(
   iterable: AsyncIterable<T>,
   predicate: (value: T) => boolean,
 ): AsyncGenerator<T, void, void> {
-  for await (const value of await iterable) {
+  for await (const value of iterable) {
     if (predicate(value)) yield value;
   }
 }
 
 export type AsyncQueueOptions = {
-  setup?: () => void,
+  setup?: () => Promise<void> | void,
   teardown?: () => void,
 };
 
@@ -30,14 +30,14 @@ export class AsyncQueue {
   promise: Promise<void>;
   options: AsyncQueueOptions;
   resolvePromise: () => void;
-  iterable: AsyncGenerator<any, void, void>;
+  iterable: Promise<AsyncGenerator<any, void, void>>;
 
   constructor(options?: AsyncQueueOptions = {}) {
     this.values = [];
     this.options = options;
     this.createPromise();
 
-    this.iterable = this.createIterable(options.setup);
+    this.iterable = this.createIterable();
   }
 
   close(): void | Promise<void> {
@@ -52,9 +52,10 @@ export class AsyncQueue {
     });
   }
 
-  async *createIterable(setup: ?() => void): AsyncGenerator<any, void, void> {
+  async *createIterableRaw(): AsyncGenerator<any, void, void> {
     try {
-      if (setup) await setup();
+      if (this.options.setup) await this.options.setup();
+      yield null;
 
       while (true) {
         await this.promise;
@@ -69,6 +70,15 @@ export class AsyncQueue {
     } finally {
       await this.close();
     }
+  }
+
+  async createIterable(): Promise<AsyncGenerator<any, void, void>> {
+    const iterableRaw = this.createIterableRaw();
+
+    // wait for the first synthetic yield after setup
+    await iterableRaw.next();
+
+    return iterableRaw;
   }
 
   push(value: any) {
