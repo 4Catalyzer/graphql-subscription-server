@@ -176,9 +176,9 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         document,
         null,
         {
-          subscribe: (...args) =>
+          subscribe: async (...args) =>
             AsyncUtils.filter(
-              this.config.subscriber.subscribe(...args),
+              await this.config.subscriber.subscribe(...args),
               this.isAuthorized,
             ),
         },

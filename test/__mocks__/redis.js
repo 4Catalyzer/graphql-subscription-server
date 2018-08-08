@@ -9,4 +9,10 @@ mock.RedisClient.prototype.quit = function quit(cb) {
   process.nextTick(cb);
 };
 
+const baseSubscribe = mock.RedisClient.prototype.subscribe;
+mock.RedisClient.prototype.subscribe = function subscribe(channel, cb) {
+  baseSubscribe.call(this, channel);
+  process.nextTick(cb);
+};
+
 export default mock;
