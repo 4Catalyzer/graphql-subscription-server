@@ -8,7 +8,8 @@ describe('RedisSubscriber', () => {
     const channel = 'whatever';
     const client = new RedisSubscriber();
 
-    const sub = await client.subscribe(channel);
+    const subscriptionContext = new SubscriptionContext(client);
+    const sub = await subscriptionContext.subscribe(channel);
 
     client.redis.publish(channel, 'foo');
 
@@ -23,7 +24,8 @@ describe('RedisSubscriber', () => {
     const channel = 'whatever';
     const client = new RedisSubscriber({ parseMessage: d => JSON.parse(d) });
 
-    const sub = await client.subscribe(channel);
+    const subscriptionContext = new SubscriptionContext(client);
+    const sub = await subscriptionContext.subscribe(channel);
 
     client.redis.publish(channel, '[1,2,3]');
 
@@ -38,8 +40,9 @@ describe('RedisSubscriber', () => {
     const channel = 'whatever';
     const client = new RedisSubscriber();
 
-    const subA = await client.subscribe(channel, d => JSON.parse(d));
-    const subB = await client.subscribe('another');
+    const subscriptionContext = new SubscriptionContext(client);
+    const subA = await subscriptionContext.subscribe(channel, JSON.parse);
+    const subB = await subscriptionContext.subscribe('another');
 
     client.redis.publish(channel, '[1,2,3]');
     client.redis.publish('another', '[1,2,3]');

@@ -24,10 +24,6 @@ export type AsyncQueueOptions = {
   teardown?: () => void | Promise<void>,
 };
 
-type CloseableAsyncIterator<T> = AsyncIterator<T> & {
-  close: () => Promise<void>,
-};
-
 export class AsyncQueue {
   options: AsyncQueueOptions;
 
@@ -36,7 +32,8 @@ export class AsyncQueue {
   resolvePromise: () => void;
 
   closed: boolean;
-  iterator: Promise<CloseableAsyncIterator<any>>;
+  iterator: Promise<AsyncIterator<any>>;
+  setupPromise: void | Promise<void>;
 
   constructor(options?: AsyncQueueOptions = {}) {
     this.options = options;
@@ -54,20 +51,21 @@ export class AsyncQueue {
     });
   }
 
-  async createIterator(): Promise<CloseableAsyncIterator<any>> {
+  async createIterator(): Promise<AsyncIterator<any>> {
     const iterator = this.createIteratorRaw();
 
     // Wait for setup.
     await iterator.next();
-
-    const closeableIterator: CloseableAsyncIterator<any> = (iterator: any);
-    closeableIterator.close = this.close;
-    return closeableIterator;
+    return iterator;
   }
 
   async *createIteratorRaw(): AsyncIterator<any> {
     if (this.options.setup) {
-      await this.options.setup();
+      this.setupPromise = this.options.setup();
+    }
+
+    if (this.setupPromise) {
+      await this.setupPromise;
     }
 
     yield null;
@@ -94,6 +92,10 @@ export class AsyncQueue {
   }
 
   close = async (): Promise<void> => {
+    if (this.setupPromise) {
+      await this.setupPromise;
+    }
+
     if (this.options.teardown) {
       await this.options.teardown();
     }

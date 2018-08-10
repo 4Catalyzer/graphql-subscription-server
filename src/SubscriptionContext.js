@@ -2,35 +2,22 @@
 
 import type { Subscriber } from './Subscriber';
 
-type MaybeCloseableAsyncIterable<T> = AsyncIterable<T> & {
-  close?: () => Promise<void>,
-};
-
 export default class SubscriptionContext {
   subscriber: Subscriber;
-  iterables: Array<Promise<MaybeCloseableAsyncIterable<any>>>;
+  closes: Array<() => Promise<void>>;
 
   constructor(subscriber: Subscriber) {
     this.subscriber = subscriber;
-    this.iterables = [];
+    this.closes = [];
   }
 
-  subscribe(...args: any[]): Promise<AsyncIterable<any>> {
-    const iterable = this.subscriber.subscribe(...args);
-    this.iterables.push(iterable);
-    return iterable;
+  subscribe(...args: any[]): Promise<AsyncIterator<any>> {
+    const { iterator, close } = this.subscriber.subscribe(...args);
+    this.closes.push(close);
+    return iterator;
   }
 
   async close(): Promise<void> {
-    await Promise.all(
-      this.iterables.map(async iterablePromise => {
-        const iterable = await iterablePromise;
-        if (!iterable.close) {
-          return null;
-        }
-
-        return iterable.close();
-      }),
-    );
+    await Promise.all(this.closes.map(close => close()));
   }
 }

@@ -14,7 +14,7 @@ type RedisConfigOptions = redis.ClientOpts & {
 
 export default class RedisSubscriber implements Subscriber {
   redis: redis.RedisClient;
-  _parseMessage: ?(data: string) => any;
+  _parseMessage: ?(string) => any;
   _queues: Map<Channel, Set<AsyncQueue>>;
   _channels: Set<string>;
 
@@ -26,33 +26,33 @@ export default class RedisSubscriber implements Subscriber {
 
     this.redis.on('message', (channel, message) => {
       const queues = this._queues.get(channel);
-      if (!queues) return;
+      if (!queues) {
+        return;
+      }
+
       queues.forEach(queue => {
         queue.push(message);
       });
     });
   }
 
-  _redisSubscribe(channel: string) {
-    return promisify(cb => this.redis.subscribe(channel, cb))();
-  }
-
   async _subscribeToChannel(channel: string) {
-    if (this._channels.has(channel)) return;
+    if (this._channels.has(channel)) {
+      return;
+    }
+
     this._channels.add(channel);
-    await this._redisSubscribe(channel);
+    await promisify(cb => this.redis.subscribe(channel, cb))();
   }
 
-  async subscribe(
+  subscribe(
     channel: Channel,
-    parseMessage: ?(data: string) => any = this._parseMessage,
+    parseMessage: ?(string) => any = this._parseMessage,
   ) {
     let channelQueues = this._queues.get(channel);
-
     if (!channelQueues) {
       channelQueues = new Set();
       this._queues.set(channel, channelQueues);
-      await this._redisSubscribe(channel);
     }
 
     const queue = new AsyncQueue({
@@ -73,10 +73,19 @@ export default class RedisSubscriber implements Subscriber {
 
     channelQueues.add(queue);
 
-    const iterable = await queue.iterator;
-    if (!parseMessage) return iterable;
+    let iteratorPromise = queue.iterator;
+    if (parseMessage) {
+      // Workaround for Flow.
+      const parseMessageFn: string => any = parseMessage;
+      iteratorPromise = iteratorPromise.then(iterator =>
+        map(iterator, parseMessageFn),
+      );
+    }
 
-    return map(iterable, parseMessage);
+    return {
+      iterator: iteratorPromise,
+      close: queue.close,
+    };
   }
 
   async close() {

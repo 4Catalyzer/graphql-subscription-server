@@ -60,8 +60,7 @@ export default class EventSubscriber implements Subscriber {
     });
 
     eventQueues.add(queue);
-
-    return queue.iterator;
+    return queue;
   }
 
   close() {

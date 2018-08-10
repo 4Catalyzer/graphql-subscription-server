@@ -34,7 +34,7 @@ describe('AsyncQueue', () => {
 
     queue.push(5);
     await iter.next();
-    await iter.close();
+    await queue.close();
 
     expect(spy).toHaveBeenCalledTimes(1);
   });
@@ -46,12 +46,11 @@ describe('AsyncQueue', () => {
     const queue = new AsyncQueue({ setup: setupSpy, teardown: teardownSpy });
     queue.push(5);
 
-    const closeableIter = await queue.iterator;
-    const iter = map(closeableIter, v => v + 1);
+    const iter = map(await queue.iterator, v => v + 1);
 
     expect((await iter.next()).value).toEqual(6);
 
-    await closeableIter.close();
+    await queue.close();
 
     expect(setupSpy).toHaveBeenCalled();
     expect(teardownSpy).toHaveBeenCalled();
