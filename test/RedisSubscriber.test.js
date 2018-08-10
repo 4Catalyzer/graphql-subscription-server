@@ -1,6 +1,7 @@
 /* @flow */
 
 import RedisSubscriber from '../src/RedisSubscriber';
+import SubscriptionContext from '../src/SubscriptionContext';
 
 describe('RedisSubscriber', () => {
   it('should subscribe for messages', async () => {
@@ -56,19 +57,16 @@ describe('RedisSubscriber', () => {
     const channel = 'channel';
     const client = new RedisSubscriber();
 
-    const sub = await client.subscribe(channel);
+    const subscriptionContext = new SubscriptionContext(client);
+    const sub = await subscriptionContext.subscribe(channel);
 
     client.redis.publish(channel, '');
     client.redis.publish(channel, '');
 
     let count = 0;
-    for (
-      let s = await sub.next();
-      !s.done;
-      s = await sub.next() // eslint-disable-line no-await-in-loop
-    ) {
+    for await (const _ of sub) {
       count++;
-      await sub.return();
+      await subscriptionContext.close();
       if (count === 2) throw new Error('Should not hit here');
     }
 

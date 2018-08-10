@@ -9,7 +9,7 @@ describe('AsyncQueue', () => {
     queue.push(5);
     queue.push(4);
 
-    const iter = await queue.iterable;
+    const iter = await queue.iterator;
 
     let step = await iter.next();
     expect(step.value).toEqual(5);
@@ -27,14 +27,14 @@ describe('AsyncQueue', () => {
     expect(teardownSpy).not.toHaveBeenCalled();
   });
 
-  it('should clean up when returned', async () => {
+  it('should clean up when closed', async () => {
     const spy = jest.fn();
     const queue = new AsyncQueue({ teardown: spy });
-    const iter = await queue.iterable;
+    const iter = await queue.iterator;
 
     queue.push(5);
     await iter.next();
-    await iter.return();
+    await iter.close();
 
     expect(spy).toHaveBeenCalledTimes(1);
   });
@@ -42,31 +42,18 @@ describe('AsyncQueue', () => {
   it('should always call teardown with setup', async () => {
     const setupSpy = jest.fn();
     const teardownSpy = jest.fn();
-    const queue = new AsyncQueue({ setup: setupSpy, teardown: teardownSpy });
 
+    const queue = new AsyncQueue({ setup: setupSpy, teardown: teardownSpy });
     queue.push(5);
 
-    const iter = map(await queue.iterable, v => v + 1);
+    const closeableIter = await queue.iterator;
+    const iter = map(closeableIter, v => v + 1);
 
     expect((await iter.next()).value).toEqual(6);
 
-    await iter.return();
+    await closeableIter.close();
 
     expect(setupSpy).toHaveBeenCalled();
     expect(teardownSpy).toHaveBeenCalled();
-  });
-
-  it('should clean up once', async () => {
-    const spy = jest.fn();
-    const queue = new AsyncQueue({ teardown: spy });
-    const iter = await queue.iterable;
-
-    queue.push(5);
-    await iter.next(); // start generator so finally block is hit
-
-    await iter.return();
-    await queue.close();
-
-    expect(spy).toHaveBeenCalledTimes(1);
   });
 });

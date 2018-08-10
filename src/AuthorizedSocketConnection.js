@@ -8,17 +8,14 @@ import {
   specifiedRules,
   validate,
 } from 'graphql';
-import type {
-  ExecutionResult,
-  GraphQLSchema,
-  ValidationContext,
-} from 'graphql';
+import type { GraphQLSchema, ValidationContext } from 'graphql';
 import type IoServer from 'socket.io';
 
 import * as AsyncUtils from './AsyncUtils';
 import type { CredentialsManager } from './CredentialsManager';
 import type { Logger, CreateLogger } from './Logger';
 import type { Subscriber } from './Subscriber';
+import SubscriptionContext from './SubscriptionContext';
 
 export type CreateValidationRules = ({
   variables: Object,
@@ -30,10 +27,6 @@ type Subscription = {
   query: string,
   variables: Object,
 };
-
-type MaybeSubscription = Promise<
-  AsyncGenerator<ExecutionResult, void, void> | ExecutionResult,
->;
 
 type AuthorizedSocketOptions<TContext, TCredentials> = {|
   schema: GraphQLSchema,
@@ -63,7 +56,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
   config: AuthorizedSocketOptions<TContext, TCredentials>;
 
   log: Logger;
-  subscriptions: Map<string, MaybeSubscription>;
+  subscriptionContexts: Map<string, SubscriptionContext>;
 
   constructor(
     socket: IoServer.socket,
@@ -73,7 +66,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     this.config = config;
 
     this.log = config.createLogger('@4c/SubscriptionServer::AuthorizedSocket');
-    this.subscriptions = new Map();
+    this.subscriptionContexts = new Map();
 
     this.socket
       .on('authenticate', this.handleAuthenticate)
@@ -127,7 +120,8 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     try {
       if (
         this.config.maxSubscriptionsPerConnection != null &&
-        this.subscriptions.size >= this.config.maxSubscriptionsPerConnection
+        this.subscriptionContexts.size >=
+          this.config.maxSubscriptionsPerConnection
       ) {
         this.log('debug', 'subscription limit reached', {
           maxSubscriptionsPerConnection: this.config
@@ -139,7 +133,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         return;
       }
 
-      if (this.subscriptions.has(id)) {
+      if (this.subscriptionContexts.has(id)) {
         this.log('debug', 'duplicate subscription attempted', { id });
 
         this.emitError({
@@ -171,6 +165,10 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         return;
       }
 
+      const subscriptionContext = new SubscriptionContext(
+        this.config.subscriber,
+      );
+
       const sourcePromise = createSourceEventStream(
         this.config.schema,
         document,
@@ -178,24 +176,24 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         {
           subscribe: async (...args) =>
             AsyncUtils.filter(
-              await this.config.subscriber.subscribe(...args),
+              await subscriptionContext.subscribe(...args),
               this.isAuthorized,
             ),
         },
         variables,
       );
 
-      this.subscriptions.set(id, sourcePromise);
+      this.subscriptionContexts.set(id, subscriptionContext);
 
       try {
         resultOrStream = await sourcePromise;
       } catch (err) {
-        this.subscriptions.delete(id);
+        this.subscriptionContexts.delete(id);
         throw err;
       }
 
       if (resultOrStream.errors != null) {
-        this.subscriptions.delete(id);
+        this.subscriptionContexts.delete(id);
         this.emitError({
           code: 'subscribe_failed.gql_error',
           // $FlowFixMe
@@ -237,24 +235,25 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
   };
 
   handleUnsubscribe = async (id: string) => {
-    const subscription = await this.subscriptions.get(id);
-    if (subscription && typeof subscription.return === 'function') {
-      subscription.return();
+    const subscriptionContext = this.subscriptionContexts.get(id);
+    if (!subscriptionContext) {
+      return;
     }
+
     this.log('debug', 'client unsubscribed', { id });
-    this.subscriptions.delete(id);
+
+    await subscriptionContext.close();
+    this.subscriptionContexts.delete(id);
   };
 
   handleDisconnect = async () => {
     this.log('debug', 'client disconnected');
-    await this.config.credentialsManager.unauthenticate();
 
-    this.subscriptions.forEach(async subscriptionPromise => {
-      const subscription = await subscriptionPromise;
-
-      if (subscription && typeof subscription.return === 'function') {
-        subscription.return();
-      }
-    });
+    await Promise.all([
+      this.config.credentialsManager.unauthenticate(),
+      ...Array.from(this.subscriptionContexts.values()).map(
+        subscriptionContext => subscriptionContext.close(),
+      ),
+    ]);
   };
 }

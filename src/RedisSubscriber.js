@@ -73,7 +73,7 @@ export default class RedisSubscriber implements Subscriber {
 
     channelQueues.add(queue);
 
-    const iterable = await queue.iterable;
+    const iterable = await queue.iterator;
     if (!parseMessage) return iterable;
 
     return map(iterable, parseMessage);
