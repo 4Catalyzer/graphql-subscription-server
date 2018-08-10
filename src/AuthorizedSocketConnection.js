@@ -251,8 +251,8 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
     await Promise.all([
       this.config.credentialsManager.unauthenticate(),
-      ...Array.from(this.subscriptionContexts.values()).map(
-        subscriptionContext => subscriptionContext.close(),
+      ...Array.from(this.subscriptionContexts.values(), subscriptionContext =>
+        subscriptionContext.close(),
       ),
     ]);
   };
