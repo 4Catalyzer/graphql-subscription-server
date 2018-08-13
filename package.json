@@ -1,6 +1,6 @@
 {
   "name": "@4c/graphql-subscription-server",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "author": "4Catalyzer",
   "license": "MIT",
   "private": false,
