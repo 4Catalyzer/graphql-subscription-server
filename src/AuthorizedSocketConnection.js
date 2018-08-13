@@ -188,8 +188,12 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       try {
         resultOrStream = await sourcePromise;
       } catch (err) {
-        this.subscriptionContexts.delete(id);
-        throw err;
+        if (err instanceof GraphQLError) {
+          resultOrStream = { errors: [err] };
+        } else {
+          this.subscriptionContexts.delete(id);
+          throw err;
+        }
       }
 
       if (resultOrStream.errors != null) {

@@ -1,3 +1,11 @@
+<a name="0.7.1"></a>
+## [0.7.1](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.7.0...v0.7.1) (2018-08-13)
+
+
+### Bug Fixes
+
+* Fix subscribe error handling ([#21](https://github.com/4Catalyzer/graphql-subscription-server/issues/21)) ([fe9308b](https://github.com/4Catalyzer/graphql-subscription-server/commit/fe9308b))
+
 <a name="0.6.0"></a>
 # [0.6.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.5.0...v0.6.0) (2018-05-24)
 
