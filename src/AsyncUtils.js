@@ -20,30 +20,29 @@ export async function* filter<T>(
 }
 
 export type AsyncQueueOptions = {
-  setup?: () => Promise<void> | void,
-  teardown?: () => void,
+  setup?: () => void | Promise<void>,
+  teardown?: () => void | Promise<void>,
 };
 
 export class AsyncQueue {
-  values: any[];
-  closed: boolean = false;
-  promise: Promise<void>;
   options: AsyncQueueOptions;
+
+  values: any[];
+  promise: Promise<void>;
   resolvePromise: () => void;
-  iterable: Promise<AsyncGenerator<any, void, void>>;
+
+  closed: boolean;
+  iterator: Promise<AsyncIterator<any>>;
+  setupPromise: void | Promise<void>;
 
   constructor(options?: AsyncQueueOptions = {}) {
-    this.values = [];
     this.options = options;
+
+    this.values = [];
     this.createPromise();
 
-    this.iterable = this.createIterable();
-  }
-
-  close(): void | Promise<void> {
-    if (this.closed) return;
-    this.closed = true;
-    if (this.options.teardown) this.options.teardown();
+    this.closed = false;
+    this.iterator = this.createIterator();
   }
 
   createPromise() {
@@ -52,37 +51,56 @@ export class AsyncQueue {
     });
   }
 
-  async *createIterableRaw(): AsyncGenerator<any, void, void> {
-    try {
-      if (this.options.setup) await this.options.setup();
-      yield null;
+  async createIterator(): Promise<AsyncIterator<any>> {
+    const iterator = this.createIteratorRaw();
 
-      while (true) {
-        await this.promise;
-
-        for (const value of this.values) {
-          yield value;
-        }
-
-        this.values.length = 0;
-        this.createPromise();
-      }
-    } finally {
-      await this.close();
-    }
+    // Wait for setup.
+    await iterator.next();
+    return iterator;
   }
 
-  async createIterable(): Promise<AsyncGenerator<any, void, void>> {
-    const iterableRaw = this.createIterableRaw();
+  async *createIteratorRaw(): AsyncIterator<any> {
+    if (this.options.setup) {
+      this.setupPromise = this.options.setup();
+    }
 
-    // wait for the first synthetic yield after setup
-    await iterableRaw.next();
+    if (this.setupPromise) {
+      await this.setupPromise;
+    }
 
-    return iterableRaw;
+    yield null;
+
+    while (true) {
+      await this.promise;
+
+      for (const value of this.values) {
+        if (this.closed) {
+          return;
+        }
+
+        yield value;
+      }
+
+      this.values.length = 0;
+      this.createPromise();
+    }
   }
 
   push(value: any) {
     this.values.push(value);
     this.resolvePromise();
   }
+
+  close = async (): Promise<void> => {
+    if (this.setupPromise) {
+      await this.setupPromise;
+    }
+
+    if (this.options.teardown) {
+      await this.options.teardown();
+    }
+
+    this.closed = true;
+    this.push(null);
+  };
 }

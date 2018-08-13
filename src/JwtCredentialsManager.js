@@ -50,7 +50,7 @@ export default class JwtCredentialsManager<TCredentials: JwtCredentials>
     await this.updateCredentials();
   }
 
-  async unauthenticate() {
+  unauthenticate() {
     if (this.renewHandle) {
       clearTimeout(this.renewHandle);
     }

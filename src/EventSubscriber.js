@@ -60,11 +60,10 @@ export default class EventSubscriber implements Subscriber {
     });
 
     eventQueues.add(queue);
-
-    return queue.iterable;
+    return queue;
   }
 
-  async close() {
+  close() {
     this._listeners.forEach((fn, event) => {
       this.emitter.removeListener(event, fn);
     });

@@ -1,13 +1,15 @@
 /* @flow */
 
 import RedisSubscriber from '../src/RedisSubscriber';
+import SubscriptionContext from '../src/SubscriptionContext';
 
 describe('RedisSubscriber', () => {
   it('should subscribe for messages', async () => {
     const channel = 'whatever';
     const client = new RedisSubscriber();
 
-    const sub = await client.subscribe(channel);
+    const subscriptionContext = new SubscriptionContext(client);
+    const sub = await subscriptionContext.subscribe(channel);
 
     client.redis.publish(channel, 'foo');
 
@@ -22,7 +24,8 @@ describe('RedisSubscriber', () => {
     const channel = 'whatever';
     const client = new RedisSubscriber({ parseMessage: d => JSON.parse(d) });
 
-    const sub = await client.subscribe(channel);
+    const subscriptionContext = new SubscriptionContext(client);
+    const sub = await subscriptionContext.subscribe(channel);
 
     client.redis.publish(channel, '[1,2,3]');
 
@@ -37,8 +40,9 @@ describe('RedisSubscriber', () => {
     const channel = 'whatever';
     const client = new RedisSubscriber();
 
-    const subA = await client.subscribe(channel, d => JSON.parse(d));
-    const subB = await client.subscribe('another');
+    const subscriptionContext = new SubscriptionContext(client);
+    const subA = await subscriptionContext.subscribe(channel, JSON.parse);
+    const subB = await subscriptionContext.subscribe('another');
 
     client.redis.publish(channel, '[1,2,3]');
     client.redis.publish('another', '[1,2,3]');
@@ -56,19 +60,16 @@ describe('RedisSubscriber', () => {
     const channel = 'channel';
     const client = new RedisSubscriber();
 
-    const sub = await client.subscribe(channel);
+    const subscriptionContext = new SubscriptionContext(client);
+    const sub = await subscriptionContext.subscribe(channel);
 
     client.redis.publish(channel, '');
     client.redis.publish(channel, '');
 
     let count = 0;
-    for (
-      let s = await sub.next();
-      !s.done;
-      s = await sub.next() // eslint-disable-line no-await-in-loop
-    ) {
+    for await (const _ of sub) {
       count++;
-      await sub.return();
+      await subscriptionContext.close();
       if (count === 2) throw new Error('Should not hit here');
     }
 

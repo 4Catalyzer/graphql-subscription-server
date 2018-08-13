@@ -1,6 +1,8 @@
 /** @flow */
 
 export interface Subscriber {
-  subscribe(...any[]): Promise<AsyncGenerator<any, void, void>>;
+  subscribe(
+    ...any[]
+  ): { iterator: Promise<AsyncIterator<any>>, close: () => Promise<void> };
   close(): void | Promise<void>;
 }
