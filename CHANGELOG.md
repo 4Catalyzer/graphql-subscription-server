@@ -1,3 +1,11 @@
+<a name="0.8.0"></a>
+# [0.8.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.7.1...v0.8.0) (2018-08-13)
+
+
+### Features
+
+* Use an explicitly closeable async iterator ([#20](https://github.com/4Catalyzer/graphql-subscription-server/issues/20)) ([4408ddf](https://github.com/4Catalyzer/graphql-subscription-server/commit/4408ddf))
+
 <a name="0.7.1"></a>
 ## [0.7.1](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.7.0...v0.7.1) (2018-08-13)
 
