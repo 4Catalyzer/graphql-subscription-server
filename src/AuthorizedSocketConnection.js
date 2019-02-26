@@ -20,7 +20,7 @@ import SubscriptionContext from './SubscriptionContext';
 export type CreateValidationRules = ({
   variables: Object,
   query: string,
-}) => $ReadOnlyArray<Array<(context: ValidationContext) => any>>;
+}) => $ReadOnlyArray<(context: ValidationContext) => any>;
 
 type Subscription = {
   id: string,
