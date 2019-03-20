@@ -53,9 +53,11 @@ const acknowledge = cb => {
  */
 export default class AuthorizedSocketConnection<TContext, TCredentials> {
   socket: IoServer.socket;
+
   config: AuthorizedSocketOptions<TContext, TCredentials>;
 
   log: Logger;
+
   subscriptionContexts: Map<string, SubscriptionContext>;
 
   constructor(

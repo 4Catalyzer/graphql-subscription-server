@@ -111,6 +111,8 @@ server.listen(GRAPHQL_PORT, () => {
 
 // Serve the Relay app.
 const compiler = webpack({
+  mode: 'development',
+
   entry: './js/app.js',
 
   output: {
@@ -128,7 +130,13 @@ const compiler = webpack({
           options: {
             babelrc: false,
             presets: [
-              ['@4c/4catalyzer', { useBuiltIns: 'usage' }],
+              [
+                '@4c',
+                {
+                  target: 'web-app',
+                  useBuiltIns: 'usage',
+                },
+              ],
               '@babel/flow',
             ],
             plugins: [['relay', { schema: 'data/schema.graphql' }]],

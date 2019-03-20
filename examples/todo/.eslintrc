@@ -1,5 +1,10 @@
 {
-  "extends": ["4catalyzer-flow-react", "prettier", "prettier/flowtype"],
+  "extends": [
+    "4catalyzer-flow-react",
+    "prettier",
+    "prettier/react",
+    "prettier/flowtype"
+  ],
   "rules": {
     "flowtype/require-valid-file-annotation": "off",
 
@@ -15,6 +20,7 @@
       }
     ]
   },
+
   "overrides": [
     {
       "files": ["data/**"],

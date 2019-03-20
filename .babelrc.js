@@ -1,20 +1,10 @@
-let modules = process.env.BABEL_ENV !== 'esm' ? 'commonjs' : false;
-let TEST = process.env.NODE_ENV === 'test';
-
-if (TEST) {
-  modules = 'commonjs';
-}
-
 module.exports = {
   presets: [
     [
-      '@4c/4catalyzer',
+      '@4c',
       {
         target: 'node',
-        targets: { node: '10' },
-        useBuiltIns: false,
-        exclude: ['proposal-async-generator-functions'], // https://github.com/babel/babel/pull/8003
-        modules,
+        modules: process.env.BABEL_ENV !== 'esm' ? 'commonjs' : false,
       },
     ],
     '@babel/flow',

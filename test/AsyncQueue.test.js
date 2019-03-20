@@ -18,7 +18,7 @@ describe('AsyncQueue', () => {
     expect(step.value).toEqual(4);
   });
 
-  it('should perform setup when queue is created', async () => {
+  it('should perform setup when queue is created', () => {
     const setupSpy = jest.fn();
     const teardownSpy = jest.fn();
     const _ = new AsyncQueue({ setup: setupSpy, teardown: teardownSpy });

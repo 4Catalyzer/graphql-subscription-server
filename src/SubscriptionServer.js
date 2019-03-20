@@ -29,6 +29,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
   config: SubscriptionServerConfig<TContext, TCredentials>;
 
   log: Logger;
+
   io: IoServer;
 
   constructor(config: SubscriptionServerConfig<TContext, TCredentials>) {

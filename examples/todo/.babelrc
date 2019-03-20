@@ -1,0 +1,9 @@
+{
+  "presets": [
+    ["@4c", {
+      "target": "node",
+      "useBuiltIns": "usage"
+    }],
+    "@babel/flow"
+  ]
+}

@@ -10,6 +10,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import Relay from 'react-relay/classic';
 
@@ -18,8 +19,8 @@ import Todo from './Todo';
 
 class TodoList extends React.Component {
   static propTypes = {
-    viewer: React.PropTypes.object.isRequired,
-    relay: React.PropTypes.object.isRequired,
+    viewer: PropTypes.object.isRequired,
+    relay: PropTypes.object.isRequired,
   };
 
   _handleMarkAllChange = e => {
@@ -40,14 +41,14 @@ class TodoList extends React.Component {
 
     return (
       <section className="main">
-        <label htmlFor="toggle-all">
-          <input
-            checked={numTodos === numCompletedTodos}
-            className="toggle-all"
-            onChange={this._handleMarkAllChange}
-            type="checkbox"
-          />Mark all as complete
-        </label>
+        <input
+          id="toggle-all"
+          checked={numTodos === numCompletedTodos}
+          className="toggle-all"
+          onChange={this._handleMarkAllChange}
+          type="checkbox"
+        />
+        <label htmlFor="toggle-all">Mark all as complete</label>
         <ul className="todo-list">
           {viewer.todos.edges.map(edge => (
             <Todo

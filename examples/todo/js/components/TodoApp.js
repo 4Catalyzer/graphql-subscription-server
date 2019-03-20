@@ -10,6 +10,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import Relay from 'react-relay/classic';
 import RelaySubscriptions from 'relay-subscriptions';
@@ -22,9 +23,9 @@ import TodoTextInput from './TodoTextInput';
 
 class TodoApp extends React.Component {
   static propTypes = {
-    viewer: React.PropTypes.object.isRequired,
-    relay: React.PropTypes.object.isRequired,
-    children: React.PropTypes.node.isRequired,
+    viewer: PropTypes.object.isRequired,
+    relay: PropTypes.object.isRequired,
+    children: PropTypes.node.isRequired,
   };
 
   _handleTextInputSave = text => {

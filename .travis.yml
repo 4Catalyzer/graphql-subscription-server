@@ -1,11 +1,17 @@
+sudo: false
+
 language: node_js
-cache: 'yarn'
-notifications:
-  email: false
 node_js:
-  - '10'
+  - stable
+
+cache: yarn
+
+after_script:
+  - yarn codecov
+
 after_success:
   - yarn semantic-release
+
 branches:
   only:
     - master

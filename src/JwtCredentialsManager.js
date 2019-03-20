@@ -18,6 +18,7 @@ export default class JwtCredentialsManager<TCredentials: JwtCredentials>
   config: JwtCredentialsManagerConfig;
 
   token: ?string;
+
   credentials: ?TCredentials;
 
   renewHandle: ?TimeoutID;

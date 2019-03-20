@@ -28,11 +28,15 @@ export class AsyncQueue {
   options: AsyncQueueOptions;
 
   values: any[];
+
   promise: Promise<void>;
+
   resolvePromise: () => void;
 
   closed: boolean;
+
   iterator: Promise<AsyncIterator<any>>;
+
   setupPromise: void | Promise<void>;
 
   constructor(options?: AsyncQueueOptions = {}) {
