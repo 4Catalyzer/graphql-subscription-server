@@ -13,8 +13,8 @@
 
 import fs from 'fs';
 import path from 'path';
-import { schema } from '../data/schema';
 import { printSchema } from 'graphql/utilities';
+import { schema } from '../data/schema';
 
 fs.writeFileSync(
   path.join(__dirname, '../data/schema.graphql'),

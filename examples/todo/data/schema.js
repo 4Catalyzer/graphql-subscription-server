@@ -42,7 +42,8 @@ const { nodeInterface, nodeField } = nodeDefinitions(
     const { type, id } = fromGlobalId(globalId);
     if (type === 'Todo') {
       return database.getTodo(id);
-    } else if (type === 'User') {
+    }
+    if (type === 'User') {
       return database.getUser(id);
     }
     return null;
@@ -51,7 +52,8 @@ const { nodeInterface, nodeField } = nodeDefinitions(
     /* eslint-disable no-use-before-define */
     if (obj instanceof Todo) {
       return GraphQLTodo;
-    } else if (obj instanceof User) {
+    }
+    if (obj instanceof User) {
       return GraphQLUser;
     }
     /* eslint-enable no-use-before-define */

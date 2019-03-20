@@ -14,6 +14,7 @@ export default class EventSubscriber implements Subscriber {
   emitter: EventEmitter;
 
   _queues: Map<string, Set<AsyncQueue>>;
+
   _listeners: Map<string, Function>;
 
   constructor(emitter: EventEmitter) {

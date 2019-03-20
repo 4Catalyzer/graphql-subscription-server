@@ -32,9 +32,11 @@ export default class MarkAllTodosMutation extends Relay.Mutation {
       }
     `,
   };
+
   getMutation() {
     return Relay.QL`mutation{markAllTodos}`;
   }
+
   getFatQuery() {
     return Relay.QL`
       fragment on MarkAllTodosPayload @relay(pattern: true) {
@@ -45,6 +47,7 @@ export default class MarkAllTodosMutation extends Relay.Mutation {
       }
     `;
   }
+
   getConfigs() {
     return [
       {
@@ -55,11 +58,13 @@ export default class MarkAllTodosMutation extends Relay.Mutation {
       },
     ];
   }
+
   getVariables() {
     return {
       complete: this.props.complete,
     };
   }
+
   getOptimisticResponse() {
     const viewerPayload = { id: this.props.viewer.id };
     if (this.props.todos && this.props.todos.edges) {

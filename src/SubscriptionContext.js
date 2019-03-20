@@ -4,6 +4,7 @@ import type { Subscriber } from './Subscriber';
 
 export default class SubscriptionContext {
   subscriber: Subscriber;
+
   closes: Array<() => Promise<void>>;
 
   constructor(subscriber: Subscriber) {

@@ -33,9 +33,11 @@ export default class RemoveCompletedTodosMutation extends Relay.Mutation {
       }
     `,
   };
+
   getMutation() {
     return Relay.QL`mutation{removeCompletedTodos}`;
   }
+
   getFatQuery() {
     return Relay.QL`
       fragment on RemoveCompletedTodosPayload @relay(pattern: true) {
@@ -47,6 +49,7 @@ export default class RemoveCompletedTodosMutation extends Relay.Mutation {
       }
     `;
   }
+
   getConfigs() {
     return [
       {
@@ -58,9 +61,11 @@ export default class RemoveCompletedTodosMutation extends Relay.Mutation {
       },
     ];
   }
+
   getVariables() {
     return {};
   }
+
   getOptimisticResponse() {
     let deletedTodoIds;
     let newTotalCount;

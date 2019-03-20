@@ -30,9 +30,11 @@ export default class RemoveTodoMutation extends Relay.Mutation {
       }
     `,
   };
+
   getMutation() {
     return Relay.QL`mutation{removeTodo}`;
   }
+
   getFatQuery() {
     return Relay.QL`
       fragment on RemoveTodoPayload @relay(pattern: true) {
@@ -44,6 +46,7 @@ export default class RemoveTodoMutation extends Relay.Mutation {
       }
     `;
   }
+
   getConfigs() {
     return [
       {
@@ -55,11 +58,13 @@ export default class RemoveTodoMutation extends Relay.Mutation {
       },
     ];
   }
+
   getVariables() {
     return {
       id: this.props.todo.id,
     };
   }
+
   getOptimisticResponse() {
     const viewerPayload = { id: this.props.viewer.id };
     if (this.props.viewer.completedCount != null) {

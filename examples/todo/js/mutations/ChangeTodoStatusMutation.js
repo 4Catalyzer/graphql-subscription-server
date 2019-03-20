@@ -27,9 +27,11 @@ export default class ChangeTodoStatusMutation extends Relay.Mutation {
       }
     `,
   };
+
   getMutation() {
     return Relay.QL`mutation{changeTodoStatus}`;
   }
+
   getFatQuery() {
     return Relay.QL`
       fragment on ChangeTodoStatusPayload @relay(pattern: true) {
@@ -43,6 +45,7 @@ export default class ChangeTodoStatusMutation extends Relay.Mutation {
       }
     `;
   }
+
   getConfigs() {
     return [
       {
@@ -54,12 +57,14 @@ export default class ChangeTodoStatusMutation extends Relay.Mutation {
       },
     ];
   }
+
   getVariables() {
     return {
       complete: this.props.complete,
       id: this.props.todo.id,
     };
   }
+
   getOptimisticResponse() {
     const viewerPayload = { id: this.props.viewer.id };
     if (this.props.viewer.completedCount != null) {

@@ -25,8 +25,11 @@ class Database extends EventEmitter {
   usersById = {
     [VIEWER_ID]: viewer,
   };
+
   nextTodoId = 0;
+
   todosById = {};
+
   todoIdsByUser = {
     [VIEWER_ID]: [],
   };
@@ -39,6 +42,7 @@ class Database extends EventEmitter {
       super.emit(topic, data);
     }, 100);
   }
+
   addTodo(text, complete) {
     const todo = new Todo();
     todo.complete = !!complete;
@@ -49,9 +53,11 @@ class Database extends EventEmitter {
     this.emit('add_todo', todo);
     return todo.id;
   }
+
   getTodo(id) {
     return this.todosById[id];
   }
+
   getTodos(status = 'any') {
     const todos = this.todoIdsByUser[VIEWER_ID].map(id => this.todosById[id]);
     if (status === 'any') {
@@ -65,6 +71,7 @@ class Database extends EventEmitter {
     todo.complete = complete;
     this.emit(`update_todo_${id}`, todo);
   }
+
   getUser(id) {
     return this.usersById[id];
   }
@@ -72,6 +79,7 @@ class Database extends EventEmitter {
   getViewer() {
     return this.getUser(VIEWER_ID);
   }
+
   markAllTodos(complete) {
     const changedTodos = [];
     this.getTodos().forEach(todo => {
@@ -92,11 +100,13 @@ class Database extends EventEmitter {
     this.emit('delete_todo', { id });
     delete this.todosById[id];
   }
+
   removeCompletedTodos() {
     const todosToRemove = this.getTodos().filter(todo => todo.complete);
     todosToRemove.forEach(todo => this.removeTodo(todo.id));
     return todosToRemove.map(todo => todo.id);
   }
+
   renameTodo(id, text) {
     const todo = this.getTodo(id);
     todo.text = text;

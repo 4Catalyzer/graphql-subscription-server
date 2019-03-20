@@ -10,6 +10,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import Relay from 'react-relay/classic';
 import { IndexLink, Link } from 'react-router';
@@ -18,8 +19,8 @@ import RemoveCompletedTodosMutation from '../mutations/RemoveCompletedTodosMutat
 
 class TodoListFooter extends React.Component {
   static propTypes = {
-    viewer: React.PropTypes.object.isRequired,
-    relay: React.PropTypes.object.isRequired,
+    viewer: PropTypes.object.isRequired,
+    relay: PropTypes.object.isRequired,
   };
 
   _handleRemoveCompletedTodosClick = () => {
@@ -40,10 +41,8 @@ class TodoListFooter extends React.Component {
     return (
       <footer className="footer">
         <span className="todo-count">
-          <strong>{numRemainingTodos}</strong> item{numRemainingTodos === 1
-            ? ''
-            : 's'}{' '}
-          left
+          <strong>{numRemainingTodos}</strong> item
+          {numRemainingTodos === 1 ? '' : 's'} left
         </span>
         <ul className="filters">
           <li>
@@ -64,6 +63,7 @@ class TodoListFooter extends React.Component {
         </ul>
         {numCompletedTodos > 0 && (
           <button
+            type="button"
             className="clear-completed"
             onClick={this._handleRemoveCompletedTodosClick}
           >

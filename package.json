@@ -1,34 +1,30 @@
 {
   "name": "@4c/graphql-subscription-server",
   "version": "0.8.1",
-  "author": "4Catalyzer",
-  "license": "MIT",
-  "private": false,
-  "main": "lib/index.js",
-  "modules": "es/index.js",
   "files": [
     "lib",
     "es"
   ],
-  "engines": {
-    "node": ">= 10"
-  },
+  "main": "lib/index.js",
+  "modules": "es/index.js",
   "scripts": {
-    "clean": "rm -rf lib es",
-    "build": "npm run clean && babel src -d lib --ignore __tests__ && BABEL_ENV=esm babel src --out-dir es --ignore __tests__ && npm run build:flow",
+    "build": "npm run clean && npm run build:cjs && npm run build:esm && npm run build:flow",
+    "build:cjs": "babel src -d lib --ignore __tests__",
+    "build:esm": "BABEL_ENV=esm babel src --out-dir es --ignore __tests__",
     "build:flow": "for file in $(find ./src -name '*.js' -not -path '*/__tests__*'); do cp \"$file\" `echo \"$file\" | sed 's/\\/src\\//\\/lib\\//g'`.flow; cp \"$file\" `echo \"$file\" | sed 's/\\/src\\//\\/es\\//g'`.flow; done",
     "check": "flow check",
-    "lint": "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css,md}'",
+    "clean": "rm -rf lib es",
     "format": "eslint . --fix && prettier --write --ignore-path .eslintignore '**/*.{json,css,md}'",
+    "lint": "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css,md}'",
     "precommit": "lint-staged",
-    "prepublishOnly": "npm run test && npm run build",
-    "test": "npm run lint && jest",
-    "tdd": "jest --watch"
+    "prepublish": "npm run build",
+    "tdd": "jest --watch",
+    "test": "npm run lint && jest --coverage"
   },
-  "prettier": {
-    "printWidth": 79,
-    "singleQuote": true,
-    "trailingComma": "all"
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
     "*.js": [
@@ -39,6 +35,11 @@
       "prettier --write --ignore-path .eslintignore",
       "git add"
     ]
+  },
+  "prettier": {
+    "printWidth": 79,
+    "singleQuote": true,
+    "trailingComma": "all"
   },
   "jest": {
     "roots": [
@@ -51,46 +52,50 @@
       "@4c/semantic-release-config"
     ]
   },
-  "devDependencies": {
-    "@4c/babel-preset-4catalyzer": "^1.4.0",
-    "@4c/semantic-release-config": "^1.0.2",
-    "@babel/cli": "^7.0.0-beta.47",
-    "@babel/core": "^7.0.0-beta.47",
-    "@babel/polyfill": "^7.0.0-beta.47",
-    "@babel/preset-flow": "^7.0.0-beta.47",
-    "babel-core": "^7.0.0-0",
-    "babel-eslint": "^8.2.6",
-    "babel-jest": "^22.4.4",
-    "eslint": "^4.19.1",
-    "eslint-config-4catalyzer": "^0.4.1",
-    "eslint-config-4catalyzer-flow": "^0.4.1",
-    "eslint-config-4catalyzer-flow-react": "^0.4.2",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-flowtype": "^2.47.1",
-    "eslint-plugin-import": "^2.12.0",
-    "eslint-plugin-jest": "^21.15.2",
-    "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-prettier": "^2.6.0",
-    "eslint-plugin-react": "^7.8.2",
-    "flow-bin": "^0.72.0",
-    "graphql": "^14.1.1",
-    "husky": "^0.14.3",
-    "jest": "^22.4.4",
-    "lint-staged": "^7.1.2",
-    "prettier": "^1.12.1",
-    "redis-mock": "^0.24.0",
-    "semantic-release": "^15.5.0"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/4Catalyzer/graphql-subscription-server.git"
+  },
+  "author": "4Catalyzer",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.4",
+    "redis": "^2.8.0",
+    "socket.io": "^2.2.0"
   },
   "peerDependencies": {
     "graphql": ">=0.12.3"
   },
-  "dependencies": {
-    "express": "^4.16.4",
-    "redis": "^2.8.0",
-    "socket.io": "^2.1.1"
+  "devDependencies": {
+    "@4c/babel-preset": "^5.0.4",
+    "@4c/semantic-release-config": "^1.0.5",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.4.0",
+    "@babel/preset-flow": "^7.0.0",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^24.5.0",
+    "codecov": "^3.2.0",
+    "eslint": "^5.15.3",
+    "eslint-config-4catalyzer-flow": "^0.8.2",
+    "eslint-config-4catalyzer-flow-react": "^0.7.8",
+    "eslint-config-4catalyzer-jest": "^1.2.1",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-flowtype": "^3.4.2",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jest": "^22.4.1",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.12.4",
+    "flow-bin": "^0.95.1",
+    "graphql": "^14.1.1",
+    "husky": "^1.3.1",
+    "jest": "^24.5.0",
+    "lint-staged": "^8.1.5",
+    "prettier": "^1.16.4",
+    "redis-mock": "^0.43.0",
+    "semantic-release": "^15.13.3"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/4Catalyzer/graphql-subscription-server.git"
+  "engines": {
+    "node": ">=10.0.0"
   }
 }

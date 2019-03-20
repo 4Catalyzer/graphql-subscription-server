@@ -20,9 +20,11 @@ export default class RenameTodoMutation extends Relay.Mutation {
       }
     `,
   };
+
   getMutation() {
     return Relay.QL`mutation{renameTodo}`;
   }
+
   getFatQuery() {
     return Relay.QL`
       fragment on RenameTodoPayload @relay(pattern: true) {
@@ -32,6 +34,7 @@ export default class RenameTodoMutation extends Relay.Mutation {
       }
     `;
   }
+
   getConfigs() {
     return [
       {
@@ -42,12 +45,14 @@ export default class RenameTodoMutation extends Relay.Mutation {
       },
     ];
   }
+
   getVariables() {
     return {
       id: this.props.todo.id,
       text: this.props.text,
     };
   }
+
   getOptimisticResponse() {
     return {
       todo: {

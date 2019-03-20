@@ -14,8 +14,11 @@ type RedisConfigOptions = redis.ClientOpts & {
 
 export default class RedisSubscriber implements Subscriber {
   redis: redis.RedisClient;
+
   _parseMessage: ?(string) => any;
+
   _queues: Map<Channel, Set<AsyncQueue>>;
+
   _channels: Set<string>;
 
   constructor({ parseMessage, ...redisConfig }: RedisConfigOptions = {}) {

@@ -11,6 +11,7 @@
  */
 
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import Relay from 'react-relay/classic';
 import RelaySubscriptions from 'relay-subscriptions';
@@ -23,9 +24,9 @@ import TodoTextInput from './TodoTextInput';
 
 class Todo extends React.Component {
   static propTypes = {
-    viewer: React.PropTypes.object.isRequired,
-    todo: React.PropTypes.object.isRequired,
-    relay: React.PropTypes.object.isRequired,
+    viewer: PropTypes.object.isRequired,
+    todo: PropTypes.object.isRequired,
+    relay: PropTypes.object.isRequired,
   };
 
   state = {
@@ -111,7 +112,11 @@ class Todo extends React.Component {
           >
             {todo.text}
           </label>
-          <button className="destroy" onClick={this._handleDestroyClick} />
+          <button
+            type="button"
+            className="destroy"
+            onClick={this._handleDestroyClick}
+          />
         </div>
         {this.state.isEditing && this.renderTextInput()}
       </li>
