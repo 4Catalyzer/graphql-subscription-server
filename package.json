@@ -57,7 +57,7 @@
     "@babel/cli": "^7.0.0-beta.47",
     "@babel/core": "^7.0.0-beta.47",
     "@babel/polyfill": "^7.0.0-beta.47",
-    "@babel/preset-flow": "^7.0.0-beta.47",
+    "@babel/preset-flow": "^7.0.0",
     "babel-core": "^7.0.0-0",
     "babel-eslint": "^8.2.6",
     "babel-jest": "^22.4.4",
