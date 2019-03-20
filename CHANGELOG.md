@@ -1,3 +1,10 @@
+## [0.8.2](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.8.1...v0.8.2) (2019-03-20)
+
+
+### Bug Fixes
+
+* Update dependencies ([#34](https://github.com/4Catalyzer/graphql-subscription-server/issues/34)) ([1600040](https://github.com/4Catalyzer/graphql-subscription-server/commit/1600040))
+
 <a name="0.8.1"></a>
 ## [0.8.1](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.8.0...v0.8.1) (2019-02-26)
 
