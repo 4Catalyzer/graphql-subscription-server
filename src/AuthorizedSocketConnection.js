@@ -176,6 +176,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         document,
         null,
         {
+          credentials: this.config.credentialsManager.getCredentials(),
           subscribe: async (...args) =>
             AsyncUtils.filter(
               await subscriptionContext.subscribe(...args),
