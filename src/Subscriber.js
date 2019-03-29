@@ -2,7 +2,8 @@
 
 export interface Subscriber {
   subscribe(
-    ...any[]
+    channel: string,
+    options: Object,
   ): { iterator: Promise<AsyncIterator<any>>, close: () => Promise<void> };
   close(): void | Promise<void>;
 }

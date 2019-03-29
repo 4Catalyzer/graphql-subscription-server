@@ -48,10 +48,8 @@ export default class RedisSubscriber implements Subscriber {
     await promisify(cb => this.redis.subscribe(channel, cb))();
   }
 
-  subscribe(
-    channel: Channel,
-    parseMessage: ?(string) => any = this._parseMessage,
-  ) {
+  subscribe(channel: Channel, options: Object) {
+    const parseMessage = options.parseMessage || this._parseMessage;
     let channelQueues = this._queues.get(channel);
     if (!channelQueues) {
       channelQueues = new Set();

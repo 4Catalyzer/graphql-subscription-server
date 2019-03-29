@@ -81,19 +81,22 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     this.socket.emit('app_error', error);
   }
 
-  isAuthorized = (data: any) => {
+  getAuthorizationChecker = (authorizationPredicate: Function) => {
     const credentials = this.config.credentialsManager.getCredentials();
-    const isAuthorized =
-      !!credentials && this.config.hasPermission(data, credentials);
+    return (data: any) => {
+      const isAuthorized = authorizationPredicate(data, credentials);
+      if (!isAuthorized) {
+        this.log('info', 'unauthorized', {
+          payload: data,
+          credentials,
+        });
+      }
+      return isAuthorized;
+    };
+  };
 
-    if (!isAuthorized) {
-      this.log('info', 'unauthorized', {
-        payload: data,
-        credentials,
-      });
-    }
-
-    return isAuthorized;
+  authorizationPredicate = (data: any, credentials: any) => {
+    return !!credentials && this.config.hasPermission(data, credentials);
   };
 
   handleAuthenticate = async (authorization: string, cb?: Function) => {
@@ -176,12 +179,18 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         document,
         null,
         {
-          credentials: this.config.credentialsManager.getCredentials(),
-          subscribe: async (...args) =>
-            AsyncUtils.filter(
-              await subscriptionContext.subscribe(...args),
-              this.isAuthorized,
-            ),
+          subscribe: async (
+            channel,
+            { authorizationPredicate, ...options },
+          ) => {
+            return AsyncUtils.authorizationFilter(
+              await subscriptionContext.subscribe(channel, options),
+              this.getAuthorizationChecker(
+                authorizationPredicate || this.authorizationPredicate,
+              ),
+              this.config.credentialsManager.getCredentials(),
+            );
+          },
         },
         variables,
       );
