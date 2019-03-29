@@ -183,7 +183,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
             channel,
             { authorizationPredicate, ...options },
           ) => {
-            return AsyncUtils.authorizationFilter(
+            return AsyncUtils.filter(
               await subscriptionContext.subscribe(channel, options),
               this.getAuthorizationChecker(
                 authorizationPredicate || this.authorizationPredicate,

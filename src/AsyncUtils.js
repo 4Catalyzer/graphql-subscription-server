@@ -19,16 +19,6 @@ export async function* filter<T>(
   }
 }
 
-export async function* authorizationFilter<T>(
-  iterable: AsyncIterable<T>,
-  predicate: (value: T, credentials: Object) => boolean,
-  credentials: Object,
-): AsyncGenerator<T, void, void> {
-  for await (const value of iterable) {
-    if (predicate(value, credentials)) yield value;
-  }
-}
-
 export type AsyncQueueOptions = {
   setup?: () => void | Promise<void>,
   teardown?: () => void | Promise<void>,
