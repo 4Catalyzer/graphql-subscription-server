@@ -188,7 +188,6 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
               this.getAuthorizationChecker(
                 authorizationPredicate || this.authorizationPredicate,
               ),
-              this.config.credentialsManager.getCredentials(),
             );
           },
         },

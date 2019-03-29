@@ -12,6 +12,10 @@ type RedisConfigOptions = redis.ClientOpts & {
   parseMessage?: (data: string) => any,
 };
 
+type SubscriptionOptions = {
+  parseMessage?: (msg: string) => any,
+};
+
 export default class RedisSubscriber implements Subscriber {
   redis: redis.RedisClient;
 
@@ -48,7 +52,7 @@ export default class RedisSubscriber implements Subscriber {
     await promisify(cb => this.redis.subscribe(channel, cb))();
   }
 
-  subscribe(channel: Channel, options: Object) {
+  subscribe(channel: Channel, options: SubscriptionOptions) {
     const parseMessage = options.parseMessage || this._parseMessage;
     let channelQueues = this._queues.get(channel);
     if (!channelQueues) {
