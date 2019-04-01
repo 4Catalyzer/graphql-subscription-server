@@ -1,9 +1,9 @@
 /** @flow */
 
-export interface Subscriber {
+export interface Subscriber<TSubscribeOptions: {}> {
   subscribe(
     topic: string,
-    options: Object,
+    options: TSubscribeOptions,
   ): { iterator: Promise<AsyncIterator<any>>, close: () => Promise<void> };
   close(): void | Promise<void>;
 }
