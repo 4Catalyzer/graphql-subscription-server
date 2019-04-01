@@ -3,11 +3,11 @@
 import type { Subscriber } from './Subscriber';
 
 export default class SubscriptionContext {
-  subscriber: Subscriber<*>;
+  subscriber: Subscriber<any>;
 
   closes: Array<() => Promise<void>>;
 
-  constructor(subscriber: Subscriber<*>) {
+  constructor(subscriber: Subscriber<any>) {
     this.subscriber = subscriber;
     this.closes = [];
   }
