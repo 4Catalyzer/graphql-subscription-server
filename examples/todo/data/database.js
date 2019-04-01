@@ -34,12 +34,12 @@ class Database extends EventEmitter {
     [VIEWER_ID]: [],
   };
 
-  emit(channel, data) {
+  emit(topic, data) {
     // Delay the change notification to avoid the subscription update hitting the
     // client before the mutation response.
     setTimeout(() => {
-      console.log('emitting data', channel);
-      super.emit(channel, data);
+      console.log('emitting data', topic);
+      super.emit(topic, data);
     }, 100);
   }
 
