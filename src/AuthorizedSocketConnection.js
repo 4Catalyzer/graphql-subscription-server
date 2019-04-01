@@ -180,7 +180,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         document,
         null,
         {
-          subscribe: async (topic, { hasPermission, ...options }) => {
+          subscribe: async (topic, { hasPermission, ...options } = {}) => {
             return AsyncUtils.filter(
               await subscriptionContext.subscribe(topic, options),
               data =>
