@@ -10,7 +10,10 @@ import type { Subscriber } from './Subscriber';
  * they received, passing through, the _first_ argument of the event handler.
  * Events are listened to at the time of subscription, meaning only event past then will be received.
  */
-export default class EventSubscriber implements Subscriber {
+
+type EventSubscribeOptions = {};
+export default class EventSubscriber
+  implements Subscriber<EventSubscribeOptions> {
   emitter: EventEmitter;
 
   _queues: Map<string, Set<AsyncQueue>>;
@@ -38,7 +41,7 @@ export default class EventSubscriber implements Subscriber {
     this._listeners.set(event, listener);
   }
 
-  subscribe(event: string) {
+  subscribe(event: string, _options: EventSubscribeOptions) {
     let eventQueues = this._queues.get(event);
 
     if (!eventQueues) {

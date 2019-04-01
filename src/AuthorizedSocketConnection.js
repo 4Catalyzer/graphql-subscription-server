@@ -30,7 +30,7 @@ type Subscription = {
 
 type AuthorizedSocketOptions<TContext, TCredentials> = {|
   schema: GraphQLSchema,
-  subscriber: Subscriber,
+  subscriber: Subscriber<*>,
   credentialsManager: CredentialsManager<TCredentials>,
   hasPermission: (data: any, credentials: TCredentials) => boolean,
   createContext: ?(credentials: ?TCredentials) => TContext,
