@@ -12,6 +12,7 @@ import type { Subscriber } from './Subscriber';
  */
 
 type EventSubscribeOptions = {};
+
 export default class EventSubscriber
   implements Subscriber<EventSubscribeOptions> {
   emitter: EventEmitter;
