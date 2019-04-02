@@ -28,9 +28,13 @@ type Subscription = {
   variables: Object,
 };
 
+type SubscribeOptions<TCredentials> = {
+  hasPermission?: (data: any, credentials: TCredentials) => boolean,
+};
+
 type AuthorizedSocketOptions<TContext, TCredentials> = {|
   schema: GraphQLSchema,
-  subscriber: Subscriber,
+  subscriber: Subscriber<any>,
   credentialsManager: CredentialsManager<TCredentials>,
   hasPermission: (data: any, credentials: TCredentials) => boolean,
   createContext: ?(credentials: ?TCredentials) => TContext,
@@ -81,19 +85,23 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     this.socket.emit('app_error', error);
   }
 
-  isAuthorized = (data: any) => {
+  isAuthorized(
+    data: any,
+    hasPermission: (data: any, credentials: TCredentials) => boolean,
+  ) {
     const credentials = this.config.credentialsManager.getCredentials();
-    const isAuthorized =
-      !!credentials && this.config.hasPermission(data, credentials);
-
+    const isAuthorized = !!credentials && hasPermission(data, credentials);
     if (!isAuthorized) {
       this.log('info', 'unauthorized', {
         payload: data,
         credentials,
       });
     }
-
     return isAuthorized;
+  }
+
+  hasPermission = (data: any, credentials: TCredentials) => {
+    return this.config.hasPermission(data, credentials);
   };
 
   handleAuthenticate = async (authorization: string, cb?: Function) => {
@@ -176,11 +184,18 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         document,
         null,
         {
-          subscribe: async (...args) =>
-            AsyncUtils.filter(
-              await subscriptionContext.subscribe(...args),
-              this.isAuthorized,
-            ),
+          subscribe: async (
+            topic,
+            {
+              hasPermission = this.config.hasPermission,
+              ...options
+            }: SubscribeOptions<TCredentials> = {},
+          ) => {
+            return AsyncUtils.filter(
+              await subscriptionContext.subscribe(topic, options),
+              data => this.isAuthorized(data, hasPermission),
+            );
+          },
         },
         variables,
       );

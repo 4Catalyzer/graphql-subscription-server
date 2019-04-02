@@ -41,7 +41,9 @@ describe('RedisSubscriber', () => {
     const client = new RedisSubscriber();
 
     const subscriptionContext = new SubscriptionContext(client);
-    const subA = await subscriptionContext.subscribe(channel, JSON.parse);
+    const subA = await subscriptionContext.subscribe(channel, {
+      parseMessage: JSON.parse,
+    });
     const subB = await subscriptionContext.subscribe('another');
 
     client.redis.publish(channel, '[1,2,3]');
