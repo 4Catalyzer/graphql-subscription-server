@@ -14,7 +14,7 @@ import type { Subscriber } from './Subscriber';
 export type SubscriptionServerConfig<TContext, TCredentials> = {|
   path: string,
   schema: GraphQLSchema,
-  subscriber: Subscriber<*>,
+  subscriber: Subscriber<any>,
   createCredentialsManager: (request: any) => CredentialsManager<TCredentials>,
   hasPermission: (data: any, credentials: TCredentials) => boolean,
   createContext?: (request: any, credentials: ?TCredentials) => TContext,
