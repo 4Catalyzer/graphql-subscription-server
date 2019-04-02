@@ -1,3 +1,10 @@
+# [0.9.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.8.2...v0.9.0) (2019-04-02)
+
+
+### Features
+
+* Allow subscription-level override of authorization check function ([#37](https://github.com/4Catalyzer/graphql-subscription-server/issues/37)) ([d5c7aaa](https://github.com/4Catalyzer/graphql-subscription-server/commit/d5c7aaa))
+
 ## [0.8.2](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.8.1...v0.8.2) (2019-03-20)
 
 
