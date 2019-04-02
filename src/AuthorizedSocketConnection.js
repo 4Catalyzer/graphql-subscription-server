@@ -28,6 +28,10 @@ type Subscription = {
   variables: Object,
 };
 
+type SubscribeOptions<TCredentials> = {
+  hasPermission?: (data: any, credentials: TCredentials) => boolean,
+};
+
 type AuthorizedSocketOptions<TContext, TCredentials> = {|
   schema: GraphQLSchema,
   subscriber: Subscriber<any>,
@@ -81,10 +85,10 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     this.socket.emit('app_error', error);
   }
 
-  isAuthorized = (
+  isAuthorized(
     data: any,
     hasPermission: (data: any, credentials: TCredentials) => boolean,
-  ) => {
+  ) {
     const credentials = this.config.credentialsManager.getCredentials();
     const isAuthorized = !!credentials && hasPermission(data, credentials);
     if (!isAuthorized) {
@@ -94,7 +98,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       });
     }
     return isAuthorized;
-  };
+  }
 
   hasPermission = (data: any, credentials: TCredentials) => {
     return this.config.hasPermission(data, credentials);
@@ -182,7 +186,10 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         {
           subscribe: async (
             topic,
-            { hasPermission = this.config.hasPermission, ...options } = {},
+            {
+              hasPermission = this.config.hasPermission,
+              ...options
+            }: SubscribeOptions<TCredentials> = {},
           ) => {
             return AsyncUtils.filter(
               await subscriptionContext.subscribe(topic, options),
