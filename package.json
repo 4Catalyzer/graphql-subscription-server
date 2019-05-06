@@ -73,7 +73,7 @@
     "@babel/core": "^7.4.4",
     "@babel/preset-flow": "^7.0.0",
     "babel-eslint": "^10.0.1",
-    "babel-jest": "^24.7.1",
+    "babel-jest": "^24.8.0",
     "codecov": "^3.3.0",
     "eslint": "^5.16.0",
     "eslint-config-4catalyzer-flow": "^0.8.2",
