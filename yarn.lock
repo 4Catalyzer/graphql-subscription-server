@@ -7262,10 +7262,10 @@ redis-commands@^1.2.0:
   resolved "https://registry.yarnpkg.com/redis-commands/-/redis-commands-1.4.0.tgz#52f9cf99153efcce56a8f86af986bd04e988602f"
   integrity sha512-cu8EF+MtkwI4DLIT0x9P8qNTLFhQD4jLfxLR0cCNkeGzs87FN6879JOJwNQR/1zD7aSYNbU0hgsV9zGY71Itvw==
 
-redis-mock@^0.43.0:
-  version "0.43.0"
-  resolved "https://registry.yarnpkg.com/redis-mock/-/redis-mock-0.43.0.tgz#e05bef36b75f7332d41c13828d63baf7b47bced1"
-  integrity sha512-ayNlCxbeaVp16U5HU220C24lFk7TEzW8hL4RE5SXv/GeKq+P4ek1QqKKbu0K2QkGRdO2bvHE2ymJ/pbBLqyUww==
+redis-mock@^0.44.0:
+  version "0.44.0"
+  resolved "https://registry.yarnpkg.com/redis-mock/-/redis-mock-0.44.0.tgz#10466421bb96d77440e152398ea1107198ecadbe"
+  integrity sha512-n28zlPa8BWX34XnaIfNDZc/SJn2H6xlnP5c01+s/86rBm+8VGuOltcFFZXaI9IKwIPA4kJD2cdf1dP3P+eNjPA==
 
 redis-parser@^2.6.0:
   version "2.6.0"
