@@ -88,7 +88,7 @@
     "eslint-plugin-react": "^7.14.2",
     "flow-bin": "^0.101.1",
     "graphql": "^14.3.1",
-    "husky": "^2.4.1",
+    "husky": "^2.5.0",
     "jest": "^24.8.0",
     "lint-staged": "^8.2.1",
     "prettier": "^1.18.2",
