@@ -93,7 +93,7 @@
     "lint-staged": "^8.2.1",
     "prettier": "^1.18.2",
     "redis-mock": "^0.44.0",
-    "semantic-release": "^15.13.17"
+    "semantic-release": "^15.13.18"
   },
   "engines": {
     "node": ">=10.0.0"
