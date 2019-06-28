@@ -31,20 +31,20 @@
     globby "^9.0.0"
     yargs "^13.2.1"
 
-"@4c/semantic-release-alt-publish-dir@^4.0.3":
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/@4c/semantic-release-alt-publish-dir/-/semantic-release-alt-publish-dir-4.0.3.tgz#21316d60815e13f4a4a98faffc78fa1b31c2d1ff"
-  integrity sha512-G0grTof/Yzo3FGNk+9rUCY0t5fCaE8DN/SdpBjkRHm6G9cz5KmVRzo4zutVsfLCOqiXTdPmpi2+Lz7ClC3oA/g==
+"@4c/semantic-release-alt-publish-dir@^4.0.4":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@4c/semantic-release-alt-publish-dir/-/semantic-release-alt-publish-dir-4.0.4.tgz#6086b565d6d16d5a220baf3aa220d6c334fbdf6d"
+  integrity sha512-umGsLVB5s9Li6Qr9RS9zmcSdKBtiXK/L6uil732Fbb/sL3r9omEmJWnfwzUVUjdm6AIL7QlBm/YLWYGoVeyuiQ==
   dependencies:
     "@4c/file-butler" "^2.3.0"
     "@semantic-release/npm" "^5.1.4"
 
-"@4c/semantic-release-config@^1.0.6":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@4c/semantic-release-config/-/semantic-release-config-1.0.6.tgz#8333c75f6d9a37d9386287e487aaf1d027d511a2"
-  integrity sha512-VtrRmuANZx+POkHzk2TB9QQnEk3MNcGX4jD/afXIHncSbrcGgxYs+TsVGzPIhSA0+0wyxTXYQjxSFvPzJzJmRw==
+"@4c/semantic-release-config@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@4c/semantic-release-config/-/semantic-release-config-1.0.7.tgz#9e44d508cb60ebb559a692b9c70313a6c7f6cfa4"
+  integrity sha512-2E5P16/EhKG6o0I8r2/FAD5iX9sOlHtssrTel9oZQumAOH2EJ29SXU0BwZLXe7GeVL4i4G3ClHBEpaRJrwTTjQ==
   dependencies:
-    "@4c/semantic-release-alt-publish-dir" "^4.0.3"
+    "@4c/semantic-release-alt-publish-dir" "^4.0.4"
     "@semantic-release/changelog" "^3.0.2"
     "@semantic-release/git" "^7.0.8"
     "@semantic-release/github" "^5.2.10"
