@@ -1656,7 +1656,7 @@ axobject-query@^2.0.2:
   dependencies:
     ast-types-flow "0.0.7"
 
-babel-eslint@^10.0.1, babel-eslint@^10.0.2:
+babel-eslint@^10.0.2:
   version "10.0.2"
   resolved "https://registry.yarnpkg.com/babel-eslint/-/babel-eslint-10.0.2.tgz#182d5ac204579ff0881684b040560fdcc1558456"
   integrity sha512-UdsurWPtgiPgpJ06ryUnuaSXC2s0WoSZnQmEpbAH65XZSdwowgN5MvyP7e88nW07FYXv72erVtpBkxyDVKhH1Q==
@@ -2368,6 +2368,11 @@ configstore@^3.0.0:
     write-file-atomic "^2.0.0"
     xdg-basedir "^3.0.0"
 
+confusing-browser-globals@^1.0.5:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/confusing-browser-globals/-/confusing-browser-globals-1.0.7.tgz#5ae852bd541a910e7ffb2dbb864a2d21a36ad29b"
+  integrity sha512-cgHI1azax5ATrZ8rJ+ODDML9Fvu67PimB6aNxBrc/QwSaDaM9eTfIEUHx3bBLJJ82ioSb+/5zfsMCCEJax3ByQ==
+
 console-control-strings@^1.0.0, console-control-strings@^1.1.0, console-control-strings@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/console-control-strings/-/console-control-strings-1.1.0.tgz#3d7cf4464db6446ea644bf4b39507f9851008e8e"
@@ -3059,12 +3064,12 @@ eslint-config-4catalyzer-flow-react@^0.7.8:
     eslint-config-4catalyzer-flow "^0.8.2"
     eslint-config-4catalyzer-react "^0.9.3"
 
-eslint-config-4catalyzer-flow@^0.8.2:
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer-flow/-/eslint-config-4catalyzer-flow-0.8.2.tgz#4513f34ceed83fde4a73e82aa9b9b4d6c681c8eb"
-  integrity sha512-DeYzO4qCb4s6uJGJZkOeVCoW8YnuOfJJSK1xKIA5I0/OS/cpHJnamVgyOSiChY5JTf6R1WqWxELxRbvlndxu2Q==
+eslint-config-4catalyzer-flow@^0.8.2, eslint-config-4catalyzer-flow@^0.8.3:
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer-flow/-/eslint-config-4catalyzer-flow-0.8.3.tgz#c20f1c0677f557de3d45cf9942850d42deaf3826"
+  integrity sha512-pBaq4bu1pUGXAD3X4fGuTGyYBb6bt4Kjj4QBuQDCEYCsvXW3OthYr7xwFzXaKkG6iLeVyV30n6RAGh6Ynm2YmQ==
   dependencies:
-    eslint-config-4catalyzer "^0.8.1"
+    eslint-config-4catalyzer "^0.8.2"
 
 eslint-config-4catalyzer-jest@^1.4.1:
   version "1.4.1"
@@ -3080,13 +3085,13 @@ eslint-config-4catalyzer-react@^0.9.3:
     eslint-config-airbnb "^17.1.0"
     eslint-plugin-react-hooks "^1.5.1"
 
-eslint-config-4catalyzer@^0.8.1:
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer/-/eslint-config-4catalyzer-0.8.1.tgz#3a961138724576f5e4241e4fc93ff9fff80c768a"
-  integrity sha512-8TjIPs5FZDPcagNTDENSkpvQzpKpITarA315ZwRKd40YsTe5f5QZQP39OHLAx84A/ZXErt1UdKYMvMXBKjuglQ==
+eslint-config-4catalyzer@^0.8.1, eslint-config-4catalyzer@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer/-/eslint-config-4catalyzer-0.8.2.tgz#f6de02500ae23754f66a7efffe7b0a8cf91a1914"
+  integrity sha512-Pd8hwdbRsEEl5wB86efN2i4B0g5mG+HfcrLBxgEAWpkjt5GWwYyg7/1ooft+CqCDSo5mPdfg820XQEIYIQAbhw==
   dependencies:
-    babel-eslint "^10.0.1"
-    eslint-config-airbnb-base "^13.1.0"
+    babel-eslint "^10.0.2"
+    eslint-config-airbnb-base "^13.2.0"
 
 eslint-config-airbnb-base@^13.1.0:
   version "13.1.0"
@@ -3096,6 +3101,15 @@ eslint-config-airbnb-base@^13.1.0:
     eslint-restricted-globals "^0.1.1"
     object.assign "^4.1.0"
     object.entries "^1.0.4"
+
+eslint-config-airbnb-base@^13.2.0:
+  version "13.2.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-airbnb-base/-/eslint-config-airbnb-base-13.2.0.tgz#f6ea81459ff4dec2dda200c35f1d8f7419d57943"
+  integrity sha512-1mg/7eoB4AUeB0X1c/ho4vb2gYkNH8Trr/EgCT/aGmKhhG+F6vF5s8+iRBlWAzFIAphxIdp3YfEKgEl0f9Xg+w==
+  dependencies:
+    confusing-browser-globals "^1.0.5"
+    object.assign "^4.1.0"
+    object.entries "^1.1.0"
 
 eslint-config-airbnb@^17.1.0:
   version "17.1.0"
