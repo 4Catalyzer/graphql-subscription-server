@@ -21,13 +21,13 @@ import RemoveTodoSubscription from '../subscriptions/RemoveTodoSubscription';
 import TodoListFooter from './TodoListFooter';
 import TodoTextInput from './TodoTextInput';
 
-class TodoApp extends React.Component {
-  static propTypes = {
-    viewer: PropTypes.object.isRequired,
-    relay: PropTypes.object.isRequired,
-    children: PropTypes.node.isRequired,
-  };
+const propTypes = {
+  viewer: PropTypes.object.isRequired,
+  relay: PropTypes.object.isRequired,
+  children: PropTypes.node.isRequired,
+};
 
+class TodoApp extends React.Component {
   _handleTextInputSave = text => {
     const { relay, viewer } = this.props;
     relay.commitUpdate(new AddTodoMutation({ viewer, text }));
@@ -68,6 +68,8 @@ class TodoApp extends React.Component {
     );
   }
 }
+
+TodoApp.propTypes = propTypes;
 
 export default RelaySubscriptions.createContainer(TodoApp, {
   fragments: {

@@ -17,12 +17,12 @@ import { IndexLink, Link } from 'react-router';
 
 import RemoveCompletedTodosMutation from '../mutations/RemoveCompletedTodosMutation';
 
-class TodoListFooter extends React.Component {
-  static propTypes = {
-    viewer: PropTypes.object.isRequired,
-    relay: PropTypes.object.isRequired,
-  };
+const propTypes = {
+  viewer: PropTypes.object.isRequired,
+  relay: PropTypes.object.isRequired,
+};
 
+class TodoListFooter extends React.Component {
   _handleRemoveCompletedTodosClick = () => {
     const { relay, viewer } = this.props;
     relay.commitUpdate(
@@ -74,6 +74,8 @@ class TodoListFooter extends React.Component {
     );
   }
 }
+
+TodoListFooter.propTypes = propTypes;
 
 export default Relay.createContainer(TodoListFooter, {
   fragments: {

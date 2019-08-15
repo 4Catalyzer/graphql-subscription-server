@@ -17,12 +17,12 @@ import Relay from 'react-relay/classic';
 import MarkAllTodosMutation from '../mutations/MarkAllTodosMutation';
 import Todo from './Todo';
 
-class TodoList extends React.Component {
-  static propTypes = {
-    viewer: PropTypes.object.isRequired,
-    relay: PropTypes.object.isRequired,
-  };
+const propTypes = {
+  viewer: PropTypes.object.isRequired,
+  relay: PropTypes.object.isRequired,
+};
 
+class TodoList extends React.Component {
   _handleMarkAllChange = e => {
     const { relay, viewer } = this.props;
     relay.commitUpdate(
@@ -63,6 +63,8 @@ class TodoList extends React.Component {
     );
   }
 }
+
+TodoList.propTypes = propTypes;
 
 export default Relay.createContainer(TodoList, {
   initialVariables: {
