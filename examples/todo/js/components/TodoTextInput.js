@@ -16,17 +16,17 @@ import React from 'react';
 const ENTER_KEY_CODE = 13;
 const ESC_KEY_CODE = 27;
 
-export default class TodoTextInput extends React.Component {
-  static propTypes = {
-    className: PropTypes.string,
-    commitOnBlur: PropTypes.bool.isRequired,
-    initialValue: PropTypes.string,
-    onCancel: PropTypes.func,
-    onDelete: PropTypes.func,
-    onSave: PropTypes.func.isRequired,
-    placeholder: PropTypes.string,
-  };
+const propTypes = {
+  className: PropTypes.string,
+  commitOnBlur: PropTypes.bool.isRequired,
+  initialValue: PropTypes.string,
+  onCancel: PropTypes.func,
+  onDelete: PropTypes.func,
+  onSave: PropTypes.func.isRequired,
+  placeholder: PropTypes.string,
+};
 
+class TodoTextInput extends React.Component {
   state = {
     text: this.props.initialValue || '',
   };
@@ -81,3 +81,7 @@ export default class TodoTextInput extends React.Component {
     );
   }
 }
+
+TodoTextInput.propTypes = propTypes;
+
+export default TodoTextInput;

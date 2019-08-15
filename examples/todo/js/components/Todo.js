@@ -22,13 +22,13 @@ import RenameTodoMutation from '../mutations/RenameTodoMutation';
 import UpdateTodoSubscription from '../subscriptions/UpdateTodoSubscription';
 import TodoTextInput from './TodoTextInput';
 
-class Todo extends React.Component {
-  static propTypes = {
-    viewer: PropTypes.object.isRequired,
-    todo: PropTypes.object.isRequired,
-    relay: PropTypes.object.isRequired,
-  };
+const propTypes = {
+  viewer: PropTypes.object.isRequired,
+  todo: PropTypes.object.isRequired,
+  relay: PropTypes.object.isRequired,
+};
 
+class Todo extends React.Component {
   state = {
     isEditing: false,
   };
@@ -114,6 +114,7 @@ class Todo extends React.Component {
           </label>
           <button
             type="button"
+            aria-label="Destroy"
             className="destroy"
             onClick={this._handleDestroyClick}
           />
@@ -123,6 +124,8 @@ class Todo extends React.Component {
     );
   }
 }
+
+Todo.propTypes = propTypes;
 
 export default RelaySubscriptions.createContainer(Todo, {
   fragments: {
