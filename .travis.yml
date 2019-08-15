@@ -1,16 +1,16 @@
-sudo: false
-
 language: node_js
 node_js:
-  - stable
+  - node
 
-cache: yarn
+cache:
+  yarn: true
+  npm: true
 
 after_script:
-  - yarn codecov
+  - node_modules/.bin/codecov
 
 after_success:
-  - yarn semantic-release
+  - node_modules/.bin/semantic-release
 
 branches:
   only:
