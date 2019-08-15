@@ -16,7 +16,6 @@
     "clean": "rm -rf lib es",
     "format": "eslint . --fix && prettier --write --ignore-path .eslintignore '**/*.{json,css,md}'",
     "lint": "npm run check && eslint . && prettier --list-different --ignore-path .eslintignore '**/*.{json,css,md}'",
-    "precommit": "lint-staged",
     "prepublish": "npm run build",
     "tdd": "jest --watch",
     "test": "npm run lint && jest --coverage"
