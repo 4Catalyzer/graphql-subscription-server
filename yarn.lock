@@ -3101,10 +3101,10 @@ eslint-config-4catalyzer-flow-react@^1.0.0:
     eslint-config-4catalyzer-flow "^1.0.0"
     eslint-config-4catalyzer-react "^1.0.0"
 
-eslint-config-4catalyzer-flow@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer-flow/-/eslint-config-4catalyzer-flow-1.0.0.tgz#e762e4368fbdf2b992e724dc92f6c0792808d687"
-  integrity sha512-rljjHooAvmvo3k9jpnXkxCVKzeoQDNfJLaV8I9E+7VuF3FofBt+0OO+aWyQVOqfEaBqBzpfvtUxP0UHkXEaowg==
+eslint-config-4catalyzer-flow@^1.0.0, eslint-config-4catalyzer-flow@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer-flow/-/eslint-config-4catalyzer-flow-1.0.1.tgz#4304b0c7e7f2c05734b186787647b5ceeee94e8a"
+  integrity sha512-3oIFAu/ZWBfce4TMqTXkwgWu1TSMLHVUAZbkq4GQV3TSyhBLd0YQW9rWpTeKhmqrJTf/hmMrE9TbFsI77EdIcg==
   dependencies:
     eslint-config-4catalyzer "^1.0.0"
 
