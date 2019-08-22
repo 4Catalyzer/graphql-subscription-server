@@ -30,6 +30,7 @@ import TodoApp from './components/TodoApp';
 import TodoList from './components/TodoList';
 import ViewerQueries from './queries/ViewerQueries';
 
+// eslint-disable-next-line react-hooks/rules-of-hooks
 const history = useRouterHistory(createHashHistory)({ queryKey: false });
 
 const environment = new RelaySubscriptions.Environment();
