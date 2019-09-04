@@ -78,7 +78,7 @@
     "eslint-config-4catalyzer-flow-react": "^1.0.2",
     "eslint-config-4catalyzer-jest": "^2.0.1",
     "eslint-config-prettier": "^6.1.0",
-    "eslint-plugin-flowtype": "^4.2.0",
+    "eslint-plugin-flowtype": "^4.3.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jest": "^22.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.3",
