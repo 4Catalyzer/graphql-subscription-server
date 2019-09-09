@@ -68,7 +68,7 @@
   "devDependencies": {
     "@4c/babel-preset": "^7.0.0",
     "@4c/semantic-release-config": "^2.0.1",
-    "@babel/cli": "^7.5.5",
+    "@babel/cli": "^7.6.0",
     "@babel/core": "^7.5.5",
     "@babel/preset-flow": "^7.0.0",
     "babel-jest": "^24.9.0",
