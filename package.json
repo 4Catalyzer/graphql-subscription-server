@@ -70,7 +70,7 @@
     "@4c/semantic-release-config": "^2.0.3",
     "@babel/cli": "^7.7.0",
     "@babel/core": "^7.7.2",
-    "@babel/preset-flow": "^7.0.0",
+    "@babel/preset-flow": "^7.7.4",
     "babel-jest": "^24.9.0",
     "codecov": "^3.6.1",
     "eslint": "^6.6.0",
