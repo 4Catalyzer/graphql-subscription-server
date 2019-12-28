@@ -1,14 +1,3 @@
 {
-  "extends": ["github>4Catalyzer/renovate-config:library", ":automergeMinor"],
-  "ignorePresets": ["group:allNonMajor"],
-  "packageRules": [
-    {
-      "packagePatterns": ["*"],
-      "excludePackageNames": ["flow-bin"],
-      "minor": {
-        "groupName": "all non-major dependencies",
-        "groupSlug": "all-minor-patch"
-      }
-    }
-  ]
+  "extends": ["github>4Catalyzer/renovate-config:library", ":automergeMinor"]
 }
