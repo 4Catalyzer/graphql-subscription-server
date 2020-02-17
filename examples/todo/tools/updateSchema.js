@@ -13,7 +13,9 @@
 
 import fs from 'fs';
 import path from 'path';
+
 import { printSchema } from 'graphql/utilities';
+
 import { schema } from '../data/schema';
 
 fs.writeFileSync(

@@ -14,22 +14,22 @@
 
 /* eslint-disable no-console */
 
-import express from 'express';
 import http from 'http';
-import graphQLHTTP from 'express-graphql';
 import path from 'path';
+
+import EventSubscriber from '@4c/graphql-subscription-server/lib/EventSubscriber';
+import JwtCredentialsManager, {
+  type JwtCredentials,
+} from '@4c/graphql-subscription-server/lib/JwtCredentialsManager';
+import SubscriptionServer from '@4c/graphql-subscription-server/lib/SubscriptionServer';
+import express from 'express';
+import graphQLHTTP from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import { rsaPublicKeyToPEM } from 'jwks-rsa/lib/utils';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 
-import SubscriptionServer from '@4c/graphql-subscription-server/lib/SubscriptionServer';
-import EventSubscriber from '@4c/graphql-subscription-server/lib/EventSubscriber';
-import JwtCredentialsManager, {
-  type JwtCredentials,
-} from '@4c/graphql-subscription-server/lib/JwtCredentialsManager';
 import database from './data/database';
-
 import { schema } from './data/schema';
 
 const APP_PORT = 3000;

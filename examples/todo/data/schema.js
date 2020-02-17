@@ -20,7 +20,6 @@ import {
   GraphQLSchema,
   GraphQLString,
 } from 'graphql';
-
 import {
   connectionArgs,
   connectionDefinitions,
@@ -32,7 +31,6 @@ import {
   nodeDefinitions,
   toGlobalId,
 } from 'graphql-relay';
-
 import { subscriptionWithClientId } from 'graphql-relay-subscription';
 
 import { Todo, User } from './database';

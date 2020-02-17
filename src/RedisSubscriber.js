@@ -1,7 +1,8 @@
 /* @flow */
 
-import redis from 'redis';
 import { promisify } from 'util';
+
+import redis from 'redis';
 
 import { AsyncQueue, map } from './AsyncUtils';
 import type { Subscriber } from './Subscriber';

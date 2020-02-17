@@ -1,9 +1,9 @@
 /* @flow */
 
 import {
+  GraphQLError,
   createSourceEventStream,
   execute,
-  GraphQLError,
   parse,
   specifiedRules,
   validate,
@@ -13,7 +13,7 @@ import type IoServer from 'socket.io';
 
 import * as AsyncUtils from './AsyncUtils';
 import type { CredentialsManager } from './CredentialsManager';
-import type { Logger, CreateLogger } from './Logger';
+import type { CreateLogger, Logger } from './Logger';
 import type { Subscriber } from './Subscriber';
 import SubscriptionContext from './SubscriptionContext';
 

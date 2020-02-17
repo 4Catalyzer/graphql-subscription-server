@@ -16,11 +16,11 @@ import { createHashHistory } from 'history';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
+  IndexRoute,
+  Route,
+  Router,
   applyRouterMiddleware,
   useRouterHistory,
-  Router,
-  Route,
-  IndexRoute,
 } from 'react-router';
 import useRelay from 'react-router-relay';
 import RelaySubscriptions from 'relay-subscriptions';
