@@ -1,14 +1,15 @@
 /* @flow */
 
+import { promisify } from 'util';
+
 import express from 'express';
 import type { GraphQLSchema } from 'graphql';
 import IoServer from 'socket.io';
-import { promisify } from 'util';
 
 import AuthorizedSocketConnection from './AuthorizedSocketConnection';
 import type { CreateValidationRules } from './AuthorizedSocketConnection';
 import type { CredentialsManager } from './CredentialsManager';
-import type { Logger, CreateLogger } from './Logger';
+import type { CreateLogger, Logger } from './Logger';
 import type { Subscriber } from './Subscriber';
 
 export type SubscriptionServerConfig<TContext, TCredentials> = {|
