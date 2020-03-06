@@ -1,15 +1,13 @@
 {
+  "plugins": ["prettier"],
   "extends": [
-    "4catalyzer-flow",
+    "4catalyzer-react",
     "4catalyzer-jest",
     "prettier",
-    "prettier/flowtype"
-  ],
-  "plugins": [
-    "prettier"
+    "prettier/react",
+    "4catalyzer-typescript"
   ],
   "rules": {
     "prettier/prettier": "error"
   }
 }
-

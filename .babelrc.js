@@ -7,6 +7,6 @@ module.exports = {
         modules: process.env.BABEL_ENV !== 'esm' ? 'commonjs' : false,
       },
     ],
-    '@babel/flow',
+    '@babel/preset-typescript',
   ],
 };

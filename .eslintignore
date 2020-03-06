@@ -5,3 +5,4 @@ es/
 examples/*/token.json
 package.json
 CHANGELOG.md
+**/coverage/**
