@@ -1,0 +1,8 @@
+{
+  "extends": "@4c/tsconfig/node",
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "types": ["jest", "node"]
+  },
+  "include": ["**/*.ts"]
+}

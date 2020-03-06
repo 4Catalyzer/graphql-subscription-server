@@ -1,5 +1,3 @@
-/* @flow */
-
 import { AsyncQueue, map } from '../src/AsyncUtils';
 
 describe('AsyncQueue', () => {
@@ -46,7 +44,8 @@ describe('AsyncQueue', () => {
     const queue = new AsyncQueue({ setup: setupSpy, teardown: teardownSpy });
     queue.push(5);
 
-    const iter = map(await queue.iterator, v => v + 1);
+    // FIXME: type this
+    const iter = map((await queue.iterator) as any, (v: number) => v + 1);
 
     expect((await iter.next()).value).toEqual(6);
 

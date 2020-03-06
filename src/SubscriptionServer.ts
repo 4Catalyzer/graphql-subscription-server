@@ -1,29 +1,32 @@
-/* @flow */
-
 import { promisify } from 'util';
 
 import express from 'express';
-import type { GraphQLSchema } from 'graphql';
+import { GraphQLSchema } from 'graphql';
 import IoServer from 'socket.io';
 
-import AuthorizedSocketConnection from './AuthorizedSocketConnection';
-import type { CreateValidationRules } from './AuthorizedSocketConnection';
-import type { CredentialsManager } from './CredentialsManager';
-import type { CreateLogger, Logger } from './Logger';
-import type { Subscriber } from './Subscriber';
+import AuthorizedSocketConnection, {
+  CreateValidationRules,
+} from './AuthorizedSocketConnection';
+import { CredentialsManager } from './CredentialsManager';
+import { CreateLogger, Logger } from './Logger';
+import { Subscriber } from './Subscriber';
 
-export type SubscriptionServerConfig<TContext, TCredentials> = {|
-  path: string,
-  schema: GraphQLSchema,
-  subscriber: Subscriber<any>,
-  createCredentialsManager: (request: any) => CredentialsManager<TCredentials>,
-  hasPermission: (data: any, credentials: TCredentials) => boolean,
-  createContext?: (request: any, credentials: ?TCredentials) => TContext,
-  maxSubscriptionsPerConnection?: number,
-  createValidationRules?: CreateValidationRules,
-  createLogger?: CreateLogger,
-|};
+export interface SubscriptionServerConfig<TContext, TCredentials> {
+  path: string;
+  schema: GraphQLSchema;
+  subscriber: Subscriber<any>;
+  createCredentialsManager: (request: any) => CredentialsManager<TCredentials>;
+  hasPermission: (data: any, credentials: TCredentials) => boolean;
+  createContext?: (
+    request: any,
+    credentials: TCredentials | null | undefined,
+  ) => TContext;
+  maxSubscriptionsPerConnection?: number;
+  createValidationRules?: CreateValidationRules;
+  createLogger?: CreateLogger;
+}
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const defaultCreateLogger = () => () => {};
 
 export default class SubscriptionServer<TContext, TCredentials> {
@@ -31,7 +34,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
 
   log: Logger;
 
-  io: IoServer;
+  io: IoServer.Server;
 
   constructor(config: SubscriptionServerConfig<TContext, TCredentials>) {
     this.config = config;
@@ -40,7 +43,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
       config.createLogger || defaultCreateLogger;
     this.log = createLogger('@4c/SubscriptionServer::Server');
 
-    this.io = new IoServer({
+    this.io = IoServer({
       serveClient: false,
       path: this.config.path,
       transports: ['websocket'],
@@ -54,16 +57,16 @@ export default class SubscriptionServer<TContext, TCredentials> {
     this.io.attach(httpServer);
   }
 
-  handleConnection = (socket: IoServer.socket) => {
+  handleConnection = (socket: IoServer.Socket) => {
     this.log('debug', 'new socket connection');
 
-    const request = Object.create((express: any).request);
+    const request = Object.create(express.request);
     Object.assign(request, socket.request);
 
     const { createContext } = this.config;
 
     // eslint-disable-next-line no-new
-    new AuthorizedSocketConnection(socket, {
+    new AuthorizedSocketConnection<TContext, TCredentials>(socket, {
       schema: this.config.schema,
       subscriber: this.config.subscriber,
       credentialsManager: this.config.createCredentialsManager(request),
@@ -77,6 +80,6 @@ export default class SubscriptionServer<TContext, TCredentials> {
   };
 
   async close() {
-    await promisify((...args) => this.io.close(...args))();
+    await promisify(this.io.close.bind(this))();
   }
 }

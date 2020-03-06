@@ -1,49 +1,54 @@
-/* @flow */
-
 import {
   GraphQLError,
+  GraphQLSchema,
+  ValidationContext,
   createSourceEventStream,
   execute,
   parse,
   specifiedRules,
   validate,
 } from 'graphql';
-import type { GraphQLSchema, ValidationContext } from 'graphql';
-import type IoServer from 'socket.io';
+import IoServer, { Socket } from 'socket.io';
 
 import * as AsyncUtils from './AsyncUtils';
-import type { CredentialsManager } from './CredentialsManager';
-import type { CreateLogger, Logger } from './Logger';
-import type { Subscriber } from './Subscriber';
+import { CredentialsManager } from './CredentialsManager';
+import { CreateLogger, Logger } from './Logger';
+import { Subscriber } from './Subscriber';
 import SubscriptionContext from './SubscriptionContext';
 
 export type CreateValidationRules = ({
-  variables: Object,
-  query: string,
-}) => $ReadOnlyArray<(context: ValidationContext) => any>;
+  variables,
+  query,
+}: {
+  variables: object;
+  query: string;
+}) => ReadonlyArray<(context: ValidationContext) => any>;
 
-type Subscription = {
-  id: string,
-  query: string,
-  variables: Object,
-};
+interface Subscription {
+  id: string;
+  query: string;
+  variables: object;
+}
 
-type SubscribeOptions<TCredentials> = {
-  hasPermission?: (data: any, credentials: TCredentials) => boolean,
-};
+interface SubscribeOptions<TCredentials> {
+  hasPermission?: (data: any, credentials: TCredentials) => boolean;
+}
 
-type AuthorizedSocketOptions<TContext, TCredentials> = {|
-  schema: GraphQLSchema,
-  subscriber: Subscriber<any>,
-  credentialsManager: CredentialsManager<TCredentials>,
-  hasPermission: (data: any, credentials: TCredentials) => boolean,
-  createContext: ?(credentials: ?TCredentials) => TContext,
-  maxSubscriptionsPerConnection: ?number,
-  createValidationRules: ?CreateValidationRules,
-  createLogger: CreateLogger,
-|};
+interface AuthorizedSocketOptions<TContext, TCredentials> {
+  schema: GraphQLSchema;
+  subscriber: Subscriber<any>;
+  credentialsManager: CredentialsManager<TCredentials>;
+  hasPermission: (data: any, credentials: TCredentials) => boolean;
+  createContext:
+    | ((credentials: TCredentials | null | undefined) => TContext)
+    | null
+    | undefined;
+  maxSubscriptionsPerConnection: number | null | undefined;
+  createValidationRules: CreateValidationRules | null | undefined;
+  createLogger: CreateLogger;
+}
 
-const acknowledge = cb => {
+const acknowledge = (cb?: Function) => {
   if (cb) cb();
 };
 
@@ -56,16 +61,19 @@ const acknowledge = cb => {
  * - Rudimentary connection constraints (max connections)
  */
 export default class AuthorizedSocketConnection<TContext, TCredentials> {
-  socket: IoServer.socket;
+  socket: IoServer.Socket;
 
   config: AuthorizedSocketOptions<TContext, TCredentials>;
 
   log: Logger;
 
-  subscriptionContexts: Map<string, SubscriptionContext>;
+  subscriptionContexts: Map<
+    string,
+    SubscriptionContext<SubscribeOptions<TCredentials>>
+  >;
 
   constructor(
-    socket: IoServer.socket,
+    socket: IoServer.Socket,
     config: AuthorizedSocketOptions<TContext, TCredentials>,
   ) {
     this.socket = socket;
@@ -81,7 +89,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       .on('disconnect', this.handleDisconnect);
   }
 
-  emitError(error: {| code: string, data?: any |}) {
+  emitError(error: { code: string; data?: any }) {
     this.socket.emit('app_error', error);
   }
 
@@ -125,7 +133,8 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     cb?: Function,
   ) => {
     let document;
-    let resultOrStream;
+    // FIXME: type this correctly
+    let resultOrStream: any;
 
     try {
       if (
@@ -185,14 +194,15 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         null,
         {
           subscribe: async (
-            topic,
+            topic: string,
             {
               hasPermission = this.config.hasPermission,
               ...options
             }: SubscribeOptions<TCredentials> = {},
           ) => {
-            return AsyncUtils.filter(
-              await subscriptionContext.subscribe(topic, options),
+            return AsyncUtils.filter<any>(
+              // FIXME: type this correctly
+              (await subscriptionContext.subscribe(topic, options)) as any,
               data => this.isAuthorized(data, hasPermission),
             );
           },
@@ -227,7 +237,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       acknowledge(cb);
     }
 
-    const stream: AsyncIterable<mixed> = (resultOrStream: any);
+    const stream: AsyncIterable<unknown> = resultOrStream as any;
 
     for await (const payload of stream) {
       const credentials = this.config.credentialsManager.getCredentials();

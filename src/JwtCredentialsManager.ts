@@ -1,27 +1,26 @@
-/* @flow */
-import type { CredentialsManager } from './CredentialsManager';
+import { CredentialsManager } from './CredentialsManager';
 
 type Seconds = number;
 
 export type JwtCredentials = {
-  exp: Seconds,
+  exp: Seconds;
 };
 
-export type JwtCredentialsManagerConfig = {|
-  tokenExpirationMarginSeconds: Seconds | null,
-|};
+export type JwtCredentialsManagerConfig = {
+  tokenExpirationMarginSeconds: Seconds | null;
+};
 
 const SECONDS_TO_MS = 1000;
 
-export default class JwtCredentialsManager<TCredentials: JwtCredentials>
+export default class JwtCredentialsManager<TCredentials extends JwtCredentials>
   implements CredentialsManager<TCredentials> {
   config: JwtCredentialsManagerConfig;
 
-  token: ?string;
+  token: string | null | undefined;
 
-  credentials: ?TCredentials;
+  credentials: TCredentials | null | undefined;
 
-  renewHandle: ?TimeoutID;
+  renewHandle: NodeJS.Timeout | null | undefined;
 
   constructor(config: JwtCredentialsManagerConfig) {
     this.config = config;
@@ -30,7 +29,7 @@ export default class JwtCredentialsManager<TCredentials: JwtCredentials>
     this.credentials = null;
   }
 
-  getCredentials(): ?TCredentials {
+  getCredentials(): TCredentials | null | undefined {
     const { credentials } = this;
     if (credentials && Date.now() >= credentials.exp * SECONDS_TO_MS) {
       return null;
@@ -40,9 +39,10 @@ export default class JwtCredentialsManager<TCredentials: JwtCredentials>
   }
 
   getCredentialsFromAuthorization(
-    // eslint-disable-next-line no-unused-vars
-    authorization: string,
-  ): ?TCredentials | Promise<?TCredentials> {
+    _authorization: string,
+  ):
+    | (TCredentials | null | undefined)
+    | Promise<TCredentials | null | undefined> {
     throw new Error('JwtCredentialManager: not implemented');
   }
 

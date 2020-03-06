@@ -1,5 +1,3 @@
-/* @flow */
-
 import mock from 'redis-mock';
 
 // redis mock doesn't fire the callback (but redis does)

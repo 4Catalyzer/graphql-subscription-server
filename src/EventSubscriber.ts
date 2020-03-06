@@ -1,16 +1,13 @@
-/* @flow */
-
-import type EventEmitter from 'events';
+import EventEmitter from 'events';
 
 import { AsyncQueue } from './AsyncUtils';
-import type { Subscriber } from './Subscriber';
+import { Subscriber } from './Subscriber';
 
 /**
  * A subscriber over a standard EventEmitter. Events are pushed as
  * they received, passing through, the _first_ argument of the event handler.
  * Events are listened to at the time of subscription, meaning only event past then will be received.
  */
-
 type EventSubscriberOptions = {};
 
 export default class EventSubscriber
@@ -19,7 +16,7 @@ export default class EventSubscriber
 
   _queues: Map<string, Set<AsyncQueue>>;
 
-  _listeners: Map<string, Function>;
+  _listeners: Map<string, (data: any) => any>;
 
   constructor(emitter: EventEmitter) {
     this.emitter = emitter;
@@ -30,7 +27,7 @@ export default class EventSubscriber
   _listen(event: string) {
     if (this._listeners.has(event)) return;
 
-    const listener = data => {
+    const listener = (data: any) => {
       const queues = this._queues.get(event);
       if (!queues) return;
       queues.forEach(queue => {

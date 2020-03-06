@@ -1,4 +1,3 @@
-/* @flow */
 /* eslint-disable no-await-in-loop */
 
 export async function* map<T, U>(
@@ -20,8 +19,8 @@ export async function* filter<T>(
 }
 
 export type AsyncQueueOptions = {
-  setup?: () => void | Promise<void>,
-  teardown?: () => void | Promise<void>,
+  setup?: () => void | Promise<void>;
+  teardown?: () => void | Promise<void>;
 };
 
 export class AsyncQueue {
@@ -29,17 +28,17 @@ export class AsyncQueue {
 
   values: any[];
 
-  promise: Promise<void>;
+  promise!: Promise<void>;
 
-  resolvePromise: () => void;
+  resolvePromise!: () => void;
 
   closed: boolean;
 
   iterator: Promise<AsyncIterator<any>>;
 
-  setupPromise: void | Promise<void>;
+  setupPromise!: void | Promise<void>;
 
-  constructor(options?: AsyncQueueOptions = {}) {
+  constructor(options: AsyncQueueOptions = {}) {
     this.options = options;
 
     this.values = [];

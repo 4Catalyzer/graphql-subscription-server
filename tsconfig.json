@@ -1,7 +1,8 @@
 {
   "extends": "@4c/tsconfig/node",
   "compilerOptions": {
-    "rootDir": "src"
+    "rootDir": "src",
+    "noImplicitAny": true
   },
   "include": ["src/**/*.ts"]
 }

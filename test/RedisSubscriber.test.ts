@@ -1,5 +1,3 @@
-/* @flow */
-
 import RedisSubscriber from '../src/RedisSubscriber';
 import SubscriptionContext from '../src/SubscriptionContext';
 
