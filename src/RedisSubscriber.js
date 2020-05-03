@@ -10,15 +10,16 @@ import type { Subscriber } from './Subscriber';
 type Channel = string;
 
 type RedisConfigOptions = redis.ClientOpts & {
-  parseMessage?: (data: string) => any,
+  parseMessage?: (msg: string) => any,
 };
 
 type RedisSubscriberOptions = {
   parseMessage?: (msg: string) => any,
 };
 
-export default class RedisSubscriber
-  implements Subscriber<RedisSubscriberOptions> {
+export default class RedisSubscriber<
+  TOptions: RedisSubscriberOptions = RedisSubscriberOptions,
+> implements Subscriber<TOptions> {
   redis: redis.RedisClient;
 
   _parseMessage: ?(string) => any;
@@ -54,8 +55,7 @@ export default class RedisSubscriber
     await promisify(cb => this.redis.subscribe(channel, cb))();
   }
 
-  subscribe(channel: Channel, options: RedisSubscriberOptions = {}) {
-    const parseMessage = options.parseMessage || this._parseMessage;
+  subscribe(channel: Channel, options?: TOptions) {
     let channelQueues = this._queues.get(channel);
     if (!channelQueues) {
       channelQueues = new Set();
@@ -81,11 +81,11 @@ export default class RedisSubscriber
     channelQueues.add(queue);
 
     let iteratorPromise = queue.iterator;
+
+    const parseMessage = options?.parseMessage || this._parseMessage;
     if (parseMessage) {
-      // Workaround for Flow.
-      const parseMessageFn: string => any = parseMessage;
       iteratorPromise = iteratorPromise.then(iterator =>
-        map(iterator, parseMessageFn),
+        map(iterator, parseMessage),
       );
     }
 

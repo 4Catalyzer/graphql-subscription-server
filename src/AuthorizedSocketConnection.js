@@ -196,6 +196,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
               data => this.isAuthorized(data, hasPermission),
             );
           },
+          subscriber: this.config.subscriber,
         },
         variables,
       );
