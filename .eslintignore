@@ -1,7 +1,11 @@
-**/node_modules/**
-/flow-typed/**
-lib/
-es/
-examples/*/token.json
-package.json
+!.babelrc.js
+!.eslintrc.js
+
+**/coverage/
+**/lib/
+**/es/
+**/node_modules/
+**/flow-typed/
+
 CHANGELOG.md
+examples/*/token.json
