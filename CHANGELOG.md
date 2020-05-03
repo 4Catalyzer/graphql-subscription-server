@@ -1,3 +1,10 @@
+# [0.10.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.9.0...v0.10.0) (2020-05-03)
+
+
+### Features
+
+* Expose subscriber to subscription ([#337](https://github.com/4Catalyzer/graphql-subscription-server/issues/337)) ([5d164d9](https://github.com/4Catalyzer/graphql-subscription-server/commit/5d164d9))
+
 # [0.9.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.8.2...v0.9.0) (2019-04-02)
 
 
