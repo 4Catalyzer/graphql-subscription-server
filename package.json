@@ -84,7 +84,7 @@
     "husky": "^4.2.5",
     "jest": "^25.5.4",
     "lint-staged": "^10.2.2",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.5",
     "redis-mock": "^0.49.0",
     "semantic-release": "^17.0.7"
   },
