@@ -9,11 +9,11 @@ import type { Subscriber } from './Subscriber';
 
 type Channel = string;
 
-type RedisConfigOptions = redis.ClientOpts & {
+export type RedisConfigOptions = redis.ClientOpts & {
   parseMessage?: (msg: string) => any,
 };
 
-type RedisSubscriberOptions = {
+export type RedisSubscriberOptions = {
   parseMessage?: (msg: string) => any,
 };
 
@@ -52,7 +52,7 @@ export default class RedisSubscriber<
     }
 
     this._channels.add(channel);
-    await promisify(cb => this.redis.subscribe(channel, cb))();
+    await promisify(this.redis.subscribe).call(this.redis, channel);
   }
 
   subscribe(channel: Channel, options?: TOptions) {
@@ -96,6 +96,6 @@ export default class RedisSubscriber<
   }
 
   async close() {
-    await promisify((...args) => this.redis.quit(...args))();
+    await promisify(this.redis.quit).call(this.redis);
   }
 }
