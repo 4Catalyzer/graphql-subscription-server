@@ -1,13 +1,10 @@
 {
   "extends": [
-    "4catalyzer-flow-react",
+    "4catalyzer-typescript",
     "prettier",
-    "prettier/react",
-    "prettier/flowtype"
+    "prettier/react"
   ],
   "rules": {
-    "flowtype/require-valid-file-annotation": "off",
-
     // Don't fail linting if example dependencies aren't installed.
     "import/extensions": "off",
     "import/no-cycle": "off",

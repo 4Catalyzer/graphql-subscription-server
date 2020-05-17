@@ -53,7 +53,9 @@ type Mutation {
   addTodo(input: AddTodoInput!): AddTodoPayload
   changeTodoStatus(input: ChangeTodoStatusInput!): ChangeTodoStatusPayload
   markAllTodos(input: MarkAllTodosInput!): MarkAllTodosPayload
-  removeCompletedTodos(input: RemoveCompletedTodosInput!): RemoveCompletedTodosPayload
+  removeCompletedTodos(
+    input: RemoveCompletedTodosInput!
+  ): RemoveCompletedTodosPayload
   removeTodo(input: RemoveTodoInput!): RemoveTodoPayload
   renameTodo(input: RenameTodoInput!): RenameTodoPayload
 }
@@ -132,9 +134,15 @@ type Root {
 }
 
 type Subscription {
-  addTodoSubscription(input: AddTodoSubscriptionInput!): AddTodoSubscriptionPayload
-  removeTodoSubscription(input: RemoveTodoSubscriptionInput!): RemoveTodoSubscriptionPayload
-  updateTodoSubscription(input: UpdateTodoSubscriptionInput!): UpdateTodoSubscriptionPayload
+  addTodoSubscription(
+    input: AddTodoSubscriptionInput!
+  ): AddTodoSubscriptionPayload
+  removeTodoSubscription(
+    input: RemoveTodoSubscriptionInput!
+  ): RemoveTodoSubscriptionPayload
+  updateTodoSubscription(
+    input: UpdateTodoSubscriptionInput!
+  ): UpdateTodoSubscriptionPayload
 }
 
 type Todo implements Node {
@@ -176,7 +184,13 @@ type UpdateTodoSubscriptionPayload {
 type User implements Node {
   # The ID of an object
   id: ID!
-  todos(status: String = "any", after: String, first: Int, before: String, last: Int): TodoConnection
+  todos(
+    status: String = "any"
+    after: String
+    first: Int
+    before: String
+    last: Int
+  ): TodoConnection
   totalCount: Int
   completedCount: Int
 }
