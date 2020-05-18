@@ -1,3 +1,10 @@
+# [0.11.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.10.1...v0.11.0) (2020-05-18)
+
+
+### Features
+
+* convert to typescript ([#344](https://github.com/4Catalyzer/graphql-subscription-server/issues/344)) ([d70ff30](https://github.com/4Catalyzer/graphql-subscription-server/commit/d70ff30))
+
 ## [0.10.1](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.10.0...v0.10.1) (2020-05-04)
 
 ### Bug Fixes

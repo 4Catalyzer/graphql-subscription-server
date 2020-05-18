@@ -1,13 +1,14 @@
 {
   "name": "@4c/graphql-subscription-server",
-  "version": "1.0.0",
-  "author": "4Catalyzer",
+  "version": "0.11.0",
+  "author": {
+    "name": "4Catalyzer"
+  },
   "license": "MIT",
   "main": "lib/index.js",
-  "modules": "es/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/4Catalyzer/graphql-subscription-server.git"
+    "url": "git+https://github.com/4Catalyzer/graphql-subscription-server.git"
   },
   "files": [
     "lib",
@@ -96,5 +97,11 @@
   },
   "engines": {
     "node": ">=v10.19.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/4Catalyzer/graphql-subscription-server/issues"
+  },
+  "readme": "ERROR: No README data found!",
+  "homepage": "https://github.com/4Catalyzer/graphql-subscription-server#readme",
+  "_id": "@4c/graphql-subscription-server@1.0.0"
 }
