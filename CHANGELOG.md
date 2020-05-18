@@ -1,3 +1,13 @@
+# [1.0.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.11.0...v1.0.0) (2020-05-18)
+
+
+* fix!: improve exports and abstract class (#346) ([c86d4e0](https://github.com/4Catalyzer/graphql-subscription-server/commit/c86d4e08b324d4c31c3f7350c4395f98bad87bfe)), closes [#346](https://github.com/4Catalyzer/graphql-subscription-server/issues/346)
+
+
+### BREAKING CHANGES
+
+* convert to typescript
+
 # [0.11.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.10.1...v0.11.0) (2020-05-18)
 
 
