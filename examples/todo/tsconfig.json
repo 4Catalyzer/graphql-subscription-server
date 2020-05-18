@@ -1,0 +1,9 @@
+{
+  "extends": "@4c/tsconfig/web.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "noEmit": true,
+    "noImplicitAny": false
+  },
+  "include": ["src", "data/schema"]
+}
