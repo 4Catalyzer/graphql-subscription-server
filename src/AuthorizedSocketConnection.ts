@@ -1,12 +1,14 @@
 import {
   GraphQLError,
+  GraphQLSchema,
+  ValidationContext,
   createSourceEventStream,
   execute,
   parse,
   specifiedRules,
   validate,
 } from 'graphql';
-import { GraphQLSchema, ValidationContext } from 'graphql';
+import { ExecutionResult } from 'graphql/execution/execute';
 import IoServer from 'socket.io';
 
 import * as AsyncUtils from './AsyncUtils';
@@ -14,7 +16,6 @@ import { CredentialsManager } from './CredentialsManager';
 import { CreateLogger, Logger } from './Logger';
 import { Subscriber } from './Subscriber';
 import SubscriptionContext from './SubscriptionContext';
-import { ExecutionResult } from 'graphql/execution/execute';
 
 export type CreateValidationRules = ({
   variables,

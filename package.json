@@ -16,8 +16,8 @@
   ],
   "scripts": {
     "build": "4c build src",
-    "format": "4c format src './*'",
-    "lint": "4c lint src './*'",
+    "format": "4c format src --prettier-ignore .eslintignore .",
+    "lint": "4c lint src --prettier-ignore .eslintignore .",
     "prepublishOnly": "yarn run build",
     "release": "4c release",
     "tdd": "jest --watch",
@@ -76,7 +76,7 @@
     "@typescript-eslint/parser": "^2.33.0",
     "babel-jest": "^26.0.1",
     "codecov": "^3.6.5",
-    "eslint": "^7.0.0",
+    "eslint-config-4catalyzer": "^1.1.1",
     "eslint-config-4catalyzer-jest": "^2.0.6",
     "eslint-config-4catalyzer-typescript": "^1.1.8",
     "eslint-config-prettier": "^6.11.0",
@@ -100,8 +100,5 @@
   },
   "bugs": {
     "url": "https://github.com/4Catalyzer/graphql-subscription-server/issues"
-  },
-  "readme": "ERROR: No README data found!",
-  "homepage": "https://github.com/4Catalyzer/graphql-subscription-server#readme",
-  "_id": "@4c/graphql-subscription-server@1.0.0"
+  }
 }
