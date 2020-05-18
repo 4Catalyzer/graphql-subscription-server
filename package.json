@@ -16,8 +16,8 @@
   ],
   "scripts": {
     "build": "4c build src",
-    "format": "4c format src './*' --prettier-ignore .eslintignore",
-    "lint": "4c lint src './*' --prettier-ignore .eslintignore",
+    "format": "4c format src --prettier-ignore .eslintignore .",
+    "lint": "4c lint src --prettier-ignore .eslintignore .",
     "prepublishOnly": "yarn run build",
     "release": "4c release",
     "tdd": "jest --watch",
@@ -100,8 +100,5 @@
   },
   "bugs": {
     "url": "https://github.com/4Catalyzer/graphql-subscription-server/issues"
-  },
-  "readme": "ERROR: No README data found!",
-  "homepage": "https://github.com/4Catalyzer/graphql-subscription-server#readme",
-  "_id": "@4c/graphql-subscription-server@1.0.0"
+  }
 }
