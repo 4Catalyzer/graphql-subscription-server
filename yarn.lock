@@ -4513,10 +4513,10 @@ eslint-config-4catalyzer-jest@^2.0.6:
   resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer-jest/-/eslint-config-4catalyzer-jest-2.0.6.tgz#4ed44a8d4971bc7611815be0d241d353e29e4f65"
   integrity sha512-q4H9BSC6THNlBinZppyMfSHy1X2E1zclBH1Xyl7pzh8PDmhbPcEqWGRMuyJ5W57hzLTzWw5vX47EYhAb4T+avQ==
 
-eslint-config-4catalyzer-typescript@^1.1.8:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer-typescript/-/eslint-config-4catalyzer-typescript-1.1.8.tgz#e5acfbc720dee664bb17474e09458f88f56c6c09"
-  integrity sha512-JWuI28v0ujjOyK65UIDAJbyUVhk3Fi8LJt+MyYDNkA9Hnn03yDMS0pM0aeKdRuTNO9nsnGZPsZX5WkOYS0w1OQ==
+eslint-config-4catalyzer-typescript@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer-typescript/-/eslint-config-4catalyzer-typescript-2.0.1.tgz#eb0c0d179ee4d90e31ab98bd70611433ef03a176"
+  integrity sha512-OqSCOhEihRoEwL/99qo4q523ijkZBWObYeyctIdmAJeCoYVnK+714D92Xza8urfJG29xcdkcvAxuPYZKNRfqMQ==
   dependencies:
     babel-eslint "^10.0.3"
     eslint-import-resolver-typescript "^2.0.0"
