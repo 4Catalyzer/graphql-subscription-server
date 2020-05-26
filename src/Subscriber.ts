@@ -1,4 +1,4 @@
-export interface Subscriber<TSubscriberOptions extends {}> {
+export interface Subscriber<TSubscriberOptions> {
   subscribe(
     topic: string,
     options?: TSubscriberOptions,

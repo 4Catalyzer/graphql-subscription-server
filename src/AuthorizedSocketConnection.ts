@@ -18,17 +18,17 @@ import { Subscriber } from './Subscriber';
 import SubscriptionContext from './SubscriptionContext';
 
 export type CreateValidationRules = ({
-  variables,
   query,
+  variables,
 }: {
-  variables: object;
   query: string;
+  variables: Record<string, unknown>;
 }) => ReadonlyArray<(context: ValidationContext) => any>;
 
 interface Subscription {
   id: string;
   query: string;
-  variables: object;
+  variables: Record<string, unknown>;
 }
 
 interface SubscribeOptions<TCredentials> {
