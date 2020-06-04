@@ -67,11 +67,10 @@ export default abstract class JwtCredentialsManager<
       throw new Error('JwtCredentialManager: Unauthenticated');
     }
 
-    // need to handle multiple promises
     this.credentials = Promise.resolve(
       this.getCredentialsFromAuthorization(token),
     );
-    const resolvedCreds = await this.credentials;
+    await this.credentials;
 
     // Avoid race conditions with multiple updates.
     if (this.token !== token) {
@@ -80,10 +79,10 @@ export default abstract class JwtCredentialsManager<
 
     // TODO: Don't schedule renewal if the new credentials are expired or
     // almost expired.
-    this.scheduleRenewCredentials(resolvedCreds);
+    this.scheduleRenewCredentials();
   }
 
-  scheduleRenewCredentials(resolvedCreds: TCredentials | null | undefined) {
+  async scheduleRenewCredentials() {
     if (this.renewHandle) {
       clearTimeout(this.renewHandle);
     }
@@ -93,11 +92,11 @@ export default abstract class JwtCredentialsManager<
       return;
     }
 
-    if (!resolvedCreds) {
-      return;
-    }
+    if (!this.credentials) return;
+    const resolvedCredentials = await this.credentials;
+    if (!resolvedCredentials) return;
 
-    const deltaMs = resolvedCreds.exp * SECONDS_TO_MS - Date.now();
+    const deltaMs = resolvedCredentials.exp * SECONDS_TO_MS - Date.now();
     const deltaMsAdjusted = Math.max(
       0,
       deltaMs - tokenExpirationMarginSeconds * SECONDS_TO_MS,
