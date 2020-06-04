@@ -19,7 +19,7 @@ export default abstract class JwtCredentialsManager<
 
   token: string | null | undefined;
 
-  credentials: TCredentials | null | undefined;
+  credentials: Promise<TCredentials | null | undefined>;
 
   renewHandle: NodeJS.Timeout | null | undefined;
 
@@ -30,8 +30,10 @@ export default abstract class JwtCredentialsManager<
     this.credentials = null;
   }
 
-  getCredentials(): TCredentials | null | undefined {
-    const { credentials } = this;
+  async getCredentials(): Promise<TCredentials | null | undefined> {
+    if (!this.credentials) return null;
+
+    const credentials = await this.credentials;
     if (credentials && Date.now() >= credentials.exp * SECONDS_TO_MS) {
       return null;
     }
@@ -65,21 +67,23 @@ export default abstract class JwtCredentialsManager<
       throw new Error('JwtCredentialManager: Unauthenticated');
     }
 
-    const credentials = await this.getCredentialsFromAuthorization(token);
+    // need to handle multiple promises
+    this.credentials = Promise.resolve(
+      this.getCredentialsFromAuthorization(token),
+    );
+    const resolvedCreds = await this.credentials;
 
     // Avoid race conditions with multiple updates.
     if (this.token !== token) {
       return;
     }
 
-    this.credentials = credentials;
-
     // TODO: Don't schedule renewal if the new credentials are expired or
     // almost expired.
-    this.scheduleRenewCredentials();
+    this.scheduleRenewCredentials(resolvedCreds);
   }
 
-  scheduleRenewCredentials() {
+  scheduleRenewCredentials(resolvedCreds: TCredentials | null | undefined) {
     if (this.renewHandle) {
       clearTimeout(this.renewHandle);
     }
@@ -89,12 +93,11 @@ export default abstract class JwtCredentialsManager<
       return;
     }
 
-    const { credentials } = this;
-    if (!credentials) {
+    if (!resolvedCreds) {
       return;
     }
 
-    const deltaMs = credentials.exp * SECONDS_TO_MS - Date.now();
+    const deltaMs = resolvedCreds.exp * SECONDS_TO_MS - Date.now();
     const deltaMsAdjusted = Math.max(
       0,
       deltaMs - tokenExpirationMarginSeconds * SECONDS_TO_MS,
