@@ -88,11 +88,10 @@ export default abstract class JwtCredentialsManager<
     }
 
     const { tokenExpirationMarginSeconds } = this.config;
-    if (tokenExpirationMarginSeconds === null) {
+    if (tokenExpirationMarginSeconds === null || !this.credentials) {
       return;
     }
 
-    if (!this.credentials) return;
     const resolvedCredentials = await this.credentials;
     if (!resolvedCredentials) return;
 
