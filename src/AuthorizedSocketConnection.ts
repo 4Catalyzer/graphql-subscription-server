@@ -94,11 +94,11 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     this.socket.emit('app_error', error);
   }
 
-  isAuthorized(
+  async isAuthorized(
     data: any,
     hasPermission: (data: any, credentials: TCredentials) => boolean,
   ) {
-    const credentials = this.config.credentialsManager.getCredentials();
+    const credentials = await this.config.credentialsManager.getCredentials();
     const isAuthorized = !!credentials && hasPermission(data, credentials);
     if (!isAuthorized) {
       this.log('info', 'unauthorized', {
@@ -239,7 +239,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     const stream: AsyncIterable<unknown> = resultOrStream as any;
 
     for await (const payload of stream) {
-      const credentials = this.config.credentialsManager.getCredentials();
+      const credentials = await this.config.credentialsManager.getCredentials();
 
       let response;
       try {

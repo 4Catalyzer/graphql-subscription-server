@@ -11,10 +11,10 @@ export async function* map<T, U>(
 
 export async function* filter<T>(
   iterable: AsyncIterable<T>,
-  predicate: (value: T) => boolean,
+  predicate: (value: T) => Promise<boolean> | boolean,
 ): AsyncGenerator<T, void, void> {
   for await (const value of iterable) {
-    if (predicate(value)) yield value;
+    if (await predicate(value)) yield value;
   }
 }
 
