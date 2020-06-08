@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/4Catalyzer/graphql-subscription-server/compare/v1.0.0...v1.0.1) (2020-06-08)
+
+
+### Bug Fixes
+
+* await credentials when subscribing ([#351](https://github.com/4Catalyzer/graphql-subscription-server/issues/351)) ([df9f3a8](https://github.com/4Catalyzer/graphql-subscription-server/commit/df9f3a85047c78eabaaa0a0562a3dfce5bdcdbb2))
+
 # [1.0.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.11.0...v1.0.0) (2020-05-18)
 
 
