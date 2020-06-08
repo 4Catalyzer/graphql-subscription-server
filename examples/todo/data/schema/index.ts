@@ -18,14 +18,19 @@ import { MarkAllTodosMutation } from './mutations/MarkAllTodosMutation';
 import { RemoveCompletedTodosMutation } from './mutations/RemoveCompletedTodosMutation';
 import { RemoveTodoMutation } from './mutations/RemoveTodoMutation';
 import { RenameTodoMutation } from './mutations/RenameTodoMutation';
-import { nodeField } from './nodes';
-import { UserQuery } from './queries/UserQuery';
+import { GraphQLUser, nodeField } from './nodes';
+import AddTodoSubscription from './subscriptions/AddTodoSubscription';
+import RemoveTodoSubscription from './subscriptions/RemoveTodoSubscription';
+import UpdateTodoSubscription from './subscriptions/UpdateTodoSubscription';
 
 const Query = new GraphQLObjectType({
   name: 'Query',
   fields: {
-    user: UserQuery,
     node: nodeField,
+    viewer: {
+      type: GraphQLUser,
+      resolve: (_obj, _args, { database }) => database.getViewer(),
+    },
   },
 });
 
@@ -41,7 +46,17 @@ const Mutation = new GraphQLObjectType({
   },
 });
 
+const Subscription = new GraphQLObjectType({
+  name: 'Subscription',
+  fields: {
+    addTodoSubscription: AddTodoSubscription,
+    removeTodoSubscription: RemoveTodoSubscription,
+    updateTodoSubscription: UpdateTodoSubscription,
+  },
+});
+
 export const schema = new GraphQLSchema({
   query: Query,
   mutation: Mutation,
+  subscription: Subscription,
 });

@@ -10,18 +10,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import { Disposable, Environment, commitMutation, graphql } from 'react-relay';
 import {
-  Disposable,
-  Environment,
+  ConnectionHandler,
   RecordProxy,
   RecordSourceSelectorProxy,
-  commitMutation,
-  graphql,
-} from 'react-relay';
-import { ConnectionHandler } from 'relay-runtime';
+} from 'relay-runtime';
 
-import { AddTodoInput } from '../__generated__/AddTodoMutation.graphql';
-import { TodoApp_user as User } from '../__generated__/TodoApp_user.graphql';
+import { AddTodoInput } from './__generated__/AddTodoMutation.graphql';
+import { TodoApp_user as User } from './__generated__/TodoApp_user.graphql';
 
 const mutation = graphql`
   mutation AddTodoMutation($input: AddTodoInput!) {
@@ -49,8 +46,8 @@ function sharedUpdater(
   newEdge: RecordProxy,
 ) {
   const userProxy = store.get(user.id);
-  const conn = ConnectionHandler.getConnection(userProxy, 'TodoList_todos');
-  ConnectionHandler.insertEdgeAfter(conn, newEdge);
+  const conn = ConnectionHandler.getConnection(userProxy!, 'TodoList_todos');
+  ConnectionHandler.insertEdgeAfter(conn!, newEdge);
 }
 
 let tempID = 0;
@@ -72,8 +69,8 @@ function commit(
       input,
     },
     updater: (store: RecordSourceSelectorProxy) => {
-      const payload = store.getRootField('addTodo');
-      const newEdge = payload.getLinkedRecord('todoEdge');
+      const payload = store.getRootField('addTodo')!;
+      const newEdge = payload.getLinkedRecord('todoEdge')!;
       sharedUpdater(store, user, newEdge);
     },
     optimisticUpdater: (store: RecordSourceSelectorProxy) => {

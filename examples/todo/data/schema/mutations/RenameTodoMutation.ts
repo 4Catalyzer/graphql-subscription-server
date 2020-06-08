@@ -13,7 +13,7 @@
 import { GraphQLID, GraphQLNonNull, GraphQLString } from 'graphql';
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay';
 
-import { Todo, getTodoOrThrow, renameTodo } from '../../database';
+import { Todo } from '../../database';
 import { GraphQLTodo } from '../nodes';
 
 type Input = {
@@ -34,12 +34,13 @@ const RenameTodoMutation = mutationWithClientMutationId({
   outputFields: {
     todo: {
       type: new GraphQLNonNull(GraphQLTodo),
-      resolve: ({ localTodoId }: Payload): Todo => getTodoOrThrow(localTodoId),
+      resolve: ({ localTodoId }: Payload, _args, { database }): Todo =>
+        database.getTodo(localTodoId),
     },
   },
-  mutateAndGetPayload: ({ id, text }: Input): Payload => {
+  mutateAndGetPayload: ({ id, text }: Input, { database }): Payload => {
     const localTodoId = fromGlobalId(id).id;
-    renameTodo(localTodoId, text);
+    database.renameTodo(localTodoId, text);
 
     return { localTodoId };
   },

@@ -18,13 +18,7 @@ import {
 } from 'graphql';
 import { mutationWithClientMutationId } from 'graphql-relay';
 
-import {
-  Todo,
-  User,
-  getTodoOrThrow,
-  getUserOrThrow,
-  markAllTodos,
-} from '../../database';
+import { Todo, User } from '../../database';
 import { GraphQLTodo, GraphQLUser } from '../nodes';
 
 type Input = {
@@ -46,16 +40,21 @@ const MarkAllTodosMutation = mutationWithClientMutationId({
   outputFields: {
     changedTodos: {
       type: new GraphQLList(new GraphQLNonNull(GraphQLTodo)),
-      resolve: ({ changedTodoIds }: Payload): ReadonlyArray<Todo> =>
-        changedTodoIds.map((todoId: string): Todo => getTodoOrThrow(todoId)),
+      resolve: (
+        { changedTodoIds }: Payload,
+        _args,
+        { database },
+      ): ReadonlyArray<Todo> =>
+        changedTodoIds.map((todoId: string): Todo => database.getTodo(todoId)),
     },
     user: {
       type: new GraphQLNonNull(GraphQLUser),
-      resolve: ({ userId }: Payload): User => getUserOrThrow(userId),
+      resolve: ({ userId }: Payload, _args, { database }): User =>
+        database.getUser(userId),
     },
   },
-  mutateAndGetPayload: ({ complete, userId }: Input): Payload => {
-    const changedTodoIds = markAllTodos(complete);
+  mutateAndGetPayload: ({ complete, userId }: Input, { database }): Payload => {
+    const changedTodoIds = database.markAllTodos(complete);
 
     return { changedTodoIds, userId };
   },

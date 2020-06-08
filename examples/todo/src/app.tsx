@@ -16,66 +16,60 @@ import * as React from 'react';
 import ReactDOM from 'react-dom';
 import { QueryRenderer, graphql } from 'react-relay';
 import {
-  Environment,
-  Network,
-  RecordSource,
-  RequestNode,
-  Store,
-  Variables,
-} from 'relay-runtime';
+  SocketIoSubscriptionClient,
+  createFetch,
+  createSubscribe,
+} from 'relay-network-layer';
+import { Environment, Network, RecordSource, Store } from 'relay-runtime';
 
-import { appQueryResponse } from './__generated__/appQuery.graphql';
+import { appQuery } from './__generated__/appQuery.graphql';
 import TodoApp from './components/TodoApp';
 
-async function fetchQuery(
-  operation: RequestNode,
-  variables: Variables,
-): Promise<{}> {
-  const response = await fetch('/graphql', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: operation.text,
-      variables,
-    }),
+function createEnvironment() {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
+  const { token } = require('../token.json');
+
+  const subscribeFn = createSubscribe({
+    subscriptionClientClass: SocketIoSubscriptionClient,
+    url: `/subscriptions`,
+    token,
   });
 
-  return response.json();
+  const network = Network.create(
+    createFetch({
+      url: '/graphql',
+      authorization: { token, scheme: 'JWT' },
+      batch: false,
+    }),
+    subscribeFn,
+  );
+
+  return new Environment({
+    network,
+    store: new Store(new RecordSource()),
+  });
 }
 
-const modernEnvironment: Environment = new Environment({
-  network: Network.create(fetchQuery),
-  store: new Store(new RecordSource()),
-});
-
 const rootElement = document.getElementById('root');
+export const environment = createEnvironment();
 
 if (rootElement) {
   ReactDOM.render(
-    <QueryRenderer
-      environment={modernEnvironment}
+    <QueryRenderer<appQuery>
+      environment={environment}
+      fetchPolicy="store-and-network"
       query={graphql`
-        query appQuery($userId: String) {
-          user(id: $userId) {
+        query appQuery {
+          viewer {
             ...TodoApp_user
           }
         }
       `}
-      variables={{
-        // Mock authenticated ID that matches database
-        userId: 'me',
-      }}
-      render={({
-        error,
-        props,
-      }: {
-        error: Error | null | undefined;
-        props: appQueryResponse | null | undefined;
-      }) => {
-        if (props && props.user) {
-          return <TodoApp user={props.user} />;
+      variables={{}}
+      render={({ error, props }) => {
+        if (props?.viewer) {
+          // eslint-disable-next-line react/prop-types
+          return <TodoApp user={props.viewer} />;
         }
         if (error) {
           return <div>{error.message}</div>;

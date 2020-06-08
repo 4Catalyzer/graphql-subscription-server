@@ -10,17 +10,11 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import {
-  Disposable,
-  Environment,
-  RecordSourceSelectorProxy,
-  commitMutation,
-  graphql,
-} from 'react-relay';
-import { ConnectionHandler } from 'relay-runtime';
+import { Disposable, Environment, commitMutation, graphql } from 'react-relay';
+import { ConnectionHandler, RecordSourceSelectorProxy } from 'relay-runtime';
 
-import { RemoveCompletedTodosInput } from '../__generated__/RemoveCompletedTodosMutation.graphql';
-import { TodoListFooter_user as User } from '../__generated__/TodoListFooter_user.graphql';
+import { RemoveCompletedTodosInput } from './__generated__/RemoveCompletedTodosMutation.graphql';
+import { TodoListFooter_user as User } from './__generated__/TodoListFooter_user.graphql';
 
 type Todos = NonNullable<User['todos']>;
 
@@ -41,12 +35,12 @@ function sharedUpdater(
   user: User,
   deletedIDs: ReadonlyArray<string>,
 ) {
-  const userProxy = store.get(user.id);
+  const userProxy = store.get(user.id)!;
   const conn = ConnectionHandler.getConnection(userProxy, 'TodoList_todos');
 
   // Purposefully type forEach as void, to toss the result of deleteNode
   deletedIDs.forEach((deletedID: string): void =>
-    ConnectionHandler.deleteNode(conn, deletedID),
+    ConnectionHandler.deleteNode(conn!, deletedID),
   );
 }
 
@@ -65,10 +59,9 @@ function commit(
       input,
     },
     updater: (store: RecordSourceSelectorProxy) => {
-      const payload = store.getRootField('removeCompletedTodos');
-      const deletedIds = payload.getValue('deletedTodoIds');
+      const payload = store.getRootField('removeCompletedTodos')!;
+      const deletedIds = payload.getValue('deletedTodoIds') as string[];
 
-      // $FlowFixMe `payload.getValue` returns mixed, not sure how to check refinement to $ReadOnlyArray<string>
       sharedUpdater(store, user, deletedIds);
     },
     optimisticUpdater: (store: RecordSourceSelectorProxy) => {

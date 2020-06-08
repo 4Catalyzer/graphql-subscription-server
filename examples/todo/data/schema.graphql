@@ -1,6 +1,4 @@
 type Query {
-  user(id: String): User
-
   """
   Fetches an object given its ID
   """
@@ -10,6 +8,17 @@ type Query {
     """
     id: ID!
   ): Node
+  viewer: User
+}
+
+"""
+An object with an ID
+"""
+interface Node {
+  """
+  The id of the object.
+  """
+  id: ID!
 }
 
 type User implements Node {
@@ -27,16 +36,6 @@ type User implements Node {
   ): TodoConnection
   totalCount: Int!
   completedCount: Int!
-}
-
-"""
-An object with an ID
-"""
-interface Node {
-  """
-  The id of the object.
-  """
-  id: ID!
 }
 
 """
@@ -183,4 +182,48 @@ input RenameTodoInput {
   id: ID!
   text: String!
   clientMutationId: String
+}
+
+type Subscription {
+  addTodoSubscription(
+    input: AddTodoSubscriptionInput!
+  ): AddTodoSubscriptionPayload
+  removeTodoSubscription(
+    input: RemoveTodoSubscriptionInput!
+  ): RemoveTodoSubscriptionPayload
+  updateTodoSubscription(
+    input: UpdateTodoSubscriptionInput!
+  ): UpdateTodoSubscriptionPayload
+}
+
+type AddTodoSubscriptionPayload {
+  todo: Todo
+  todoEdge: TodoEdge
+  viewer: User
+  clientSubscriptionId: String
+}
+
+input AddTodoSubscriptionInput {
+  clientSubscriptionId: String
+}
+
+type RemoveTodoSubscriptionPayload {
+  deletedTodoId: ID
+  viewer: User
+  clientSubscriptionId: String
+}
+
+input RemoveTodoSubscriptionInput {
+  clientSubscriptionId: String
+}
+
+type UpdateTodoSubscriptionPayload {
+  todo: Todo
+  viewer: User
+  clientSubscriptionId: String
+}
+
+input UpdateTodoSubscriptionInput {
+  id: ID!
+  clientSubscriptionId: String
 }

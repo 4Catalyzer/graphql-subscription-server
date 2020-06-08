@@ -12,7 +12,7 @@
 
 import { GraphQLString } from 'graphql';
 
-import { User, getUserOrThrow } from '../../database';
+import { User } from '../../database';
 import { GraphQLUser } from '../nodes';
 
 type Input = {
@@ -24,7 +24,9 @@ const UserQuery = {
   args: {
     id: { type: GraphQLString },
   },
-  resolve: (_root: {}, { id }: Input): User => getUserOrThrow(id),
+  resolve: (_root, { id }: Input, { database }): User => {
+    return database.getUser(id);
+  },
 };
 
 export { UserQuery };

@@ -27,24 +27,17 @@ import {
   nodeDefinitions,
 } from 'graphql-relay';
 
-import {
-  Todo,
-  USER_ID,
-  User,
-  getTodoOrThrow,
-  getTodos,
-  getUserOrThrow,
-} from '../database';
+import { Todo, User, VIEWER_ID } from '../database';
 
 const { nodeInterface, nodeField } = nodeDefinitions(
-  (globalId: string): {} | null | undefined => {
+  (globalId: string, { database }): {} | null | undefined => {
     const { type, id }: { id: string; type: string } = fromGlobalId(globalId);
 
     if (type === 'Todo') {
-      return getTodoOrThrow(id);
+      return database.getTodo(id);
     }
     if (type === 'User') {
-      return getUserOrThrow(id);
+      return database.getUser(id);
     }
     return null;
   },
@@ -89,7 +82,7 @@ const GraphQLUser = new GraphQLObjectType({
     id: globalIdField('User'),
     userId: {
       type: new GraphQLNonNull(GraphQLString),
-      resolve: (): string => USER_ID,
+      resolve: (): string => VIEWER_ID,
     },
     todos: {
       type: TodosConnection,
@@ -101,8 +94,12 @@ const GraphQLUser = new GraphQLObjectType({
         // $FlowFixMe
         ...connectionArgs,
       },
-      resolve: (_root: {}, { status, after, before, first, last }) =>
-        connectionFromArray([...getTodos(status)], {
+      resolve: (
+        _root: {},
+        { status, after, before, first, last },
+        { database },
+      ) =>
+        connectionFromArray([...database.getTodos(status)], {
           after,
           before,
           first,
@@ -111,11 +108,13 @@ const GraphQLUser = new GraphQLObjectType({
     },
     totalCount: {
       type: new GraphQLNonNull(GraphQLInt),
-      resolve: (): number => getTodos().length,
+      resolve: (_obj, _args, { database }): number =>
+        database.getTodos().length,
     },
     completedCount: {
       type: new GraphQLNonNull(GraphQLInt),
-      resolve: (): number => getTodos('completed').length,
+      resolve: (_obj, _args, { database }): number =>
+        database.getTodos('completed').length,
     },
   },
   interfaces: [nodeInterface],

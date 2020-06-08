@@ -11,15 +11,16 @@
  */
 
 import classnames from 'classnames';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RelayProp, createFragmentContainer, graphql } from 'react-relay';
 
-import type { Todo_todo as TodoItem } from '../__generated__/Todo_todo.graphql';
-import type { Todo_user as User } from '../__generated__/Todo_user.graphql';
 import ChangeTodoStatusMutation from '../mutations/ChangeTodoStatusMutation';
 import RemoveTodoMutation from '../mutations/RemoveTodoMutation';
 import RenameTodoMutation from '../mutations/RenameTodoMutation';
+import updateTodoSubscription from '../subscriptions/UpdateTodoSubscription';
 import TodoTextInput from './TodoTextInput';
+import type { Todo_todo as TodoItem } from './__generated__/Todo_todo.graphql';
+import type { Todo_user as User } from './__generated__/Todo_user.graphql';
 
 interface Props {
   readonly relay: RelayProp;
@@ -51,6 +52,11 @@ function Todo({ relay, todo, user }: Props) {
     setIsEditing(false);
     removeTodo();
   };
+
+  useEffect(() => {
+    const disposable = updateTodoSubscription({ id: todo.id });
+    return () => disposable.dispose();
+  }, [todo.id]);
 
   return (
     <li

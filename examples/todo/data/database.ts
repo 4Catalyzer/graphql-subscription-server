@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 /**
  * This file provided by Facebook is for non-commercial testing and evaluation
  * purposes only.  Facebook reserves all rights not expressly granted.
@@ -10,6 +9,9 @@
  * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
+// eslint-disable-next-line max-classes-per-file
+import { EventEmitter } from 'events';
 
 export class Todo {
   constructor(
@@ -24,136 +26,105 @@ export class User {
 }
 
 // Mock authenticated ID
-export const USER_ID = 'me';
+export const VIEWER_ID = 'me';
 
-// Mock user database table
-const usersById: Map<string, User> = new Map([[USER_ID, new User(USER_ID)]]);
+// Mock user data
+const viewer = new User(VIEWER_ID);
 
-// Mock todo database table
-const todosById: Map<string, Todo> = new Map();
-const todoIdsByUser: Map<string, ReadonlyArray<string>> = new Map([
-  [USER_ID, []],
-]);
+class Database extends EventEmitter {
+  usersById: Record<string, User> = {
+    [VIEWER_ID]: viewer,
+  };
 
-function getTodoIdsForUser(id: string): ReadonlyArray<string> {
-  return todoIdsByUser.get(id) || [];
-}
+  nextTodoId = 0;
 
-// Seed initial data
-let nextTodoId = 0;
+  todosById = {};
 
-export function addTodo(text: string, complete: boolean): string {
-  const todo = new Todo(`${nextTodoId++}`, text, complete);
-  todosById.set(todo.id, todo);
+  todoIdsByUser: Record<string, string[]> = {
+    [VIEWER_ID]: [],
+  };
 
-  const todoIdsForUser = getTodoIdsForUser(USER_ID);
-  todoIdsByUser.set(USER_ID, todoIdsForUser.concat(todo.id));
+  emit(topic: string | symbol, data): boolean {
+    // Delay the change notification to avoid the subscription update hitting the
+    // client before the mutation response.
+    setTimeout(() => {
+      console.log('emitting data', topic);
+      super.emit(topic, data);
+    }, 100);
 
-  return todo.id;
-}
-
-addTodo('Taste JavaScript', true);
-addTodo('Buy a unicorn', false);
-
-// Private, for strongest typing, only export `getTodoOrThrow`
-function getTodo(id: string): Todo | null | undefined {
-  return todosById.get(id);
-}
-
-export function getTodoOrThrow(id: string): Todo {
-  const todo = getTodo(id);
-
-  if (!todo) {
-    throw new Error(`Invariant exception, Todo ${id} not found`);
+    return true;
   }
 
-  return todo;
-}
-
-export function getTodos(status = 'any'): ReadonlyArray<Todo> {
-  const todoIdsForUser = getTodoIdsForUser(USER_ID);
-  const todosForUser = todoIdsForUser.map(getTodoOrThrow);
-
-  if (status === 'any') {
-    return todosForUser;
+  addTodo(text, complete) {
+    const todo = new Todo(`${this.nextTodoId++}`, text, !!complete);
+    this.todosById[todo.id] = todo;
+    this.todoIdsByUser[VIEWER_ID].push(todo.id);
+    this.emit('add_todo', todo);
+    return todo.id;
   }
 
-  return todosForUser.filter(
-    (todo: Todo): boolean => todo.complete === (status === 'completed'),
-  );
-}
-
-export function changeTodoStatus(id: string, complete: boolean) {
-  const todo = getTodoOrThrow(id);
-
-  // Replace with the modified complete value
-  todosById.set(id, new Todo(id, todo.text, complete));
-}
-
-// Private, for strongest typing, only export `getUserOrThrow`
-function getUser(id: string): User | null | undefined {
-  return usersById.get(id);
-}
-
-export function getUserOrThrow(id: string): User {
-  const user = getUser(id);
-
-  if (!user) {
-    throw new Error(`Invariant exception, User ${id} not found`);
+  getTodo(id) {
+    return this.todosById[id];
   }
 
-  return user;
+  getTodos(status = 'any') {
+    const todos = this.todoIdsByUser[VIEWER_ID].map((id) => this.todosById[id]);
+    if (status === 'any') {
+      return todos;
+    }
+    return todos.filter((todo) => todo.complete === (status === 'completed'));
+  }
+
+  changeTodoStatus(id, complete) {
+    const todo = this.getTodo(id);
+    todo.complete = complete;
+    this.emit(`update_todo_${id}`, todo);
+  }
+
+  getUser(id) {
+    return this.usersById[id];
+  }
+
+  getViewer() {
+    return this.getUser(VIEWER_ID);
+  }
+
+  markAllTodos(complete) {
+    const changedTodos: Todo[] = [];
+    this.getTodos().forEach((todo) => {
+      if (todo.complete !== complete) {
+        todo.complete = complete; // eslint-disable-line no-param-reassign
+        changedTodos.push(todo);
+        this.emit(`update_todo_${todo.id}`, todo);
+      }
+    });
+    return changedTodos.map((todo) => todo.id);
+  }
+
+  removeTodo(id) {
+    const todoIndex = this.todoIdsByUser[VIEWER_ID].indexOf(id);
+    if (todoIndex !== -1) {
+      this.todoIdsByUser[VIEWER_ID].splice(todoIndex, 1);
+    }
+    this.emit('delete_todo', { id });
+    delete this.todosById[id];
+  }
+
+  removeCompletedTodos() {
+    const todosToRemove = this.getTodos().filter((todo) => todo.complete);
+    todosToRemove.forEach((todo) => this.removeTodo(todo.id));
+    return todosToRemove.map((todo) => todo.id);
+  }
+
+  renameTodo(id, text) {
+    const todo = this.getTodo(id);
+    todo.text = text;
+    this.emit(`update_todo_${id}`, todo);
+  }
 }
 
-export function markAllTodos(complete: boolean): ReadonlyArray<string> {
-  const todosToChange = getTodos().filter(
-    (todo: Todo): boolean => todo.complete !== complete,
-  );
+const db = new Database();
+db.addTodo('Taste JavaScript', true);
+db.addTodo('Buy a unicorn', false);
 
-  todosToChange.forEach((todo: Todo): void =>
-    changeTodoStatus(todo.id, complete),
-  );
-
-  return todosToChange.map((todo: Todo): string => todo.id);
-}
-
-export function removeTodo(id: string) {
-  const todoIdsForUser = getTodoIdsForUser(USER_ID);
-
-  // Remove from the users list
-  todoIdsByUser.set(
-    USER_ID,
-    todoIdsForUser.filter((todoId: string): boolean => todoId !== id),
-  );
-
-  // And also from the total list of Todos
-  todosById.delete(id);
-}
-
-export function removeCompletedTodos(): ReadonlyArray<string> {
-  const todoIdsForUser = getTodoIdsForUser(USER_ID);
-
-  const todoIdsToRemove = getTodos()
-    .filter((todo: Todo): boolean => todo.complete)
-    .map((todo: Todo): string => todo.id);
-
-  // Remove from the users list
-  todoIdsByUser.set(
-    USER_ID,
-    todoIdsForUser.filter(
-      (todoId: string): boolean => !todoIdsToRemove.includes(todoId),
-    ),
-  );
-
-  // And also from the total list of Todos
-  todoIdsToRemove.forEach((id: string): boolean => todosById.delete(id));
-
-  return todoIdsToRemove;
-}
-
-export function renameTodo(id: string, text: string) {
-  const todo = getTodoOrThrow(id);
-
-  // Replace with the modified text value
-  todosById.set(id, new Todo(id, text, todo.complete));
-}
+export default db;

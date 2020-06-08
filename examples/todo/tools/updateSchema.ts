@@ -17,7 +17,7 @@ import path from 'path';
 
 import { printSchema } from 'graphql';
 
-import { schema } from './schema';
+import { schema } from '../data/schema';
 
 const schemaPath = path.resolve(__dirname, '../data/schema.graphql');
 

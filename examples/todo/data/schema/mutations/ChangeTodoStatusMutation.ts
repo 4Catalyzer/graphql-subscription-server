@@ -13,13 +13,7 @@
 import { GraphQLBoolean, GraphQLID, GraphQLNonNull } from 'graphql';
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay';
 
-import {
-  Todo,
-  User,
-  changeTodoStatus,
-  getTodoOrThrow,
-  getUserOrThrow,
-} from '../../database';
+import { Todo, User } from '../../database';
 import { GraphQLTodo, GraphQLUser } from '../nodes';
 
 type Input = {
@@ -43,16 +37,21 @@ const ChangeTodoStatusMutation = mutationWithClientMutationId({
   outputFields: {
     todo: {
       type: new GraphQLNonNull(GraphQLTodo),
-      resolve: ({ todoId }: Payload): Todo => getTodoOrThrow(todoId),
+      resolve: ({ todoId }: Payload, _args, { database }): Todo =>
+        database.getTodo(todoId),
     },
     user: {
       type: new GraphQLNonNull(GraphQLUser),
-      resolve: ({ userId }: Payload): User => getUserOrThrow(userId),
+      resolve: ({ userId }: Payload, _args, { database }): User =>
+        database.getUser(userId),
     },
   },
-  mutateAndGetPayload: ({ id, complete, userId }: Input): Payload => {
+  mutateAndGetPayload: (
+    { id, complete, userId }: Input,
+    { database },
+  ): Payload => {
     const todoId = fromGlobalId(id).id;
-    changeTodoStatus(todoId, complete);
+    database.changeTodoStatus(todoId, complete);
 
     return { todoId, userId };
   },

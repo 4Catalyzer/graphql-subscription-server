@@ -3,11 +3,10 @@
     [
       "@4c",
       {
-        "target": "web-app",
+        "target": "node",
         "useBuiltIns": "usage"
       }
     ],
     "@babel/preset-typescript"
-  ],
-  "plugins": [["relay", { "artifactDirectory": "./src/__generated__" }]]
+  ]
 }

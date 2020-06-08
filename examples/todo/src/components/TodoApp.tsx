@@ -10,15 +10,17 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createFragmentContainer, graphql } from 'react-relay';
 import type { RelayProp } from 'react-relay';
 
-import type { TodoApp_user as User } from '../__generated__/TodoApp_user.graphql';
 import AddTodoMutation from '../mutations/AddTodoMutation';
+import addTodoSubscription from '../subscriptions/AddTodoSubscription';
+import removeTodoSubscription from '../subscriptions/RemoveTodoSubscription';
 import TodoList from './TodoList';
 import TodoListFooter from './TodoListFooter';
 import TodoTextInput from './TodoTextInput';
+import type { TodoApp_user as User } from './__generated__/TodoApp_user.graphql';
 
 interface Props {
   readonly relay: RelayProp;
@@ -31,6 +33,16 @@ function TodoApp({ relay, user }: Props) {
   };
 
   const hasTodos = user.totalCount > 0;
+
+  useEffect(() => {
+    // initialize subscriptions
+    const removeDisposable = removeTodoSubscription();
+    const addDisposable = addTodoSubscription();
+    return () => {
+      removeDisposable.dispose();
+      addDisposable.dispose();
+    };
+  });
 
   return (
     <div>

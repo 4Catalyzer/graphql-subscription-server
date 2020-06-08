@@ -13,8 +13,8 @@
 import React from 'react';
 import { RelayProp, createFragmentContainer, graphql } from 'react-relay';
 
-import { TodoListFooter_user as User } from '../__generated__/TodoListFooter_user.graphql';
 import RemoveCompletedTodosMutation from '../mutations/RemoveCompletedTodosMutation';
+import { TodoListFooter_user as User } from './__generated__/TodoListFooter_user.graphql';
 
 interface Props {
   readonly relay: RelayProp;

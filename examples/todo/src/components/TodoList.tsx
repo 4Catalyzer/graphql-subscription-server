@@ -13,9 +13,9 @@
 import React from 'react';
 import { RelayProp, createFragmentContainer, graphql } from 'react-relay';
 
-import { TodoList_user as User } from '../__generated__/TodoList_user.graphql';
 import MarkAllTodosMutation from '../mutations/MarkAllTodosMutation';
 import Todo from './Todo';
+import { TodoList_user as User } from './__generated__/TodoList_user.graphql';
 
 interface Props {
   readonly relay: RelayProp;
@@ -56,7 +56,7 @@ function TodoList({
 
       <ul className="todo-list">
         {nodes.map((node) => (
-          <Todo key={node!.id} todo={node} user={user} />
+          <Todo key={node!.id} todo={node!} user={user} />
         ))}
       </ul>
     </section>

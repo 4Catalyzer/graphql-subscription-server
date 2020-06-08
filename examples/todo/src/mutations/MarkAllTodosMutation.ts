@@ -14,8 +14,8 @@ import { Disposable, Environment, commitMutation, graphql } from 'react-relay';
 import {
   MarkAllTodosInput,
   MarkAllTodosMutationResponse,
-} from '../__generated__/MarkAllTodosMutation.graphql';
-import { TodoList_user as User } from '../__generated__/TodoList_user.graphql';
+} from './__generated__/MarkAllTodosMutation.graphql';
+import { TodoList_user as User } from './__generated__/TodoList_user.graphql';
 
 type Todos = NonNullable<User['todos']>;
 

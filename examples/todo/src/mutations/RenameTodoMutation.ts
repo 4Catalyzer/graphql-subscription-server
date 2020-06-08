@@ -15,8 +15,8 @@ import { Disposable, Environment, commitMutation, graphql } from 'react-relay';
 import {
   RenameTodoInput,
   RenameTodoMutationResponse,
-} from '../__generated__/RenameTodoMutation.graphql';
-import { Todo_todo as Todo } from '../__generated__/Todo_todo.graphql';
+} from './__generated__/RenameTodoMutation.graphql';
+import { Todo_todo as Todo } from './__generated__/Todo_todo.graphql';
 
 const mutation = graphql`
   mutation RenameTodoMutation($input: RenameTodoInput!) {

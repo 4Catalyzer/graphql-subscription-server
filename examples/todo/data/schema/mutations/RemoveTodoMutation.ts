@@ -13,7 +13,7 @@
 import { GraphQLID, GraphQLNonNull } from 'graphql';
 import { fromGlobalId, mutationWithClientMutationId } from 'graphql-relay';
 
-import { User, getUserOrThrow, removeTodo } from '../../database';
+import { User } from '../../database';
 import { GraphQLUser } from '../nodes';
 
 type Input = {
@@ -39,12 +39,13 @@ const RemoveTodoMutation = mutationWithClientMutationId({
     },
     user: {
       type: new GraphQLNonNull(GraphQLUser),
-      resolve: ({ userId }: Payload): User => getUserOrThrow(userId),
+      resolve: ({ userId }: Payload, _args, { database }): User =>
+        database.getUser(userId),
     },
   },
-  mutateAndGetPayload: ({ id, userId }: Input): Payload => {
+  mutateAndGetPayload: ({ id, userId }: Input, { database }): Payload => {
     const localTodoId = fromGlobalId(id).id;
-    removeTodo(localTodoId);
+    database.removeTodo(localTodoId);
 
     return { id, userId };
   },

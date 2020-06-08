@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable import/no-extraneous-dependencies,no-console */
 /**
  * This file provided by Facebook is for non-commercial testing and evaluation
  * purposes only.  Facebook reserves all rights not expressly granted.
@@ -17,9 +17,9 @@ import path from 'path';
 import {
   EventSubscriber,
   JwtCredentialsManager,
+  SubscriptionServer,
 } from '@4c/graphql-subscription-server';
 import type { JwtCredentials } from '@4c/graphql-subscription-server/JwtCredentialsManager';
-import SubscriptionServer from '@4c/graphql-subscription-server/SubscriptionServer';
 import express from 'express';
 import graphQLHTTP from 'express-graphql';
 import jwt from 'jsonwebtoken';
@@ -27,12 +27,12 @@ import { rsaPublicKeyToPEM } from 'jwks-rsa/lib/utils';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 
-import * as database from './database';
-import { schema } from './schema';
+import database from './data/database';
+import { schema } from './data/schema';
 
 const APP_PORT = 3000;
 const GRAPHQL_PORT = 8080;
-const BASE_APP = path.resolve(__dirname, '..', 'src');
+const BASE_APP = path.resolve(__dirname, 'src');
 
 const createContext = () => ({
   database,
@@ -58,12 +58,14 @@ type Credentials = JwtCredentials & {
 };
 
 class CredentialsManager extends JwtCredentialsManager<Credentials> {
-  getCredentialsFromAuthorization(token: string) {
+  getCredentialsFromAuthorization(
+    token: string,
+  ): Credentials | null | undefined | Promise<Credentials | null | undefined> {
     const { header } = jwt.decode(token, { complete: true }) as {
       header: { kid: string };
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require
     const jwkSet = require('./jwk-set.json');
 
     const jwk = jwkSet.keys.find((k: any) => k.kid === header.kid);
@@ -116,7 +118,7 @@ server.listen(GRAPHQL_PORT, () => {
 // Calling webpack() without a callback as 2nd property returns a Compiler object.
 const compiler: webpack.Compiler = webpack({
   mode: 'development',
-  entry: ['whatwg-fetch', path.resolve(BASE_APP, 'app')],
+  entry: path.join(BASE_APP, 'app'),
   module: {
     rules: [
       {
@@ -124,6 +126,20 @@ const compiler: webpack.Compiler = webpack({
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
+          options: {
+            babelrc: false,
+            presets: [
+              [
+                '@4c',
+                {
+                  target: 'web-app',
+                  useBuiltIns: 'usage',
+                },
+              ],
+              '@babel/preset-typescript',
+            ],
+            plugins: [['relay', { schema: 'data/schema.graphql' }]],
+          },
         },
       },
     ],
