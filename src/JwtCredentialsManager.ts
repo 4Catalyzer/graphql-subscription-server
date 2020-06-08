@@ -70,11 +70,6 @@ export default abstract class JwtCredentialsManager<
     );
     await this.credentialsPromise;
 
-    // Avoid race conditions with multiple updates.
-    if (this.token !== token) {
-      return;
-    }
-
     // TODO: Don't schedule renewal if the new credentials are expired or
     // almost expired.
     this.scheduleRenewCredentials();
