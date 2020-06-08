@@ -1,6 +1,6 @@
 import { Subscriber } from './Subscriber';
 
-export default class SubscriptionContext<TSubscriberOptions extends {}> {
+export default class SubscriptionContext<TSubscriberOptions> {
   subscriber: Subscriber<TSubscriberOptions>;
 
   closes: Array<() => Promise<void>>;

@@ -6,6 +6,10 @@ export type LogLevels =
   | 'debug'
   | 'silly';
 
-export type Logger = (level: LogLevels, message: string, meta?: {}) => void;
+export type Logger = (
+  level: LogLevels,
+  message: string,
+  meta?: Record<string, unknown>,
+) => void;
 
 export type CreateLogger = (group?: string) => Logger;
