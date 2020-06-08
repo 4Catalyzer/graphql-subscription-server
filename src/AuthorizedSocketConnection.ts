@@ -87,6 +87,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       .on('authenticate', this.handleAuthenticate)
       .on('subscribe', this.handleSubscribe)
       .on('unsubscribe', this.handleUnsubscribe)
+      .on('connect', this.handleConnect)
       .on('disconnect', this.handleDisconnect);
   }
 
@@ -234,6 +235,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       }
     } finally {
       acknowledge(cb);
+      this.log('debug', 'client subscribed');
     }
 
     const stream: AsyncIterable<unknown> = resultOrStream as any;
@@ -262,6 +264,10 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
       this.socket.emit('subscription update', { id, ...response });
     }
+  };
+
+  handleConnect = () => {
+    this.log('debug', 'client connected');
   };
 
   handleUnsubscribe = async (id: string) => {
