@@ -19,7 +19,7 @@ export default abstract class JwtCredentialsManager<
 
   token: string | null | undefined;
 
-  credentials: Promise<TCredentials | null | undefined>;
+  credentialsPromise: Promise<TCredentials | null | undefined> | null;
 
   renewHandle: NodeJS.Timeout | null | undefined;
 
@@ -27,13 +27,13 @@ export default abstract class JwtCredentialsManager<
     this.config = config;
 
     this.token = null;
-    this.credentials = null;
+    this.credentialsPromise = null;
   }
 
   async getCredentials(): Promise<TCredentials | null | undefined> {
-    if (!this.credentials) return null;
+    if (!this.credentialsPromise) return null;
 
-    const credentials = await this.credentials;
+    const credentials = await this.credentialsPromise;
     if (credentials && Date.now() >= credentials.exp * SECONDS_TO_MS) {
       return null;
     }
@@ -58,7 +58,7 @@ export default abstract class JwtCredentialsManager<
     }
 
     this.token = null;
-    this.credentials = null;
+    this.credentialsPromise = null;
   }
 
   async updateCredentials() {
@@ -67,10 +67,10 @@ export default abstract class JwtCredentialsManager<
       throw new Error('JwtCredentialManager: Unauthenticated');
     }
 
-    this.credentials = Promise.resolve(
+    this.credentialsPromise = Promise.resolve(
       this.getCredentialsFromAuthorization(token),
     );
-    await this.credentials;
+    await this.credentialsPromise;
 
     // Avoid race conditions with multiple updates.
     if (this.token !== token) {
@@ -88,14 +88,16 @@ export default abstract class JwtCredentialsManager<
     }
 
     const { tokenExpirationMarginSeconds } = this.config;
-    if (tokenExpirationMarginSeconds === null || !this.credentials) {
+    if (tokenExpirationMarginSeconds === null) {
       return;
     }
 
-    const resolvedCredentials = await this.credentials;
-    if (!resolvedCredentials) return;
+    const credentials = await this.credentialsPromise;
+    if (!credentials) {
+      return;
+    }
 
-    const deltaMs = resolvedCredentials.exp * SECONDS_TO_MS - Date.now();
+    const deltaMs = credentials.exp * SECONDS_TO_MS - Date.now();
     const deltaMsAdjusted = Math.max(
       0,
       deltaMs - tokenExpirationMarginSeconds * SECONDS_TO_MS,
