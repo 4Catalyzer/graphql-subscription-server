@@ -30,7 +30,7 @@ import {
 import { Todo, User, VIEWER_ID } from '../database';
 
 const { nodeInterface, nodeField } = nodeDefinitions(
-  (globalId: string, { database }): {} | null | undefined => {
+  (globalId: string, { database }): Record<string, any> | null | undefined => {
     const { type, id }: { id: string; type: string } = fromGlobalId(globalId);
 
     if (type === 'Todo') {
@@ -41,7 +41,7 @@ const { nodeInterface, nodeField } = nodeDefinitions(
     }
     return null;
   },
-  (obj: {}): GraphQLObjectType | null | undefined => {
+  (obj: Record<string, any>): GraphQLObjectType | null | undefined => {
     if (obj instanceof Todo) {
       return GraphQLTodo;
     }
@@ -91,11 +91,10 @@ const GraphQLUser = new GraphQLObjectType({
           type: GraphQLString,
           defaultValue: 'any',
         },
-        // $FlowFixMe
         ...connectionArgs,
       },
       resolve: (
-        _root: {},
+        _root: Record<string, any>,
         { status, after, before, first, last },
         { database },
       ) =>
