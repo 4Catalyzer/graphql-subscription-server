@@ -10,10 +10,6 @@
     "type": "git",
     "url": "git+https://github.com/4Catalyzer/graphql-subscription-server.git"
   },
-  "files": [
-    "lib",
-    "es"
-  ],
   "scripts": {
     "build": "4c build src",
     "format": "4c format --prettier-ignore .eslintignore .",
