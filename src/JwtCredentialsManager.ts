@@ -31,8 +31,6 @@ export default abstract class JwtCredentialsManager<
   }
 
   async getCredentials(): Promise<TCredentials | null | undefined> {
-    if (!this.credentialsPromise) return null;
-
     const credentials = await this.credentialsPromise;
     if (credentials && Date.now() >= credentials.exp * SECONDS_TO_MS) {
       return null;
