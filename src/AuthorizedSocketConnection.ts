@@ -235,7 +235,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       }
     } finally {
       acknowledge(cb);
-      this.log('debug', 'client subscribed');
+      this.log('debug', 'client subscribed', { id, query, variables });
     }
 
     const stream: AsyncIterable<unknown> = resultOrStream as any;
