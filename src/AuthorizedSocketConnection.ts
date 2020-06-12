@@ -248,7 +248,11 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
     for await (const payload of stream) {
       const credentials = await this.config.credentialsManager.getCredentials();
-      await this.rateLimiter.consume(this.socket.client.id);
+      try {
+        await this.rateLimiter.consume(this.socket.client.id);
+      } catch (e) {
+        this.socket.emit('blocked', { 'retry-ms': e.msBeforeNext });
+      }
 
       let response;
       try {
