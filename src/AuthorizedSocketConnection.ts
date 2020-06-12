@@ -9,6 +9,7 @@ import {
   validate,
 } from 'graphql';
 import { ExecutionResult } from 'graphql/execution/execute';
+import { RateLimiterMemory } from 'rate-limiter-flexible';
 import IoServer from 'socket.io';
 
 import * as AsyncUtils from './AsyncUtils';
@@ -73,6 +74,8 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     SubscriptionContext<SubscribeOptions<TCredentials>>
   >;
 
+  private rateLimiter: RateLimiterMemory;
+
   constructor(
     socket: IoServer.Socket,
     config: AuthorizedSocketOptions<TContext, TCredentials>,
@@ -82,6 +85,11 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
     this.log = config.createLogger('@4c/SubscriptionServer::AuthorizedSocket');
     this.subscriptionContexts = new Map();
+
+    this.rateLimiter = new RateLimiterMemory({
+      points: 5,
+      duration: 1,
+    });
 
     this.socket
       .on('authenticate', this.handleAuthenticate)
@@ -240,6 +248,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
     for await (const payload of stream) {
       const credentials = await this.config.credentialsManager.getCredentials();
+      await this.rateLimiter.consume(this.socket.client.id);
 
       let response;
       try {
