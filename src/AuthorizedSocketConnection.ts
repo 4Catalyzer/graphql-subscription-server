@@ -68,6 +68,8 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
   log: Logger;
 
+  clientId: string;
+
   subscriptionContexts: Map<
     string,
     SubscriptionContext<SubscribeOptions<TCredentials>>
@@ -79,6 +81,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
   ) {
     this.socket = socket;
     this.config = config;
+    this.clientId = socket.client.id;
 
     this.log = config.createLogger('@4c/SubscriptionServer::AuthorizedSocket');
     this.subscriptionContexts = new Map();
@@ -116,7 +119,9 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
   handleAuthenticate = async (authorization: string, cb?: () => void) => {
     try {
-      this.log('debug', 'authenticating connection');
+      this.log('debug', 'authenticating connection', {
+        clientId: this.clientId,
+      });
 
       await this.config.credentialsManager.authenticate(authorization);
     } catch (err) {
@@ -235,7 +240,12 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       }
     } finally {
       acknowledge(cb);
-      this.log('debug', 'client subscribed', { id, query, variables });
+      this.log('debug', 'client subscribed', {
+        id,
+        query,
+        variables,
+        clientId: this.clientId,
+      });
     }
 
     const stream: AsyncIterable<unknown> = resultOrStream as any;
@@ -267,7 +277,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
   };
 
   handleConnect = () => {
-    this.log('debug', 'client connected');
+    this.log('debug', 'client connected', { clientId: this.clientId });
   };
 
   handleUnsubscribe = async (id: string) => {
@@ -276,14 +286,14 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       return;
     }
 
-    this.log('debug', 'client unsubscribed', { id });
+    this.log('debug', 'client unsubscribed', { id, clientId: this.clientId });
 
     await subscriptionContext.close();
     this.subscriptionContexts.delete(id);
   };
 
   handleDisconnect = async () => {
-    this.log('debug', 'client disconnected');
+    this.log('debug', 'client disconnected', { clientId: this.clientId });
 
     await Promise.all([
       this.config.credentialsManager.unauthenticate(),
