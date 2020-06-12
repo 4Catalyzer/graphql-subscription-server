@@ -252,6 +252,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         await this.rateLimiter.consume(this.socket.client.id);
       } catch (e) {
         this.socket.emit('blocked', { 'retry-ms': e.msBeforeNext });
+        return;
       }
 
       let response;
