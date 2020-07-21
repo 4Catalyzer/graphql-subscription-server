@@ -264,7 +264,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     }
   };
 
-  handleUnsubscribe = async (id: string) => {
+  handleUnsubscribe = async (id: string, cb?: () => void) => {
     const subscriptionContext = this.subscriptionContexts.get(id);
     if (!subscriptionContext) {
       return;
@@ -274,6 +274,8 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
     await subscriptionContext.close();
     this.subscriptionContexts.delete(id);
+
+    acknowledge(cb);
   };
 
   handleDisconnect = async () => {
