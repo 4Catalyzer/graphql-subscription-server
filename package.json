@@ -1,6 +1,6 @@
 {
   "name": "@4c/graphql-subscription-server",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "author": {
     "name": "4Catalyzer"
   },
@@ -99,5 +99,5 @@
   },
   "readme": "ERROR: No README data found!",
   "homepage": "https://github.com/4Catalyzer/graphql-subscription-server#readme",
-  "_id": "@4c/graphql-subscription-server@1.0.0"
+  "_id": "@4c/graphql-subscription-server@1.0.1"
 }

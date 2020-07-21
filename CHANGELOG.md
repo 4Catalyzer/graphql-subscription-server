@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v1.0.1...v1.1.0) (2020-07-21)
+
+
+### Features
+
+* Acknowledge unsubscribe requests ([#367](https://github.com/4Catalyzer/graphql-subscription-server/issues/367)) ([a2c24a8](https://github.com/4Catalyzer/graphql-subscription-server/commit/a2c24a8530c97f6fdbb51220d95f0c81e7deeb0a))
+
 ## [1.0.1](https://github.com/4Catalyzer/graphql-subscription-server/compare/v1.0.0...v1.0.1) (2020-06-08)
 
 
