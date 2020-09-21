@@ -4726,10 +4726,10 @@ eslint-plugin-import@^2.22.0:
     resolve "^1.17.0"
     tsconfig-paths "^3.9.0"
 
-eslint-plugin-jest@^24.0.1:
-  version "24.0.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-24.0.1.tgz#ad5e091d47cf895e15dc115e18f98471135a334f"
-  integrity sha512-8tYFDqOHGr7vVfdVYspmlV4sRBTylrM4gSLgkGKlO6F+djDOEJ+tEU7I50smUs7AIvFnNZutXUQAMgI9s9N6xQ==
+eslint-plugin-jest@^24.0.2:
+  version "24.0.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-24.0.2.tgz#4bf0fcdc86289d702a7dacb430b4363482af773b"
+  integrity sha512-DSBLNpkKDOpUJQkTGSs5sVJWsu0nDyQ2rYxkr0Eh7nrkc5bMUr/dlDbtTj3l8y6UaCVsem6rryF1OZrKnz1S5g==
   dependencies:
     "@typescript-eslint/experimental-utils" "^4.0.1"
 
@@ -7653,10 +7653,10 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.1.6.tgz#1c00c743b433cd0a4e80758f7b64a57440d9ff00"
   integrity sha1-HADHQ7QzzQpOgHWPe2SldEDZ/wA=
 
-lint-staged@^10.3.0:
-  version "10.3.0"
-  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-10.3.0.tgz#388c3d440590c45c339e7163f669ea69ae90b1e0"
-  integrity sha512-an3VgjHqmJk0TORB/sdQl0CTkRg4E5ybYCXTTCSJ5h9jFwZbcgKIx5oVma5e7wp/uKt17s1QYFmYqT9MGVosGw==
+lint-staged@^10.4.0:
+  version "10.4.0"
+  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-10.4.0.tgz#d18628f737328e0bbbf87d183f4020930e9a984e"
+  integrity sha512-uaiX4U5yERUSiIEQc329vhCTDDwUcSvKdRLsNomkYLRzijk3v8V9GWm2Nz0RMVB87VcuzLvtgy6OsjoH++QHIg==
   dependencies:
     chalk "^4.1.0"
     cli-truncate "^2.1.0"
@@ -9758,10 +9758,10 @@ prettier-linter-helpers@^1.0.0:
   dependencies:
     fast-diff "^1.1.2"
 
-prettier@^2.0.0, prettier@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.1.1.tgz#d9485dd5e499daa6cb547023b87a6cf51bee37d6"
-  integrity sha512-9bY+5ZWCfqj3ghYBLxApy2zf6m+NJo5GzmLTpr9FsApsfjriNnS2dahWReHMi7qNPhhHl9SYHJs2cHZLgexNIw==
+prettier@^2.0.0, prettier@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.1.2.tgz#3050700dae2e4c8b67c4c3f666cdb8af405e1ce5"
+  integrity sha512-16c7K+x4qVlJg9rEbXl7HEGmQyZlG4R9AgP+oHKRMsMsuk8s+ATStlf1NpDqyBI1HpVyfjLOeMhH2LvuNvV5Vg==
 
 pretty-format@^25.2.1, pretty-format@^25.5.0:
   version "25.5.0"
@@ -10262,10 +10262,10 @@ redis-errors@^1.0.0, redis-errors@^1.2.0:
   resolved "https://registry.yarnpkg.com/redis-errors/-/redis-errors-1.2.0.tgz#eb62d2adb15e4eaf4610c04afe1529384250abad"
   integrity sha1-62LSrbFeTq9GEMBK/hUpOEJQq60=
 
-redis-mock@^0.51.0:
-  version "0.51.0"
-  resolved "https://registry.yarnpkg.com/redis-mock/-/redis-mock-0.51.0.tgz#14d21bb0877299b3fbb022a85ffff481c56d43f3"
-  integrity sha512-b4vzfpDY5DlwcNgM3rkL51gitAQqOdCMu3GgQLb/ZQ2tOLOtLQ4Xi8goYA5cSLPp6w1AhVYvdIgTaYAYlOdncg==
+redis-mock@^0.52.0:
+  version "0.52.0"
+  resolved "https://registry.yarnpkg.com/redis-mock/-/redis-mock-0.52.0.tgz#4dabe306549abfd36305a3891d802e9839b2e22a"
+  integrity sha512-s+6m2BFfgbXdbN4Pbv/+y7/lLd5M7gCTuYI0EAdb0IqvqDjYoexh+fs3Gd1w2bYIchNAez11wDhbBlFxXnjUog==
 
 redis-parser@^3.0.0:
   version "3.0.0"
@@ -10673,10 +10673,10 @@ selfsigned@^1.10.7:
   dependencies:
     node-forge "0.9.0"
 
-semantic-release@^17.1.1:
-  version "17.1.1"
-  resolved "https://registry.yarnpkg.com/semantic-release/-/semantic-release-17.1.1.tgz#d9775968e841b2b7c5020559e4481aea8520ca75"
-  integrity sha512-9H+207eynBJElrQBHySZm+sIEoJeUhPA2zU4cdlY1QSInd2lnE8GRD2ALry9EassE22c9WW+aCREwBhro5AIIg==
+semantic-release@^17.1.2:
+  version "17.1.2"
+  resolved "https://registry.yarnpkg.com/semantic-release/-/semantic-release-17.1.2.tgz#7d77555185722012b34e3ca74e4d13f813daf3cd"
+  integrity sha512-szYBXm10QjQO5Tb1S2PSkvOBW3MajWJat5EWtx+MzaVT/jquuxf9o+Zn8FC1j157xvJ5p9r1d/MZGslgs7oQQg==
   dependencies:
     "@semantic-release/commit-analyzer" "^8.0.0"
     "@semantic-release/error" "^2.2.0"
@@ -11986,10 +11986,10 @@ typescript@^3.8.3:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.7.tgz#98d600a5ebdc38f40cb277522f12dc800e9e25fa"
   integrity sha512-BLbiRkiBzAwsjut4x/dsibSTB6yWpwT5qWmC2OfuCg3GgVQCSgMs4vEctYPhsaGtd0AeuuHMkjZ2h2WG8MSzRw==
 
-typescript@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.0.2.tgz#7ea7c88777c723c681e33bf7988be5d008d05ac2"
-  integrity sha512-e4ERvRV2wb+rRZ/IQeb3jm2VxBsirQLpQhdxplZ2MEzGvDkkMmPglecnNDfSUBivMjP93vRbngYYDQqQ/78bcQ==
+typescript@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.0.3.tgz#153bbd468ef07725c1df9c77e8b453f8d36abba5"
+  integrity sha512-tEu6DGxGgRJPb/mVPIZ48e69xCn2yRmCgYmDugAVwmJ6o+0u1RI18eO7E7WBTLYLaEVVOhwQmcdhQHweux/WPg==
 
 uglify-js@^3.1.4:
   version "3.8.0"
