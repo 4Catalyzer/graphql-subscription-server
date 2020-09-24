@@ -57,7 +57,7 @@
     "graphql": ">=0.12.3"
   },
   "devDependencies": {
-    "@4c/babel-preset": "^7.4.1",
+    "@4c/babel-preset": "^8.0.1",
     "@4c/cli": "^2.1.11",
     "@4c/jest-preset": "^1.5.3",
     "@4c/prettier-config": "^1.1.0",
