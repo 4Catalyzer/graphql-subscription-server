@@ -135,22 +135,22 @@
     rxjs "^6.5.2"
     semver "^7.0.0"
 
-"@4c/semantic-release-alt-publish-dir@^5.0.11":
-  version "5.0.11"
-  resolved "https://registry.yarnpkg.com/@4c/semantic-release-alt-publish-dir/-/semantic-release-alt-publish-dir-5.0.11.tgz#40e82b4bd3f7af4e97f744f22fd934a6132f630d"
-  integrity sha512-MO74JYs/n0w8gTWhT5W79652M27FlwkWNmsFhJsuI4zL6vrkGvAqM4D/iAA1MFjzk/AndwYKvE2jPUNaTcjFEw==
+"@4c/semantic-release-alt-publish-dir@^5.0.12":
+  version "5.0.12"
+  resolved "https://registry.yarnpkg.com/@4c/semantic-release-alt-publish-dir/-/semantic-release-alt-publish-dir-5.0.12.tgz#0dee21a3058c7fba287353def940c1de0d8aec03"
+  integrity sha512-ZlxXZ/I43pVH+Kv1cOl7cOM+b0rnDz7GCNKbTx8I0PLjCDqfptYCi6PTlfqzfzAE+jxaTeZL50vRCOQm1dmDYA==
   dependencies:
     "@4c/file-butler" "^4.1.0"
     "@semantic-release/npm" "^7.0.0"
     execa "^4.0.3"
     read-pkg-up "^7.0.1"
 
-"@4c/semantic-release-config@^2.0.11":
-  version "2.0.11"
-  resolved "https://registry.yarnpkg.com/@4c/semantic-release-config/-/semantic-release-config-2.0.11.tgz#e888c1b6dc74d6fbc13ccb529da94bd619905e94"
-  integrity sha512-S/Nk3YsnnWAFQwRfM/ZG059XNxP0YB5r+zBD/8wqiPYiK2KMsOVAVdlxnPhzNfaLZb+Prpw3biYSciXGl08ERA==
+"@4c/semantic-release-config@^2.0.12":
+  version "2.0.12"
+  resolved "https://registry.yarnpkg.com/@4c/semantic-release-config/-/semantic-release-config-2.0.12.tgz#abe4f471e60dff3928f320b097f5054fd7577998"
+  integrity sha512-nmx/a1hdILF3lY9gLwsAyX5jwpbN1KyI9WIWJTPtHucjZY6bAub/gUV0YhU6UykltdJJOhhtu1qNicJcJQAdbA==
   dependencies:
-    "@4c/semantic-release-alt-publish-dir" "^5.0.11"
+    "@4c/semantic-release-alt-publish-dir" "^5.0.12"
     "@semantic-release/changelog" "^5.0.0"
     "@semantic-release/git" "^9.0.0"
     "@semantic-release/github" "^7.0.0"
@@ -4664,10 +4664,10 @@ escodegen@^1.14.1:
   optionalDependencies:
     source-map "~0.6.1"
 
-eslint-config-4catalyzer-jest@^2.0.8:
-  version "2.0.8"
-  resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer-jest/-/eslint-config-4catalyzer-jest-2.0.8.tgz#2b3206fe0faa82bbc38fe483ea185d3c2191c156"
-  integrity sha512-Wqt/0Xw/ct7S2qB+whTNL5m2kIH+ZC5LLEbOuqEeYXBarLad2ZwG1LWvRq7++ZG56+vd0rw6+PPLOE7PtJL9VA==
+eslint-config-4catalyzer-jest@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/eslint-config-4catalyzer-jest/-/eslint-config-4catalyzer-jest-2.0.9.tgz#b8a93da4e66ad347fb52d0f2d0c1c3d47fbf5cdc"
+  integrity sha512-2LBRRs5TtDssm7rEUafL281eSO0h8vW31qPkRC3VusMdHD5UxEdcMST7+hpnsCkMBVZprJbBstMvL/1P/yseng==
 
 eslint-config-4catalyzer-typescript@^3.0.0:
   version "3.0.0"
@@ -4694,17 +4694,17 @@ eslint-config-airbnb-base@^14.0.0:
     object.assign "^4.1.0"
     object.entries "^1.1.1"
 
-eslint-config-prettier@^6.11.0:
-  version "6.11.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-6.11.0.tgz#f6d2238c1290d01c859a8b5c1f7d352a0b0da8b1"
-  integrity sha512-oB8cpLWSAjOVFEJhhyMZh6NOEOtBVziaqdDQ86+qhDHFbZXoRTM7pNSvFRfW/W/L/LrQ38C99J5CGuRBBzBsdA==
+eslint-config-prettier@^6.12.0:
+  version "6.12.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-6.12.0.tgz#9eb2bccff727db1c52104f0b49e87ea46605a0d2"
+  integrity sha512-9jWPlFlgNwRUYVoujvWTQ1aMO8o6648r+K7qU7K5Jmkbyqav1fuEZC0COYpGBxyiAJb65Ra9hrmFx19xRGwXWw==
   dependencies:
     get-stdin "^6.0.0"
 
-eslint-import-resolver-node@^0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/eslint-import-resolver-node/-/eslint-import-resolver-node-0.3.3.tgz#dbaa52b6b2816b50bc6711af75422de808e98404"
-  integrity sha512-b8crLDo0M5RSe5YG8Pu2DYBj71tSB6OvXkfzwbJU2w7y8P4/yo0MyF8jU26IEuEuHF2K5/gcAJE3LhQGqBBbVg==
+eslint-import-resolver-node@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/eslint-import-resolver-node/-/eslint-import-resolver-node-0.3.4.tgz#85ffa81942c25012d8231096ddf679c03042c717"
+  integrity sha512-ogtf+5AB/O+nM6DIeBUNr2fuT7ot9Qg/1harBfBtaP13ekEWFQEEMP94BCB7zaNW3gyY+8SHYF00rnqYwXKWOA==
   dependencies:
     debug "^2.6.9"
     resolve "^1.13.1"
@@ -4728,17 +4728,17 @@ eslint-module-utils@^2.6.0:
     debug "^2.6.9"
     pkg-dir "^2.0.0"
 
-eslint-plugin-import@^2.22.0:
-  version "2.22.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.22.0.tgz#92f7736fe1fde3e2de77623c838dd992ff5ffb7e"
-  integrity sha512-66Fpf1Ln6aIS5Gr/55ts19eUuoDhAbZgnr6UxK5hbDx6l/QgQgx61AePq+BV4PP2uXQFClgMVzep5zZ94qqsxg==
+eslint-plugin-import@^2.22.1:
+  version "2.22.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.22.1.tgz#0896c7e6a0cf44109a2d97b95903c2bb689d7702"
+  integrity sha512-8K7JjINHOpH64ozkAhpT3sd+FswIZTfMZTjdx052pnWrgRCVfp8op9tbjpAk3DdUeI/Ba4C8OjdC0r90erHEOw==
   dependencies:
     array-includes "^3.1.1"
     array.prototype.flat "^1.2.3"
     contains-path "^0.1.0"
     debug "^2.6.9"
     doctrine "1.5.0"
-    eslint-import-resolver-node "^0.3.3"
+    eslint-import-resolver-node "^0.3.4"
     eslint-module-utils "^2.6.0"
     has "^1.0.3"
     minimatch "^3.0.4"
