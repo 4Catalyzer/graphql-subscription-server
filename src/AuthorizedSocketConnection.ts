@@ -87,6 +87,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       .on('authenticate', this.handleAuthenticate)
       .on('subscribe', this.handleSubscribe)
       .on('unsubscribe', this.handleUnsubscribe)
+      .on('connect', this.handleConnect)
       .on('disconnect', this.handleDisconnect);
   }
 
@@ -115,7 +116,9 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
   handleAuthenticate = async (authorization: string, cb?: () => void) => {
     try {
-      this.log('debug', 'authenticating connection');
+      this.log('debug', 'authenticating connection', {
+        clientId: this.socket.id,
+      });
 
       await this.config.credentialsManager.authenticate(authorization);
     } catch (err) {
@@ -234,6 +237,12 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       }
     } finally {
       acknowledge(cb);
+      this.log('debug', 'client subscribed', {
+        id,
+        query,
+        variables,
+        clientId: this.socket.id,
+      });
     }
 
     const stream: AsyncIterable<unknown> = resultOrStream as any;
@@ -264,13 +273,17 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     }
   };
 
+  handleConnect = () => {
+    this.log('debug', 'client connected', { clientId: this.socket.id });
+  };
+
   handleUnsubscribe = async (id: string, cb?: () => void) => {
     const subscriptionContext = this.subscriptionContexts.get(id);
     if (!subscriptionContext) {
       return;
     }
 
-    this.log('debug', 'client unsubscribed', { id });
+    this.log('debug', 'client unsubscribed', { id, clientId: this.socket.id });
 
     await subscriptionContext.close();
     this.subscriptionContexts.delete(id);
@@ -279,7 +292,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
   };
 
   handleDisconnect = async () => {
-    this.log('debug', 'client disconnected');
+    this.log('debug', 'client disconnected', { clientId: this.socket.id });
 
     await Promise.all([
       this.config.credentialsManager.unauthenticate(),
