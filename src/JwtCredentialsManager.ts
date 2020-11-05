@@ -19,7 +19,7 @@ export default abstract class JwtCredentialsManager<
 
   token: string | null | undefined;
 
-  credentials: TCredentials | null | undefined;
+  credentialsPromise: Promise<TCredentials | null | undefined> | null;
 
   renewHandle: NodeJS.Timeout | null | undefined;
 
@@ -27,11 +27,11 @@ export default abstract class JwtCredentialsManager<
     this.config = config;
 
     this.token = null;
-    this.credentials = null;
+    this.credentialsPromise = null;
   }
 
-  getCredentials(): TCredentials | null | undefined {
-    const { credentials } = this;
+  async getCredentials(): Promise<TCredentials | null | undefined> {
+    const credentials = await this.credentialsPromise;
     if (credentials && Date.now() >= credentials.exp * SECONDS_TO_MS) {
       return null;
     }
@@ -56,7 +56,7 @@ export default abstract class JwtCredentialsManager<
     }
 
     this.token = null;
-    this.credentials = null;
+    this.credentialsPromise = null;
   }
 
   async updateCredentials() {
@@ -65,21 +65,17 @@ export default abstract class JwtCredentialsManager<
       throw new Error('JwtCredentialManager: Unauthenticated');
     }
 
-    const credentials = await this.getCredentialsFromAuthorization(token);
-
-    // Avoid race conditions with multiple updates.
-    if (this.token !== token) {
-      return;
-    }
-
-    this.credentials = credentials;
+    this.credentialsPromise = Promise.resolve(
+      this.getCredentialsFromAuthorization(token),
+    );
+    await this.credentialsPromise;
 
     // TODO: Don't schedule renewal if the new credentials are expired or
     // almost expired.
     this.scheduleRenewCredentials();
   }
 
-  scheduleRenewCredentials() {
+  async scheduleRenewCredentials() {
     if (this.renewHandle) {
       clearTimeout(this.renewHandle);
     }
@@ -89,7 +85,7 @@ export default abstract class JwtCredentialsManager<
       return;
     }
 
-    const { credentials } = this;
+    const credentials = await this.credentialsPromise;
     if (!credentials) {
       return;
     }

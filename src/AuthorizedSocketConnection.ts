@@ -68,8 +68,6 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
   log: Logger;
 
-  clientId: string;
-
   subscriptionContexts: Map<
     string,
     SubscriptionContext<SubscribeOptions<TCredentials>>
@@ -81,7 +79,6 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
   ) {
     this.socket = socket;
     this.config = config;
-    this.clientId = socket.client.id;
 
     this.log = config.createLogger('@4c/SubscriptionServer::AuthorizedSocket');
     this.subscriptionContexts = new Map();
@@ -98,11 +95,11 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     this.socket.emit('app_error', error);
   }
 
-  isAuthorized(
+  async isAuthorized(
     data: any,
     hasPermission: (data: any, credentials: TCredentials) => boolean,
   ) {
-    const credentials = this.config.credentialsManager.getCredentials();
+    const credentials = await this.config.credentialsManager.getCredentials();
     const isAuthorized = !!credentials && hasPermission(data, credentials);
     if (!isAuthorized) {
       this.log('info', 'unauthorized', {
@@ -120,7 +117,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
   handleAuthenticate = async (authorization: string, cb?: () => void) => {
     try {
       this.log('debug', 'authenticating connection', {
-        clientId: this.clientId,
+        clientId: this.socket.id,
       });
 
       await this.config.credentialsManager.authenticate(authorization);
@@ -244,14 +241,14 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         id,
         query,
         variables,
-        clientId: this.clientId,
+        clientId: this.socket.id,
       });
     }
 
     const stream: AsyncIterable<unknown> = resultOrStream as any;
 
     for await (const payload of stream) {
-      const credentials = this.config.credentialsManager.getCredentials();
+      const credentials = await this.config.credentialsManager.getCredentials();
 
       let response;
       try {
@@ -277,23 +274,25 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
   };
 
   handleConnect = () => {
-    this.log('debug', 'client connected', { clientId: this.clientId });
+    this.log('debug', 'client connected', { clientId: this.socket.id });
   };
 
-  handleUnsubscribe = async (id: string) => {
+  handleUnsubscribe = async (id: string, cb?: () => void) => {
     const subscriptionContext = this.subscriptionContexts.get(id);
     if (!subscriptionContext) {
       return;
     }
 
-    this.log('debug', 'client unsubscribed', { id, clientId: this.clientId });
+    this.log('debug', 'client unsubscribed', { id, clientId: this.socket.id });
 
     await subscriptionContext.close();
     this.subscriptionContexts.delete(id);
+
+    acknowledge(cb);
   };
 
   handleDisconnect = async () => {
-    this.log('debug', 'client disconnected', { clientId: this.clientId });
+    this.log('debug', 'client disconnected', { clientId: this.socket.id });
 
     await Promise.all([
       this.config.credentialsManager.unauthenticate(),
