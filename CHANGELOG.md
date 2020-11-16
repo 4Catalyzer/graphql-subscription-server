@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v1.1.0...v1.2.0) (2020-11-16)
+
+
+### Features
+
+* log connect and subscribed events ([#354](https://github.com/4Catalyzer/graphql-subscription-server/issues/354)) ([b9a109c](https://github.com/4Catalyzer/graphql-subscription-server/commit/b9a109c7b27159cd024ab4a31e0f6d1f6ecf81a0))
+
 # [1.1.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v1.0.1...v1.1.0) (2020-07-21)
 
 
