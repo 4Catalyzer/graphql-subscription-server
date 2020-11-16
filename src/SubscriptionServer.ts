@@ -42,7 +42,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
       config.createLogger || defaultCreateLogger;
     this.log = createLogger('@4c/SubscriptionServer::Server');
 
-    this.io = IoServer({
+    this.io = new IoServer.Server({
       serveClient: false,
       path: this.config.path,
       transports: ['websocket'],
