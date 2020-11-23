@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/4Catalyzer/graphql-subscription-server/compare/v1.2.0...v1.2.1) (2020-11-23)
+
+
+### Bug Fixes
+
+* force patch release ([67f5b63](https://github.com/4Catalyzer/graphql-subscription-server/commit/67f5b63eed00ff85692dcc88a35a6c74b65d5360))
+
 # [1.2.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v1.1.0...v1.2.0) (2020-11-16)
 
 
