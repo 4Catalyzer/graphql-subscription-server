@@ -1,3 +1,21 @@
+# [2.0.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v1.2.1...v2.0.0) (2020-11-25)
+
+
+* fix!: socket io v3 update (#392) ([0c4ff42](https://github.com/4Catalyzer/graphql-subscription-server/commit/0c4ff42a0ac43650d99b8dbdf94247dca6204f13)), closes [#392](https://github.com/4Catalyzer/graphql-subscription-server/issues/392)
+
+
+### BREAKING CHANGES
+
+* socket io v3 update
+
+* add a manual releases file for staging manual releases
+
+* Revert "BREAKING CHANGE: socket io v3 update"
+
+This reverts commit 236ee123139744c17f83a170860bd4b3e4089f1e.
+
+* linting
+
 ## [1.2.1](https://github.com/4Catalyzer/graphql-subscription-server/compare/v1.2.0...v1.2.1) (2020-11-23)
 
 
