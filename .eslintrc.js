@@ -4,6 +4,8 @@ module.exports = {
     '4catalyzer-typescript',
     '4catalyzer-jest',
     'prettier',
+    'prettier/prettier',
+    'prettier/@typescript-eslint',
   ],
   plugins: ['prettier'],
   rules: {
