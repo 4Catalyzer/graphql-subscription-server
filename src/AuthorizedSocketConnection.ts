@@ -9,7 +9,7 @@ import {
   validate,
 } from 'graphql';
 import { ExecutionResult } from 'graphql/execution/execute';
-import IoServer from 'socket.io';
+import io from 'socket.io';
 
 import * as AsyncUtils from './AsyncUtils';
 import { CredentialsManager } from './CredentialsManager';
@@ -62,7 +62,7 @@ const acknowledge = (cb?: () => void) => {
  * - Rudimentary connection constraints (max connections)
  */
 export default class AuthorizedSocketConnection<TContext, TCredentials> {
-  socket: IoServer.Socket;
+  socket: io.Socket;
 
   config: AuthorizedSocketOptions<TContext, TCredentials>;
 
@@ -74,7 +74,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
   >;
 
   constructor(
-    socket: IoServer.Socket,
+    socket: io.Socket,
     config: AuthorizedSocketOptions<TContext, TCredentials>,
   ) {
     this.socket = socket;

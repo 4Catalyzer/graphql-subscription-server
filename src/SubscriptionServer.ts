@@ -2,7 +2,7 @@ import { promisify } from 'util';
 
 import express from 'express';
 import type { GraphQLSchema } from 'graphql';
-import IoServer from 'socket.io';
+import type io from 'socket.io';
 
 import AuthorizedSocketConnection from './AuthorizedSocketConnection';
 import type { CreateValidationRules } from './AuthorizedSocketConnection';
@@ -23,6 +23,7 @@ export type SubscriptionServerConfig<TContext, TCredentials> = {
   maxSubscriptionsPerConnection?: number;
   createValidationRules?: CreateValidationRules;
   createLogger?: CreateLogger;
+  socketIoServer: io.Server;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -33,7 +34,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
 
   log: Logger;
 
-  io: IoServer.Server;
+  io: io.Server;
 
   constructor(config: SubscriptionServerConfig<TContext, TCredentials>) {
     this.config = config;
@@ -42,12 +43,17 @@ export default class SubscriptionServer<TContext, TCredentials> {
       config.createLogger || defaultCreateLogger;
     this.log = createLogger('@4c/SubscriptionServer::Server');
 
-    this.io = new IoServer.Server({
-      serveClient: false,
-      path: this.config.path,
-      transports: ['websocket'],
-      wsEngine: 'ws',
-    });
+    this.io = config.socketIoServer;
+    if (!this.io) {
+      // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
+      const IoServer = require('socket.io').Server;
+      this.io = new IoServer({
+        serveClient: false,
+        path: this.config.path,
+        transports: ['websocket'],
+        wsEngine: 'ws',
+      });
+    }
 
     this.io.on('connection', this.handleConnection);
   }
@@ -56,7 +62,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
     this.io.attach(httpServer);
   }
 
-  handleConnection = (socket: IoServer.Socket) => {
+  handleConnection = (socket: io.Socket) => {
     this.log('debug', 'new socket connection');
 
     const request = Object.create((express as any).request);
