@@ -47,8 +47,11 @@
     ]
   },
   "dependencies": {
+    "@types/ws": "^7.4.1",
     "express": "^4.17.1",
-    "redis": "^3.0.0"
+    "graphql-ws": "^4.3.2",
+    "redis": "^3.0.0",
+    "ws": "^7.4.4"
   },
   "peerDependencies": {
     "graphql": ">=0.12.3",
