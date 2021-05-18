@@ -9,13 +9,13 @@ import {
   validate,
 } from 'graphql';
 import { ExecutionResult } from 'graphql/execution/execute';
-import io from 'socket.io';
 
 import * as AsyncUtils from './AsyncUtils';
 import { CredentialsManager } from './CredentialsManager';
 import { CreateLogger, Logger } from './Logger';
 import { Subscriber } from './Subscriber';
 import SubscriptionContext from './SubscriptionContext';
+import { WebSocket } from './types';
 
 export type CreateValidationRules = ({
   query,
@@ -62,7 +62,7 @@ const acknowledge = (cb?: () => void) => {
  * - Rudimentary connection constraints (max connections)
  */
 export default class AuthorizedSocketConnection<TContext, TCredentials> {
-  socket: io.Socket;
+  socket: WebSocket;
 
   config: AuthorizedSocketOptions<TContext, TCredentials>;
 
@@ -74,7 +74,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
   >;
 
   constructor(
-    socket: io.Socket,
+    socket: WebSocket,
     config: AuthorizedSocketOptions<TContext, TCredentials>,
   ) {
     this.socket = socket;
@@ -83,12 +83,11 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     this.log = config.createLogger('@4c/SubscriptionServer::AuthorizedSocket');
     this.subscriptionContexts = new Map();
 
-    this.socket
-      .on('authenticate', this.handleAuthenticate)
-      .on('subscribe', this.handleSubscribe)
-      .on('unsubscribe', this.handleUnsubscribe)
-      .on('connect', this.handleConnect)
-      .on('disconnect', this.handleDisconnect);
+    this.socket.on('authenticate', this.handleAuthenticate);
+    this.socket.on('subscribe', this.handleSubscribe);
+    this.socket.on('unsubscribe', this.handleUnsubscribe);
+    this.socket.on('connect', this.handleConnect);
+    this.socket.on('disconnect', this.handleDisconnect);
   }
 
   emitError(error: { code: string; data?: any }) {

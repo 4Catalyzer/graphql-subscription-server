@@ -1,16 +1,14 @@
-import { promisify } from 'util';
-
-import express from 'express';
+import { Request } from 'express';
 import type { GraphQLSchema } from 'graphql';
-import type io from 'socket.io';
 
 import AuthorizedSocketConnection from './AuthorizedSocketConnection';
 import type { CreateValidationRules } from './AuthorizedSocketConnection';
 import type { CredentialsManager } from './CredentialsManager';
 import type { CreateLogger, Logger } from './Logger';
 import type { Subscriber } from './Subscriber';
+import { WebSocket } from './types';
 
-export type SubscriptionServerConfig<TContext, TCredentials> = {
+export interface SubscriptionServerConfig<TContext, TCredentials> {
   path: string;
   schema: GraphQLSchema;
   subscriber: Subscriber<any>;
@@ -23,50 +21,29 @@ export type SubscriptionServerConfig<TContext, TCredentials> = {
   maxSubscriptionsPerConnection?: number;
   createValidationRules?: CreateValidationRules;
   createLogger?: CreateLogger;
-  socketIoServer: io.Server;
-};
+}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const defaultCreateLogger = () => () => {};
 
-export default class SubscriptionServer<TContext, TCredentials> {
+export default abstract class SubscriptionServer<TContext, TCredentials> {
   config: SubscriptionServerConfig<TContext, TCredentials>;
 
   log: Logger;
-
-  io: io.Server;
 
   constructor(config: SubscriptionServerConfig<TContext, TCredentials>) {
     this.config = config;
 
     const createLogger: CreateLogger =
       config.createLogger || defaultCreateLogger;
+
     this.log = createLogger('@4c/SubscriptionServer::Server');
-
-    this.io = config.socketIoServer;
-    if (!this.io) {
-      // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
-      const IoServer = require('socket.io').Server;
-      this.io = new IoServer({
-        serveClient: false,
-        path: this.config.path,
-        transports: ['websocket'],
-        wsEngine: 'ws',
-      });
-    }
-
-    this.io.on('connection', this.handleConnection);
   }
 
-  attach(httpServer: any) {
-    this.io.attach(httpServer);
-  }
+  public abstract attach(httpServer: any): void;
 
-  handleConnection = (socket: io.Socket) => {
+  protected opened(socket: WebSocket, request: Request) {
     this.log('debug', 'new socket connection');
-
-    const request = Object.create((express as any).request);
-    Object.assign(request, socket.request);
 
     const { createContext } = this.config;
 
@@ -84,10 +61,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
       createValidationRules: this.config.createValidationRules,
       createLogger: this.config.createLogger || defaultCreateLogger,
     });
-  };
-
-  async close() {
-    // @ts-ignore
-    await promisify((...args) => this.io.close(...args))();
   }
+
+  abstract close(): void | Promise<void>;
 }
