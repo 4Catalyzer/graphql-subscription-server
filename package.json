@@ -19,7 +19,8 @@
     "tdd": "jest --watch",
     "test": "yarn lint && yarn typecheck && jest",
     "testonly": "jest",
-    "typecheck": "tsc --noEmit && tsc -p test --noEmit"
+    "typecheck": "tsc --noEmit && tsc -p test --noEmit",
+    "update-schema": "NODE_ENV=test babel-node ./update-schema.js"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"
@@ -47,7 +48,7 @@
     "express": "^4.17.1",
     "graphql-ws": "^4.3.2",
     "redis": "^3.1.2",
-    "ws": "^7.4.4"
+    "ws": "^7.4.5"
   },
   "peerDependencies": {
     "graphql": ">=0.12.3",

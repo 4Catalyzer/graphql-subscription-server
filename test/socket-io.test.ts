@@ -2,7 +2,7 @@
 import socketio from 'socket.io-client';
 
 import { CreateLogger } from '../src';
-import SubscriptionServer from '../src/SubscriptionServer';
+import SocketIOSubscriptionServer from '../src/SocketIOSubscriptionServer';
 import { maskNonDeterministicValues } from '../src/Testing';
 import schema from './data/schema';
 import {
@@ -13,10 +13,8 @@ import {
   startServer,
 } from './helpers';
 
-const sleep = () => new Promise((resolve) => process.nextTick(resolve));
-
 function createServer(subscriber, options = {}) {
-  return new SubscriptionServer({
+  return new SocketIOSubscriptionServer({
     ...options,
     path: '/graphql',
     schema,
@@ -25,7 +23,6 @@ function createServer(subscriber, options = {}) {
       return creds !== null;
     },
     createCredentialsManager: () => new TestCredentialsManager(),
-    // createLogger: () => console.debug,
   });
 }
 
@@ -177,7 +174,7 @@ describe('socket-io client', () => {
       promises.push(socket.subscribe(`s-${id}`));
       promises.push(socket.unsubscribe(`s-${id}`));
 
-      await sleep();
+      await delay(0);
     }
 
     await Promise.all(promises);
