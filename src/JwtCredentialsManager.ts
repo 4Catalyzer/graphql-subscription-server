@@ -23,8 +23,8 @@ export default abstract class JwtCredentialsManager<
 
   renewHandle: NodeJS.Timeout | null | undefined;
 
-  constructor(config: JwtCredentialsManagerConfig) {
-    this.config = config;
+  constructor(config?: JwtCredentialsManagerConfig) {
+    this.config = config || { tokenExpirationMarginSeconds: 5 };
 
     this.token = null;
     this.credentialsPromise = null;
