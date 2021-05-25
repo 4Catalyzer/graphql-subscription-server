@@ -60,7 +60,7 @@ export default abstract class JwtCredentialsManager<
   private updateCredentials() {
     const { token } = this;
     if (token == null) {
-      throw new Error('JwtCredentialManager: Unauthenticated');
+      throw new Error('JwtCredentialsManager: Unauthenticated');
     }
 
     this.credentialsPromise = Promise.resolve(
