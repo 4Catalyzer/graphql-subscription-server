@@ -35,24 +35,6 @@
     listr "^0.14.3"
     typescript "^4.1.3"
 
-"@4c/cli-core@^2.1.6":
-  version "2.1.6"
-  resolved "https://registry.yarnpkg.com/@4c/cli-core/-/cli-core-2.1.6.tgz#2c1e5ebc1ede2659dab6eab6268fcd2817c5b80a"
-  integrity sha512-EhEQrbXkdMSKPESchDLwYvT8iEiu1Y3/HWcUF4K8PF+RUpeID5NzDApQFLVkcUuoeKsMttr8141UphxZ+uwwTQ==
-  dependencies:
-    chalk "^4.0.0"
-    execa "^4.0.0"
-    fs-extra "^9.0.0"
-    globby "^11.0.0"
-    inquirer "^7.0.0"
-    is-ci "^2.0.0"
-    log-symbols "^4.0.0"
-    ora "^5.0.0"
-    slash "^3.0.0"
-    strip-ansi "^6.0.0"
-    text-table "^0.2.0"
-    yargs "^16.0.3"
-
 "@4c/cli-core@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@4c/cli-core/-/cli-core-2.2.1.tgz#cde56fd941415de92956e26d977cbb9fd730c494"
@@ -86,18 +68,6 @@
     svg2c "^1.5.1"
     ts-doctor "^1.3.1"
     yargs "^16.2.0"
-
-"@4c/file-butler@^4.1.8":
-  version "4.1.8"
-  resolved "https://registry.yarnpkg.com/@4c/file-butler/-/file-butler-4.1.8.tgz#d17cf22a45489d796d5e07e598ff44164c37ad1a"
-  integrity sha512-aLNNtq8WSkRBNNBc1TD6cK1NLjy8qoK+u8hMsDJtWPdQVfPrlq1RQxQZliEb5rUqsVgbSlYwE8a5p1aMKm7drA==
-  dependencies:
-    "@4c/cli-core" "^2.1.6"
-    cpy "^7.3.0"
-    fs-extra "^9.0.0"
-    globby "^11.0.0"
-    read-pkg-up "^7.0.1"
-    yargs "^16.0.3"
 
 "@4c/file-butler@^4.2.1":
   version "4.2.1"
@@ -166,27 +136,6 @@
     rimraf "^3.0.0"
     rxjs "^6.5.2"
     semver "^7.3.4"
-
-"@4c/semantic-release-alt-publish-dir@^5.0.14":
-  version "5.0.14"
-  resolved "https://registry.yarnpkg.com/@4c/semantic-release-alt-publish-dir/-/semantic-release-alt-publish-dir-5.0.14.tgz#d1745e55e7da68b337207103de28122ae06ccdc2"
-  integrity sha512-lUz7s9bxCdgZpcr4KHNfXgRlCVs1AC9P+xpD/0+/a3H2sfLaNTEvc//kLSVh3QrtUjzZl7SFywvZVuzzhAEXvg==
-  dependencies:
-    "@4c/file-butler" "^4.1.8"
-    "@semantic-release/npm" "^7.0.9"
-    execa "^5.0.0"
-    read-pkg-up "^7.0.1"
-
-"@4c/semantic-release-config@^2.0.14":
-  version "2.0.14"
-  resolved "https://registry.yarnpkg.com/@4c/semantic-release-config/-/semantic-release-config-2.0.14.tgz#ed95ba08630ee59be459ac53c626b02639da854f"
-  integrity sha512-zE1OXD4/U/4NK/j/m52QoBP4hhlXIefdkylrX+C/BIuuptBgTbNnfGjl0qSe5l9mMXpUdZDXLM5hr6OLtzmJOQ==
-  dependencies:
-    "@4c/semantic-release-alt-publish-dir" "^5.0.14"
-    "@semantic-release/changelog" "^5.0.0"
-    "@semantic-release/git" "^9.0.0"
-    "@semantic-release/github" "^7.2.0"
-    "@semantic-release/npm" "^7.0.9"
 
 "@4c/start@^2.5.1":
   version "2.5.1"
@@ -1916,16 +1865,6 @@
   dependencies:
     any-observable "^0.3.0"
 
-"@semantic-release/changelog@^5.0.0":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@semantic-release/changelog/-/changelog-5.0.1.tgz#50a84b63e5d391b7debfe021421589fa2bcdafe4"
-  integrity sha512-unvqHo5jk4dvAf2nZ3aw4imrlwQ2I50eVVvq9D47Qc3R+keNqepx1vDYwkjF8guFXnOYaYcR28yrZWno1hFbiw==
-  dependencies:
-    "@semantic-release/error" "^2.1.0"
-    aggregate-error "^3.0.0"
-    fs-extra "^9.0.0"
-    lodash "^4.17.4"
-
 "@semantic-release/commit-analyzer@^8.0.0":
   version "8.0.1"
   resolved "https://registry.yarnpkg.com/@semantic-release/commit-analyzer/-/commit-analyzer-8.0.1.tgz#5d2a37cd5a3312da0e3ac05b1ca348bf60b90bca"
@@ -1939,26 +1878,12 @@
     lodash "^4.17.4"
     micromatch "^4.0.2"
 
-"@semantic-release/error@^2.1.0", "@semantic-release/error@^2.2.0":
+"@semantic-release/error@^2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@semantic-release/error/-/error-2.2.0.tgz#ee9d5a09c9969eade1ec864776aeda5c5cddbbf0"
   integrity sha512-9Tj/qn+y2j+sjCI3Jd+qseGtHjOAeg7dU2/lVcqIQ9TV3QDaDXDYXcoOHU+7o2Hwh8L8ymL4gfuO7KxDs3q2zg==
 
-"@semantic-release/git@^9.0.0":
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/@semantic-release/git/-/git-9.0.0.tgz#304c4883c87d095b1faaae93300f1f1e0466e9a5"
-  integrity sha512-AZ4Zha5NAPAciIJH3ipzw/WU9qLAn8ENaoVAhD6srRPxTpTzuV3NhNh14rcAo8Paj9dO+5u4rTKcpetOBluYVw==
-  dependencies:
-    "@semantic-release/error" "^2.1.0"
-    aggregate-error "^3.0.0"
-    debug "^4.0.0"
-    dir-glob "^3.0.0"
-    execa "^4.0.0"
-    lodash "^4.17.4"
-    micromatch "^4.0.0"
-    p-reduce "^2.0.0"
-
-"@semantic-release/github@^7.0.0", "@semantic-release/github@^7.2.0":
+"@semantic-release/github@^7.0.0":
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/@semantic-release/github/-/github-7.2.0.tgz#925f3efd91adabfc4bbe0de24b79fe1a8a38b4e2"
   integrity sha512-tMRnWiiWb43whRHvbDGXq4DGEbKRi56glDpXDJZit4PIiwDPX7Kx3QzmwRtDOcG+8lcpGjpdPabYZ9NBxoI2mw==
@@ -1980,7 +1905,7 @@
     p-retry "^4.0.0"
     url-join "^4.0.0"
 
-"@semantic-release/npm@^7.0.0", "@semantic-release/npm@^7.0.9":
+"@semantic-release/npm@^7.0.0":
   version "7.0.9"
   resolved "https://registry.yarnpkg.com/@semantic-release/npm/-/npm-7.0.9.tgz#a49d80d0f96a52cd70f9ce4e78fac5be70f24844"
   integrity sha512-VsmmQF3/n7mDbm6AGL0yPD3QNTGsHdinBtkyyerN1eLgvhdGJ/vEeAvmDMARiuf5Ev9cFeCheF0wLyUZNlAkeA==
@@ -3546,11 +3471,6 @@ cli-cursor@^3.1.0:
   dependencies:
     restore-cursor "^3.1.0"
 
-cli-spinners@^2.4.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/cli-spinners/-/cli-spinners-2.5.0.tgz#12763e47251bf951cb75c201dfa58ff1bcb2d047"
-  integrity sha512-PC+AmIuK04E6aeSs/pUccSujsTzBhu4HzC2dL+CfJB/Jcc2qTRbEwZQDfIUpt2Xl8BodYBEq8w4fc0kU2I9DjQ==
-
 cli-spinners@^2.5.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/cli-spinners/-/cli-spinners-2.6.0.tgz#36c7dc98fb6a9a76bd6238ec3f77e2425627e939"
@@ -4168,17 +4088,6 @@ cosmiconfig@^7.0.0:
     path-type "^4.0.0"
     yaml "^1.10.0"
 
-cp-file@^6.1.0:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/cp-file/-/cp-file-6.2.0.tgz#40d5ea4a1def2a9acdd07ba5c0b0246ef73dc10d"
-  integrity sha512-fmvV4caBnofhPe8kOcitBwSn2f39QLjnAnGq3gO9dfd75mUytzKNZB1hde6QHunW2Rt+OwuBOMc3i1tNElbszA==
-  dependencies:
-    graceful-fs "^4.1.2"
-    make-dir "^2.0.0"
-    nested-error-stacks "^2.0.0"
-    pify "^4.0.1"
-    safe-buffer "^5.0.1"
-
 cp-file@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/cp-file/-/cp-file-7.0.0.tgz#b9454cfd07fe3b974ab9ea0e5f29655791a9b8cd"
@@ -4188,16 +4097,6 @@ cp-file@^7.0.0:
     make-dir "^3.0.0"
     nested-error-stacks "^2.0.0"
     p-event "^4.1.0"
-
-cpy@^7.3.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/cpy/-/cpy-7.3.0.tgz#62f2847986b4ff9d029710568a49e9a9ab5a210e"
-  integrity sha512-auvDu6h/J+cO1uqV40ymL/VoPM0+qPpNGaNttTzkYVXO/+GeynuyAK/MwFcWgU/P82ezcZw7RaN34CIIWajKLA==
-  dependencies:
-    arrify "^1.0.1"
-    cp-file "^6.1.0"
-    globby "^9.2.0"
-    nested-error-stacks "^2.1.0"
 
 cpy@^8.1.1:
   version "8.1.2"
@@ -6273,9 +6172,9 @@ handle-thing@^2.0.0:
   integrity sha512-9Qn4yBxelxoh2Ow62nP+Ka/kMnOXRi8BXnRaUwezLNhqelnN49xKz4F/dPP8OYLxLxq6JDtZb2i9XznUQbNPTg==
 
 handlebars@^4.4.3, handlebars@^4.7.6:
-  version "4.7.6"
-  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.7.6.tgz#d4c05c1baf90e9945f77aa68a7a219aa4a7df74e"
-  integrity sha512-1f2BACcBfiwAfStCKZNrUCgqNZkGsAT7UM3kkYtXuLo0KnaVfjKOyf7PRzB6++aK9STyT1Pd2ZCPe3EGOXleXA==
+  version "4.7.7"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-4.7.7.tgz#9ce33416aad02dbd6c8fafa8240d5d98004945a1"
+  integrity sha512-aAcXm5OAfE/8IXkcZvCepKU3VzW1/39Fb5ZuqMtgI/hT8X2YgoMvBY5dLhq/cpOvw7Lk1nK/UF71aLG/ZnVYRA==
   dependencies:
     minimist "^1.2.5"
     neo-async "^2.6.0"
@@ -8815,7 +8714,7 @@ micromatch@^3.1.10, micromatch@^3.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.2"
 
-micromatch@^4.0.0, micromatch@^4.0.2:
+micromatch@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/micromatch/-/micromatch-4.0.2.tgz#4fcb0999bf9fbc2fcbdd212f6d629b9a56c39259"
   integrity sha512-y7FpHSbMUMoyPbYUSzO6PaZ6FyRnQOpHuKwbo1G+Knck95XVU4QAiKdGEnj5wwoS7PlOgthX/09u5iFJ+aYf5Q==
@@ -9670,20 +9569,6 @@ optionator@^0.9.1:
     prelude-ls "^1.2.1"
     type-check "^0.4.0"
     word-wrap "^1.2.3"
-
-ora@^5.0.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/ora/-/ora-5.1.0.tgz#b188cf8cd2d4d9b13fd25383bc3e5cba352c94f8"
-  integrity sha512-9tXIMPvjZ7hPTbk8DFq1f7Kow/HU/pQYB60JbNq+QnGwcyhWVZaQ4hM9zQDEsPxw/muLpgiHSaumUZxCAmod/w==
-  dependencies:
-    chalk "^4.1.0"
-    cli-cursor "^3.1.0"
-    cli-spinners "^2.4.0"
-    is-interactive "^1.0.0"
-    log-symbols "^4.0.0"
-    mute-stream "0.0.8"
-    strip-ansi "^6.0.0"
-    wcwidth "^1.0.1"
 
 ora@^5.3.0:
   version "5.4.0"
@@ -12442,9 +12327,9 @@ typescript@^4.0, typescript@^4.1.3:
   integrity sha512-B3ZIOf1IKeH2ixgHhj6la6xdwR9QrLC5d1VKeCSY4tvkqhF2eqd9O7txNlS0PO3GrBAFIdr3L1ndNwteUbZLYg==
 
 uglify-js@^3.1.4:
-  version "3.11.6"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.11.6.tgz#144b50d3e05eadd3ad4dd047c60ca541a8cd4e9c"
-  integrity sha512-oASI1FOJ7BBFkSCNDZ446EgkSuHkOZBuqRFrwXIKWCoXw8ZXQETooTQjkAcBS03Acab7ubCKsXnwuV2svy061g==
+  version "3.13.7"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.13.7.tgz#25468a3b39b1c875df03f0937b2b7036a93f3fee"
+  integrity sha512-1Psi2MmnZJbnEsgJJIlfnd7tFlJfitusmR7zDI8lXlFI0ACD4/Rm/xdrU8bh6zF0i74aiVoBtkRiFulkrmh3AA==
 
 uid-number@0.0.6:
   version "0.0.6"
@@ -13229,19 +13114,6 @@ yargs@^15.0.1, yargs@^15.4.1:
     which-module "^2.0.0"
     y18n "^4.0.0"
     yargs-parser "^18.1.2"
-
-yargs@^16.0.3:
-  version "16.1.1"
-  resolved "https://registry.yarnpkg.com/yargs/-/yargs-16.1.1.tgz#5a4a095bd1ca806b0a50d0c03611d38034d219a1"
-  integrity sha512-hAD1RcFP/wfgfxgMVswPE+z3tlPFtxG8/yWUrG2i17sTWGCGqWnxKcLTF4cUKDUK8fzokwsmO9H0TDkRbMHy8w==
-  dependencies:
-    cliui "^7.0.2"
-    escalade "^3.1.1"
-    get-caller-file "^2.0.5"
-    require-directory "^2.1.1"
-    string-width "^4.2.0"
-    y18n "^5.0.5"
-    yargs-parser "^20.2.2"
 
 yargs@^16.2.0:
   version "16.2.0"
