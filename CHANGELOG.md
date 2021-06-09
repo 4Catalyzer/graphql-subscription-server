@@ -1,3 +1,14 @@
+## [3.0.3](https://github.com/4Catalyzer/graphql-subscription-server/compare/v3.0.2...v3.0.3) (2021-06-09)
+
+
+### Bug Fixes
+
+* use old message names ([8dc6a1d](https://github.com/4Catalyzer/graphql-subscription-server/commit/8dc6a1ddb59a569001415ccad7ec0b2753695c48))
+
+
+
+
+
 ## [3.0.2](https://github.com/4Catalyzer/graphql-subscription-server/compare/v3.0.1...v3.0.2) (2021-06-09)
 
 
