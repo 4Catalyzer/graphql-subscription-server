@@ -1,19 +1,23 @@
 /* eslint-disable no-underscore-dangle */
 import socketio from 'socket.io-client';
 
+import { CreateLogger } from '../src';
 import SubscriptionServer from '../src/SubscriptionServer';
+import { maskNonDeterministicValues } from '../src/Testing';
 import schema from './data/schema';
 import {
   TestClient,
   TestCredentialsManager,
+  delay,
   graphql,
   startServer,
 } from './helpers';
 
 const sleep = () => new Promise((resolve) => process.nextTick(resolve));
 
-function createServer(subscriber) {
+function createServer(subscriber, options = {}) {
   return new SubscriptionServer({
+    ...options,
     path: '/graphql',
     schema,
     subscriber,
@@ -145,7 +149,7 @@ describe('socket-io client', () => {
     expect(server.subscriber._queues.size).toEqual(0);
   });
 
-  it.only('should not race', async (done) => {
+  it('should not race unsubscribe call', async () => {
     const socket = await createClient(
       graphql`
         subscription TestTodoUpdatedSubscription(
@@ -178,12 +182,216 @@ describe('socket-io client', () => {
 
     await Promise.all(promises);
 
-    setTimeout(() => {
-      console.log(server.subscriber._queues);
+    expect(server.subscriber._queues.size).toEqual(0);
+    expect(server.subscriber._channels.size).toEqual(0);
+  });
 
-      expect(server.subscriber._queues.size).toEqual(0);
-      expect(server.subscriber._channels.size).toEqual(0);
-      done();
-    }, 100);
+  it('should clean up subscriptions after execution errors', async () => {
+    const socket = await createClient(
+      graphql`
+        subscription TestErrorSubscription(
+          $input: ExecutionErrorSubscriptionInput!
+        ) {
+          todoFailingExample(input: $input) {
+            todo {
+              text
+            }
+          }
+        }
+      `,
+      {
+        input: {
+          id: '1',
+        },
+      },
+    );
+
+    await socket.authenticate();
+
+    const result = await socket.getSubscriptionResult({
+      topic: `todo:1:updated`,
+      data: { id: '1' },
+    });
+
+    expect(result).toEqual({
+      event: 'app_error',
+      payload: expect.objectContaining({ code: 'subscribe_failed.gql_error' }),
+    });
+    expect(server.subscriber._queues.size).toEqual(0);
+    expect(server.subscriber._channels.size).toEqual(0);
+  });
+});
+
+describe('socket-io client logging', () => {
+  let server: PromiseType<ReturnType<typeof startServer>>;
+  let client: TestClient | null = null;
+  let logs: any[];
+
+  async function createClient(query: string, variables: any) {
+    client = new TestClient(server.subscriber, query, variables);
+
+    await client.init();
+    return client;
+  }
+
+  beforeAll(async () => {
+    logs = [] as any[];
+    const createLogger: CreateLogger = (group) => (level, message, meta) =>
+      logs.push({
+        group,
+        level,
+        message,
+        meta: maskNonDeterministicValues(meta, ['clientId']),
+      });
+
+    server = await startServer((sub) => createServer(sub, { createLogger }));
+  });
+
+  afterEach(() => {
+    client?.close();
+    client = null;
+  });
+
+  afterAll(async () => {
+    client?.close();
+    await server.close();
+  });
+
+  it('should log', async () => {
+    const socket = await createClient(
+      graphql`
+        subscription TestTodoUpdatedSubscription(
+          $input: TodoUpdatedSubscriptionInput!
+        ) {
+          todoUpdated(input: $input) {
+            todo {
+              text
+            }
+          }
+        }
+      `,
+      {
+        input: {
+          id: '1',
+        },
+      },
+    );
+
+    await socket.authenticate();
+
+    await socket.getSubscriptionResult({
+      topic: `todo:1:updated`,
+      data: { id: '1' },
+    });
+
+    await socket.subscribe();
+
+    await socket.unsubscribe();
+
+    socket.close();
+
+    await delay(50);
+
+    expect(logs).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "group": "SubscriptionServer",
+          "level": "debug",
+          "message": "SubscriptionServer: new socket connection",
+          "meta": Object {
+            "clientId": "<ClientId:1>",
+            "numClients": 1,
+          },
+        },
+        Object {
+          "group": "AuthorizedSocket",
+          "level": "debug",
+          "message": "authenticating connection",
+          "meta": Object {
+            "clientId": "<ClientId:1>",
+          },
+        },
+        Object {
+          "group": "AuthorizedSocket",
+          "level": "debug",
+          "message": "client subscribed",
+          "meta": Object {
+            "clientId": "<ClientId:1>",
+            "id": "foo",
+            "query": "
+              subscription TestTodoUpdatedSubscription(
+                $input: TodoUpdatedSubscriptionInput!
+              ) {
+                todoUpdated(input: $input) {
+                  todo {
+                    text
+                  }
+                }
+              }
+            ",
+            "variables": Object {
+              "input": Object {
+                "id": "1",
+              },
+            },
+          },
+        },
+        Object {
+          "group": "AuthorizedSocket",
+          "level": "info",
+          "message": "emit",
+          "meta": Object {
+            "clientId": "<ClientId:1>",
+            "credentials": Object {},
+            "response": Object {
+              "data": Object {
+                "todoUpdated": Object {
+                  "todo": Object {
+                    "text": "Buy a unicorn",
+                  },
+                },
+              },
+            },
+          },
+        },
+        Object {
+          "group": "AuthorizedSocket",
+          "level": "debug",
+          "message": "duplicate subscription attempted",
+          "meta": Object {
+            "clientId": "<ClientId:1>",
+            "id": "foo",
+          },
+        },
+        Object {
+          "group": "AuthorizedSocket",
+          "level": "debug",
+          "message": "client unsubscribed",
+          "meta": Object {
+            "clientId": "<ClientId:1>",
+            "id": "foo",
+          },
+        },
+        Object {
+          "group": "AuthorizedSocket",
+          "level": "debug",
+          "message": "client disconnected",
+          "meta": Object {
+            "clientId": "<ClientId:1>",
+            "reason": "client namespace disconnect",
+          },
+        },
+        Object {
+          "group": "SubscriptionServer",
+          "level": "debug",
+          "message": "SubscriptionServer: socket disconnected",
+          "meta": Object {
+            "clientId": "<ClientId:1>",
+            "numClients": 0,
+            "reason": "client namespace disconnect",
+          },
+        },
+      ]
+    `);
   });
 });

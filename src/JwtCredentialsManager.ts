@@ -1,4 +1,5 @@
 import { CredentialsManager } from './CredentialsManager';
+import { CreateLogger, Logger, noopCreateLogger } from './Logger';
 
 const SECONDS_TO_MS = 1000;
 
@@ -10,21 +11,29 @@ export interface JwtCredentials {
 
 export interface JwtCredentialsManagerConfig {
   updateOnExpired?: boolean;
+  createLogger?: CreateLogger;
 }
 
 export default abstract class JwtCredentialsManager<
-  TCredentials extends JwtCredentials
-> implements CredentialsManager<TCredentials> {
+  TCredentials extends JwtCredentials,
+> implements CredentialsManager<TCredentials>
+{
   private token: string | null | undefined;
 
   private credentialsPromise: Promise<TCredentials | null | undefined> | null;
 
   private updateOnExpired: boolean;
 
-  constructor(config: JwtCredentialsManagerConfig = {}) {
+  readonly log: Logger;
+
+  constructor({
+    createLogger = noopCreateLogger,
+    updateOnExpired,
+  }: JwtCredentialsManagerConfig = {}) {
     this.token = null;
     this.credentialsPromise = null;
-    this.updateOnExpired = config.updateOnExpired ?? false;
+    this.updateOnExpired = updateOnExpired ?? false;
+    this.log = createLogger('JwtCredentialsManager');
   }
 
   private isExpired(credentials: TCredentials) {
@@ -35,7 +44,18 @@ export default abstract class JwtCredentialsManager<
     const credentials = await this.credentialsPromise;
 
     if (credentials && this.isExpired(credentials)) {
-      return this.updateOnExpired ? this.updateCredentials() : null;
+      if (!this.updateOnExpired) {
+        this.log('debug', 'request for expired credentials', {
+          token: this.token,
+          expiredCredentials: credentials,
+        });
+        return null;
+      }
+      this.log('silly', 'credentials expired: refreshing from token', {
+        token: this.token,
+        expiredCredentials: credentials,
+      });
+      return this.updateCredentials();
     }
 
     return credentials;
@@ -67,6 +87,10 @@ export default abstract class JwtCredentialsManager<
       this.getCredentialsFromAuthorization(token),
     ).then((creds) => {
       if (!creds || this.isExpired(creds)) {
+        this.log('silly', 'credentials expired after update', {
+          token: this.token,
+          credentials: creds,
+        });
         return null;
       }
       return creds;

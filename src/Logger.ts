@@ -13,3 +13,8 @@ export type Logger = (
 ) => void;
 
 export type CreateLogger = (group?: string) => Logger;
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noopCreateLogger: CreateLogger = () => () => {};
+
+export { noopCreateLogger };

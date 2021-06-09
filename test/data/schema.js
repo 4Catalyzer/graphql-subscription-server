@@ -70,10 +70,8 @@ const GraphQLTodo = new GraphQLObjectType({
   interfaces: [nodeInterface],
 });
 
-const {
-  connectionType: TodosConnection,
-  edgeType: GraphQLTodoEdge,
-} = connectionDefinitions({ nodeType: GraphQLTodo });
+const { connectionType: TodosConnection, edgeType: GraphQLTodoEdge } =
+  connectionDefinitions({ nodeType: GraphQLTodo });
 
 const GraphQLUser = new GraphQLObjectType({
   name: 'User',
@@ -275,15 +273,13 @@ const GraphQLTodoUpdatedSubscription = subscriptionWithClientId({
     },
   },
 
-  // subscribe: ({ id }, { subscribe }) => {
-  //   return subscribe(`todo:${id}:updated`);
-  // },
-
+  // this code intentionally a generator. Because the setup `subscribe` is inside the
+  // iterator it only runs after the first `.next()` is called, causing the subscribe setup logic
+  // to occur asynchronously from the server subscribe event handler. If an unsubscribe for
+  // this subscription happens on the same tick it will try and close the subscribe before it's
+  // set up.
   async *subscribe({ id }, { subscribe }) {
-    console.log('subscribe', id);
     const stream = await subscribe(`todo:${id}:updated`);
-
-    // await delay(50);
     yield* stream;
   },
 });
@@ -302,11 +298,36 @@ const GraphQLTodoCreatedSubscription = subscriptionWithClientId({
   },
 });
 
+const GraphQLExecutionErrorSubscription = subscriptionWithClientId({
+  name: 'ExecutionErrorSubscription',
+
+  inputFields: {
+    id: { type: new GraphQLNonNull(GraphQLID) },
+  },
+
+  outputFields: {
+    todo: {
+      type: GraphQLTodo,
+      resolve: ({ id }) => {
+        return getTodo(id);
+      },
+    },
+  },
+
+  subscribe({ id }, { subscribe }) {
+    subscribe(`todo:${id}:updated_failed`);
+
+    throw new Error('Something went wrong after subscribe');
+  },
+});
+
 const GraphQLSubscription = new GraphQLObjectType({
   name: 'Subscription',
   fields: () => ({
     todoUpdated: GraphQLTodoUpdatedSubscription,
     todoCreated: GraphQLTodoCreatedSubscription,
+
+    todoFailingExample: GraphQLExecutionErrorSubscription,
   }),
 });
 
