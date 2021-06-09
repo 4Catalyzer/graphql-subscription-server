@@ -3,12 +3,14 @@ import { promisify } from 'util';
 import redis from 'redis';
 
 import { AsyncQueue, map } from './AsyncUtils';
+import { CreateLogger, Logger, noopCreateLogger } from './Logger';
 import type { Subscriber } from './Subscriber';
 
 type Channel = string;
 
 export type RedisConfigOptions = redis.ClientOpts & {
   parseMessage?: (msg: string) => any;
+  createLogger?: CreateLogger;
 };
 
 export type RedisSubscriberOptions = {
@@ -16,8 +18,9 @@ export type RedisSubscriberOptions = {
 };
 
 export default class RedisSubscriber<
-  TOptions extends RedisSubscriberOptions = RedisSubscriberOptions
-> implements Subscriber<TOptions> {
+  TOptions extends RedisSubscriberOptions = RedisSubscriberOptions,
+> implements Subscriber<TOptions>
+{
   redis: redis.RedisClient;
 
   _parseMessage: ((msg: string) => any) | null | undefined;
@@ -26,13 +29,21 @@ export default class RedisSubscriber<
 
   _channels: Set<string>;
 
-  constructor({ parseMessage, ...redisConfig }: RedisConfigOptions = {}) {
+  private readonly log: Logger;
+
+  constructor({
+    parseMessage,
+    createLogger = noopCreateLogger,
+    ...redisConfig
+  }: RedisConfigOptions = {}) {
+    this.log = createLogger('RedisSubscriber');
     this.redis = redis.createClient(redisConfig);
     this._queues = new Map();
     this._channels = new Set();
     this._parseMessage = parseMessage;
 
     this.redis.on('message', (channel, message) => {
+      this.log('silly', 'message received', { channel, message });
       const queues = this._queues.get(channel);
       if (!queues) {
         return;
@@ -46,12 +57,14 @@ export default class RedisSubscriber<
 
   async _subscribeToChannel(channel: string) {
     if (this._channels.has(channel)) {
+      this.log('debug', 'Channel already subscribed to', { channel });
       return;
     }
 
     this._channels.add(channel);
     // @ts-ignore
     await promisify(this.redis.subscribe).call(this.redis, channel);
+    this.log('debug', 'Channel subscribed', { channel });
   }
 
   subscribe(channel: Channel, options?: TOptions) {
@@ -74,6 +87,10 @@ export default class RedisSubscriber<
           this._channels.delete(channel);
           this._queues.delete(channel);
         }
+        this.log('debug', 'Channel subscriber unsubscribed', {
+          channel,
+          numSubscribersForChannelRemaining: innerQueues.size,
+        });
       },
     });
 
@@ -96,5 +113,9 @@ export default class RedisSubscriber<
 
   async close() {
     await promisify(this.redis.quit).call(this.redis);
+    this.log('silly', 'closed', {
+      numQueus: this._queues.size,
+      numChannels: this._channels.size,
+    });
   }
 }

@@ -1,3 +1,4 @@
+import { CreateLogger } from '../src';
 import RedisSubscriber from '../src/RedisSubscriber';
 import SubscriptionContext from '../src/SubscriptionContext';
 
@@ -74,5 +75,73 @@ describe('RedisSubscriber', () => {
     }
 
     await client.close();
+  });
+
+  it('should use provided logger', async () => {
+    const channel = 'A redis topic';
+    const logs = [] as any[];
+    const createLogger: CreateLogger = (group) => (level, message, meta) =>
+      logs.push({ group, level, message, meta });
+
+    const client = new RedisSubscriber({ createLogger });
+
+    const subscriptionContext = new SubscriptionContext(client);
+
+    await subscriptionContext.subscribe(channel);
+    await subscriptionContext.subscribe(channel);
+
+    client.redis.publish(channel, 'hey');
+
+    await subscriptionContext.close();
+
+    await client.close();
+
+    expect(logs).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "group": "RedisSubscriber",
+          "level": "debug",
+          "message": "Channel subscribed",
+          "meta": Object {
+            "channel": "A redis topic",
+          },
+        },
+        Object {
+          "group": "RedisSubscriber",
+          "level": "debug",
+          "message": "Channel already subscribed to",
+          "meta": Object {
+            "channel": "A redis topic",
+          },
+        },
+        Object {
+          "group": "RedisSubscriber",
+          "level": "debug",
+          "message": "Channel subscriber unsubscribed",
+          "meta": Object {
+            "channel": "A redis topic",
+            "numSubscribersForChannelRemaining": 1,
+          },
+        },
+        Object {
+          "group": "RedisSubscriber",
+          "level": "debug",
+          "message": "Channel subscriber unsubscribed",
+          "meta": Object {
+            "channel": "A redis topic",
+            "numSubscribersForChannelRemaining": 0,
+          },
+        },
+        Object {
+          "group": "RedisSubscriber",
+          "level": "silly",
+          "message": "closed",
+          "meta": Object {
+            "numChannels": 0,
+            "numQueus": 0,
+          },
+        },
+      ]
+    `);
   });
 });

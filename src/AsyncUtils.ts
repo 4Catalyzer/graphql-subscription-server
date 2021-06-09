@@ -1,5 +1,11 @@
 /* eslint-disable no-await-in-loop */
 
+import { Logger } from './Logger';
+
+export async function* createAsyncIterable<T>(values: T[]) {
+  for (const value of values) yield value;
+}
+
 export async function* map<T, U>(
   iterable: AsyncIterable<T>,
   mapper: (value: T) => U,
@@ -21,6 +27,7 @@ export async function* filter<T>(
 export type AsyncQueueOptions = {
   setup?: () => void | Promise<void>;
   teardown?: () => void | Promise<void>;
+  log?: Logger;
 };
 
 export class AsyncQueue {
@@ -70,7 +77,8 @@ export class AsyncQueue {
     if (this.setupPromise) {
       await this.setupPromise;
     }
-
+    // this is dummy value yielded so we can await the first `.next()`
+    // call of the iterable, ensuring that the setup code has completed
     yield null;
 
     while (true) {

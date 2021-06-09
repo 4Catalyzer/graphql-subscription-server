@@ -73,6 +73,8 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     SubscriptionContext<SubscribeOptions<TCredentials>>
   >;
 
+  readonly clientId: string;
+
   constructor(
     socket: io.Socket,
     config: AuthorizedSocketOptions<TContext, TCredentials>,
@@ -80,8 +82,10 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     this.socket = socket;
     this.config = config;
 
-    this.log = config.createLogger('@4c/SubscriptionServer::AuthorizedSocket');
+    this.log = config.createLogger('AuthorizedSocket');
     this.subscriptionContexts = new Map();
+
+    this.clientId = this.socket.id;
 
     this.socket
       .on('authenticate', this.handleAuthenticate)
@@ -117,12 +121,12 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
   handleAuthenticate = async (authorization: string, cb?: () => void) => {
     try {
       this.log('debug', 'authenticating connection', {
-        clientId: this.socket.id,
+        clientId: this.clientId,
       });
 
       await this.config.credentialsManager.authenticate(authorization);
-    } catch (err) {
-      this.log('error', err.message, err);
+    } catch (error) {
+      this.log('error', error.message, { error, clientId: this.clientId });
       this.emitError({ code: 'invalid_authorization' });
     }
 
@@ -146,8 +150,9 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
           this.config.maxSubscriptionsPerConnection
       ) {
         this.log('debug', 'subscription limit reached', {
-          maxSubscriptionsPerConnection: this.config
-            .maxSubscriptionsPerConnection,
+          clientId: this.clientId,
+          maxSubscriptionsPerConnection:
+            this.config.maxSubscriptionsPerConnection,
         });
         this.emitError({
           code: 'subscribe_failed.subscription_limit',
@@ -156,7 +161,10 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       }
 
       if (this.subscriptionContexts.has(id)) {
-        this.log('debug', 'duplicate subscription attempted', { id });
+        this.log('debug', 'duplicate subscription attempted', {
+          id,
+          clientId: this.clientId,
+        });
 
         this.emitError({
           code: 'invalid_id.duplicate',
@@ -227,7 +235,19 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       }
 
       if ((resultOrStream as ExecutionResult).errors != null) {
-        this.subscriptionContexts.delete(id);
+        // Do a full unsubscribe because the error may have occured
+        // after the subscription was set up
+        this.handleUnsubscribe(id);
+
+        const { errors } = resultOrStream as ExecutionResult;
+
+        this.log('error', 'client subscribe failed', {
+          errors,
+          clientId: this.clientId,
+          query,
+          variables,
+          id,
+        });
         this.emitError({
           code: 'subscribe_failed.gql_error',
           data: (resultOrStream as ExecutionResult).errors,
@@ -235,20 +255,22 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
         return;
       }
-    } finally {
-      acknowledge(cb);
+
       this.log('debug', 'client subscribed', {
         id,
         query,
         variables,
-        clientId: this.socket.id,
+        clientId: this.clientId,
       });
+    } finally {
+      acknowledge(cb);
     }
 
     const stream: AsyncIterable<unknown> = resultOrStream as any;
 
     for await (const payload of stream) {
-      const credentials = await this.config.credentialsManager.getCredentials();
+      const credentials =
+        await this.config.credentialsManager.getCredentials();
 
       let response;
       try {
@@ -267,14 +289,18 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         }
       }
 
-      this.log('info', 'emit', { response, credentials });
+      this.log('info', 'emit', {
+        response,
+        credentials,
+        clientId: this.clientId,
+      });
 
       this.socket.emit('subscription update', { id, ...response });
     }
   };
 
   handleConnect = () => {
-    this.log('debug', 'client connected', { clientId: this.socket.id });
+    this.log('debug', 'client connected', { clientId: this.clientId });
   };
 
   handleUnsubscribe = async (id: string, cb?: () => void) => {
@@ -283,7 +309,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       return;
     }
 
-    this.log('debug', 'client unsubscribed', { id, clientId: this.socket.id });
+    this.log('debug', 'client unsubscribed', { id, clientId: this.clientId });
 
     await subscriptionContext.close();
     this.subscriptionContexts.delete(id);
@@ -291,8 +317,11 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     acknowledge(cb);
   };
 
-  handleDisconnect = async () => {
-    this.log('debug', 'client disconnected', { clientId: this.socket.id });
+  handleDisconnect = async (reason?: string) => {
+    this.log('debug', 'client disconnected', {
+      reason,
+      clientId: this.clientId,
+    });
 
     await Promise.all([
       this.config.credentialsManager.unauthenticate(),

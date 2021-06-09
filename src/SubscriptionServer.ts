@@ -7,7 +7,7 @@ import type io from 'socket.io';
 import AuthorizedSocketConnection from './AuthorizedSocketConnection';
 import type { CreateValidationRules } from './AuthorizedSocketConnection';
 import type { CredentialsManager } from './CredentialsManager';
-import type { CreateLogger, Logger } from './Logger';
+import { CreateLogger, Logger, noopCreateLogger } from './Logger';
 import type { Subscriber } from './Subscriber';
 
 export type SubscriptionServerConfig<TContext, TCredentials> = {
@@ -23,11 +23,8 @@ export type SubscriptionServerConfig<TContext, TCredentials> = {
   maxSubscriptionsPerConnection?: number;
   createValidationRules?: CreateValidationRules;
   createLogger?: CreateLogger;
-  socketIoServer: io.Server;
+  socketIoServer?: io.Server;
 };
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const defaultCreateLogger = () => () => {};
 
 export default class SubscriptionServer<TContext, TCredentials> {
   config: SubscriptionServerConfig<TContext, TCredentials>;
@@ -39,11 +36,10 @@ export default class SubscriptionServer<TContext, TCredentials> {
   constructor(config: SubscriptionServerConfig<TContext, TCredentials>) {
     this.config = config;
 
-    const createLogger: CreateLogger =
-      config.createLogger || defaultCreateLogger;
-    this.log = createLogger('@4c/SubscriptionServer::Server');
+    const createLogger = config.createLogger || noopCreateLogger;
+    this.log = createLogger('SubscriptionServer');
 
-    this.io = config.socketIoServer;
+    this.io = config.socketIoServer!;
     if (!this.io) {
       // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
       const IoServer = require('socket.io').Server;
@@ -63,7 +59,13 @@ export default class SubscriptionServer<TContext, TCredentials> {
   }
 
   handleConnection = (socket: io.Socket) => {
-    this.log('debug', 'new socket connection');
+    const clientId = socket.id;
+
+    this.log('debug', 'SubscriptionServer: new socket connection', {
+      clientId,
+      // @ts-expect-error private field
+      numClients: this.io.engine?.clientsCount ?? 0,
+    });
 
     const request = Object.create((express as any).request);
     Object.assign(request, socket.request);
@@ -82,7 +84,17 @@ export default class SubscriptionServer<TContext, TCredentials> {
           createContext(request, credentials)),
       maxSubscriptionsPerConnection: this.config.maxSubscriptionsPerConnection,
       createValidationRules: this.config.createValidationRules,
-      createLogger: this.config.createLogger || defaultCreateLogger,
+      createLogger: this.config.createLogger || noopCreateLogger,
+    });
+
+    // add after so the logs happen in order
+    socket.once('disconnect', (reason) => {
+      this.log('debug', 'SubscriptionServer: socket disconnected', {
+        reason,
+        clientId,
+        // @ts-expect-error private field
+        numClients: (this.io.engine.clientsCount ?? 0) - 1, // number hasn't decremented at this point for this client
+      });
     });
   };
 
