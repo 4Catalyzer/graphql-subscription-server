@@ -282,7 +282,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
     if (!subscriptionContext) {
       return;
     }
-
+    console.log('client unsubscribed', id);
     this.log('debug', 'client unsubscribed', { id, clientId: this.socket.id });
 
     await subscriptionContext.close();

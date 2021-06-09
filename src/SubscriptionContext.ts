@@ -16,10 +16,12 @@ export default class SubscriptionContext<TSubscriberOptions> {
   ): Promise<AsyncIterableIterator<any>> {
     const { iterator, close } = this.subscriber.subscribe(topic, options);
     this.closes.push(close);
+    console.log('push closes', topic);
     return iterator;
   }
 
   async close(): Promise<void> {
+    console.log('close!', this.closes.length);
     await Promise.all(this.closes.map((close) => close()));
   }
 }

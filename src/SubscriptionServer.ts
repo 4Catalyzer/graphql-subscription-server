@@ -23,7 +23,7 @@ export type SubscriptionServerConfig<TContext, TCredentials> = {
   maxSubscriptionsPerConnection?: number;
   createValidationRules?: CreateValidationRules;
   createLogger?: CreateLogger;
-  socketIoServer: io.Server;
+  socketIoServer?: io.Server;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -43,7 +43,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
       config.createLogger || defaultCreateLogger;
     this.log = createLogger('@4c/SubscriptionServer::Server');
 
-    this.io = config.socketIoServer;
+    this.io = config.socketIoServer!;
     if (!this.io) {
       // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
       const IoServer = require('socket.io').Server;

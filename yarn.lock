@@ -2606,6 +2606,11 @@ babel-preset-jest@^26.6.2:
     babel-plugin-jest-hoist "^26.6.2"
     babel-preset-current-node-syntax "^1.0.0"
 
+backo2@~1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/backo2/-/backo2-1.0.2.tgz#31ab1ac8b129363463e35b3ebb69f4dfcfba7947"
+  integrity sha1-MasayLEpNjRj41s+u2n038+6eUc=
+
 balanced-match@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
@@ -4467,7 +4472,22 @@ end-of-stream@^1.0.0, end-of-stream@^1.1.0:
   dependencies:
     once "^1.4.0"
 
-engine.io-parser@~4.0.0:
+engine.io-client@~5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/engine.io-client/-/engine.io-client-5.1.1.tgz#f5c3aaaef1bdc9443aac6ffde48b3b2fb2dc56fc"
+  integrity sha512-jPFpw2HLL0lhZ2KY0BpZhIJdleQcUO9W1xkIpo0h3d6s+5D6+EV/xgQw9qWOmymszv2WXef/6KUUehyxEKomlQ==
+  dependencies:
+    base64-arraybuffer "0.1.4"
+    component-emitter "~1.3.0"
+    debug "~4.3.1"
+    engine.io-parser "~4.0.1"
+    has-cors "1.1.0"
+    parseqs "0.0.6"
+    parseuri "0.0.6"
+    ws "~7.4.2"
+    yeast "0.1.2"
+
+engine.io-parser@~4.0.0, engine.io-parser@~4.0.1:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/engine.io-parser/-/engine.io-parser-4.0.2.tgz#e41d0b3fb66f7bf4a3671d2038a154024edb501e"
   integrity sha512-sHfEQv6nmtJrq6TKuIz5kyEKH/qSdK56H/A+7DnAuUPWosnIZAS2NHNcPLmyjtY3cGS/MqJdZbUjW97JU72iYg==
@@ -5800,6 +5820,16 @@ graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.5
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.4.tgz#2256bde14d3632958c465ebc96dc467ca07a29fb"
   integrity sha512-WjKPNJF79dtJAVniUlGGWHYGz2jWxT6VhN/4m1NdkbZ2nOsEF+cI1Edgql5zCRhs/VsQYRvrXctxktVXZUkixw==
 
+graphql-relay-subscription@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/graphql-relay-subscription/-/graphql-relay-subscription-0.3.1.tgz#9645760294f1d4b09573e2889085bf251810c492"
+  integrity sha512-np9ez07ct0l6JkoM6cqiqoEtUNccETAAQNmkOSxkvdEm864CzfBBLmQorGhvhA5nnbLsckMCRJt0Vm0auGevDw==
+
+graphql-relay@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/graphql-relay/-/graphql-relay-0.7.0.tgz#e5c7a4bb52ede09e90e92dfd7b89d5947362278b"
+  integrity sha512-P8eS3IbZRhbfbcfud1Q6VPrIru4hchkb15MuOij+WQo9r0chD5NBIxiVjuRE2iG2EMHxIOrZb8LnMe82+YdITA==
+
 graphql@^15.5.0:
   version "15.5.0"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.5.0.tgz#39d19494dbe69d1ea719915b578bf920344a69d5"
@@ -5864,6 +5894,11 @@ has-bigints@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/has-bigints/-/has-bigints-1.0.1.tgz#64fe6acb020673e3b78db035a5af69aa9d07b113"
   integrity sha512-LSBS2LjbNBTf6287JEbEzvJgftkF5qFkmCo9hDRpAzKhUOlJ+hx8dd4USs00SgsUNwc4617J9ki5YtEClM2ffA==
+
+has-cors@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/has-cors/-/has-cors-1.1.0.tgz#5e474793f7ea9843d1bb99c23eef49ff126fff39"
+  integrity sha1-XkdHk/fqmEPRu5nCPu9J/xJv/zk=
 
 has-flag@^3.0.0:
   version "3.0.0"
@@ -9551,6 +9586,16 @@ parse5@5.1.1:
   resolved "https://registry.yarnpkg.com/parse5/-/parse5-5.1.1.tgz#f68e4e5ba1852ac2cadc00f4555fff6c2abb6178"
   integrity sha512-ugq4DFI0Ptb+WWjAdOK16+u/nHfiIrcE+sh8kZMaM0WllQKLI9rOUq6c2b7cwPkXdzfQESqvoqK6ug7U/Yyzug==
 
+parseqs@0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/parseqs/-/parseqs-0.0.6.tgz#8e4bb5a19d1cdc844a08ac974d34e273afa670d5"
+  integrity sha512-jeAGzMDbfSHHA091hr0r31eYfTig+29g3GKKE/PPbEQ65X0lmMwlEoqmhzu0iztID5uJpZsFlUPDP8ThPL7M8w==
+
+parseuri@0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/parseuri/-/parseuri-0.0.6.tgz#e1496e829e3ac2ff47f39a4dd044b32823c4a25a"
+  integrity sha512-AUjen8sAkGgao7UyCX6Ahv0gIK2fABKmYjvP4xmy5JaKvcbTRueIqIPHLAfq30xJddqSE033IOMUSOMCcK3Sow==
+
 parseurl@~1.3.2, parseurl@~1.3.3:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/parseurl/-/parseurl-1.3.3.tgz#9da19e7bee8d12dff0513ed5b76957793bc2e8d4"
@@ -11031,7 +11076,20 @@ socket.io-adapter@~2.1.0:
   resolved "https://registry.yarnpkg.com/socket.io-adapter/-/socket.io-adapter-2.1.0.tgz#edc5dc36602f2985918d631c1399215e97a1b527"
   integrity sha512-+vDov/aTsLjViYTwS9fPy5pEtTkrbEKsw2M+oVSoFGw6OD1IpvlV1VPhUzNbofCQ8oyMbdYJqDtGdmHQK6TdPg==
 
-socket.io-parser@~4.0.3:
+socket.io-client@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-4.1.2.tgz#95ad7113318ea01fba0860237b96d71e1b1fd2eb"
+  integrity sha512-RDpWJP4DQT1XeexmeDyDkm0vrFc0+bUsHDKiVGaNISJvJonhQQOMqV9Vwfg0ZpPJ27LCdan7iqTI92FRSOkFWQ==
+  dependencies:
+    "@types/component-emitter" "^1.2.10"
+    backo2 "~1.0.2"
+    component-emitter "~1.3.0"
+    debug "~4.3.1"
+    engine.io-client "~5.1.1"
+    parseuri "0.0.6"
+    socket.io-parser "~4.0.4"
+
+socket.io-parser@~4.0.3, socket.io-parser@~4.0.4:
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/socket.io-parser/-/socket.io-parser-4.0.4.tgz#9ea21b0d61508d18196ef04a2c6b9ab630f4c2b0"
   integrity sha512-t+b0SS+IxG7Rxzda2EVvyBZbvFPBCjJoyHuE0P//7OAsN23GItzDRdWa6ALxZI/8R5ygK7jAR6t028/z+7295g==
@@ -12831,3 +12889,8 @@ yargs@^8.0.2:
     which-module "^2.0.0"
     y18n "^3.2.1"
     yargs-parser "^7.0.0"
+
+yeast@0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/yeast/-/yeast-0.1.2.tgz#008e06d8094320c372dbc2f8ed76a0ca6c8ac419"
+  integrity sha1-AI4G2AlDIMNy28L47XagymyKxBk=
