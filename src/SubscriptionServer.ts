@@ -61,7 +61,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
   handleConnection = (socket: io.Socket) => {
     const clientId = socket.id;
 
-    this.log('debug', 'SubscriptionServer: new socket connection', {
+    this.log('debug', 'new socket connection', {
       clientId,
       // @ts-expect-error private field
       numClients: this.io.engine?.clientsCount ?? 0,
@@ -89,7 +89,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
 
     // add after so the logs happen in order
     socket.once('disconnect', (reason) => {
-      this.log('debug', 'SubscriptionServer: socket disconnected', {
+      this.log('debug', 'socket disconnected', {
         reason,
         clientId,
         // @ts-expect-error private field

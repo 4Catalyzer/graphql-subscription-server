@@ -297,7 +297,7 @@ describe('socket-io client logging', () => {
         Object {
           "group": "SubscriptionServer",
           "level": "debug",
-          "message": "SubscriptionServer: new socket connection",
+          "message": "new socket connection",
           "meta": Object {
             "clientId": "<ClientId:1>",
             "numClients": 1,
@@ -384,7 +384,7 @@ describe('socket-io client logging', () => {
         Object {
           "group": "SubscriptionServer",
           "level": "debug",
-          "message": "SubscriptionServer: socket disconnected",
+          "message": "socket disconnected",
           "meta": Object {
             "clientId": "<ClientId:1>",
             "numClients": 0,
