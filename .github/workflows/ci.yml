@@ -18,4 +18,4 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: yarn install --frozen-lockfile
       - run: yarn test
-      - run: yarn codecov
+      - run: node_modules/.bin/codecov
