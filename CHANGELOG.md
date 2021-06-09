@@ -1,3 +1,14 @@
+## [3.0.2](https://github.com/4Catalyzer/graphql-subscription-server/compare/v3.0.1...v3.0.2) (2021-06-09)
+
+
+### Bug Fixes
+
+* race condition causing memory leak ([#417](https://github.com/4Catalyzer/graphql-subscription-server/issues/417)) ([8a5675c](https://github.com/4Catalyzer/graphql-subscription-server/commit/8a5675ce0dfd0852c955655d473c78ebd7d725ea))
+
+
+
+
+
 ## [3.0.1](https://github.com/4Catalyzer/graphql-subscription-server/compare/v3.0.0...v3.0.1) (2021-05-25)
 
 
