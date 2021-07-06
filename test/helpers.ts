@@ -55,7 +55,6 @@ export async function startServer(
     httpServer,
     subscriber,
     async close() {
-      httpServer.close();
       await server.close();
     },
   };

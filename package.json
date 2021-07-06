@@ -21,10 +21,8 @@
     "testonly": "jest",
     "typecheck": "tsc --noEmit && tsc -p test --noEmit"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+  "gitHooks": {
+    "pre-commit": "lint-staged"
   },
   "lint-staged": {
     "*": "4c lint --fix --prettier-ignore .eslintignore"
@@ -46,7 +44,7 @@
   },
   "dependencies": {
     "express": "^4.17.1",
-    "redis": "^3.0.0"
+    "redis": "^3.1.2"
   },
   "peerDependencies": {
     "graphql": ">=0.12.3",
@@ -70,14 +68,14 @@
     "@types/jest": "^26.0.23",
     "@types/jsonwebtoken": "^8.5.3",
     "@types/redis": "^2.8.30",
-    "@typescript-eslint/eslint-plugin": "^4.28.1",
-    "@typescript-eslint/parser": "^4.28.1",
-    "babel-jest": "^26.6.3",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "babel-jest": "^27.0.6",
     "codecov": "^3.8.2",
     "eslint-config-4catalyzer": "^1.2.0",
     "eslint-config-4catalyzer-jest": "^2.1.0",
     "eslint-config-4catalyzer-typescript": "^3.1.0",
-    "eslint-config-prettier": "^7.2.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-jest": "^24.3.6",
     "eslint-plugin-jsx-a11y": "^6.4.1",
@@ -85,14 +83,14 @@
     "graphql": "^15.5.1",
     "graphql-relay": "^0.8.0",
     "graphql-relay-subscription": "^0.3.1",
-    "husky": "^4.3.8",
-    "jest": "^26.6.3",
+    "hookem": "^1.0.8",
+    "jest": "^27.0.6",
     "jsonwebtoken": "^8.5.1",
-    "lint-staged": "^10.5.4",
+    "lint-staged": "^11.0.0",
     "prettier": "^2.3.2",
     "redis-mock": "^0.56.3",
     "semantic-release": "^17.4.4",
-    "socket.io": "^3.1.2",
+    "socket.io": "^4.1.2",
     "socket.io-client": "^4.1.2",
     "travis-deploy-once": "^5.0.11",
     "typescript": "^4.3.5",
