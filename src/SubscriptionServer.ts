@@ -2,7 +2,7 @@ import { promisify } from 'util';
 
 import express from 'express';
 import type { GraphQLSchema } from 'graphql';
-import type io from 'socket.io';
+import type { Server, Socket } from 'socket.io';
 
 import AuthorizedSocketConnection from './AuthorizedSocketConnection';
 import type { CreateValidationRules } from './AuthorizedSocketConnection';
@@ -23,7 +23,7 @@ export type SubscriptionServerConfig<TContext, TCredentials> = {
   maxSubscriptionsPerConnection?: number;
   createValidationRules?: CreateValidationRules;
   createLogger?: CreateLogger;
-  socketIoServer?: io.Server;
+  socketIoServer?: Server;
 };
 
 export default class SubscriptionServer<TContext, TCredentials> {
@@ -31,7 +31,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
 
   log: Logger;
 
-  io: io.Server;
+  io: Server;
 
   constructor(config: SubscriptionServerConfig<TContext, TCredentials>) {
     this.config = config;
@@ -47,7 +47,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
         serveClient: false,
         path: this.config.path,
         transports: ['websocket'],
-        wsEngine: 'ws',
+        allowEIO3: true,
       });
     }
 
@@ -58,12 +58,11 @@ export default class SubscriptionServer<TContext, TCredentials> {
     this.io.attach(httpServer);
   }
 
-  handleConnection = (socket: io.Socket) => {
+  handleConnection = (socket: Socket) => {
     const clientId = socket.id;
 
     this.log('debug', 'new socket connection', {
       clientId,
-      // @ts-expect-error private field
       numClients: this.io.engine?.clientsCount ?? 0,
     });
 
@@ -92,7 +91,6 @@ export default class SubscriptionServer<TContext, TCredentials> {
       this.log('debug', 'socket disconnected', {
         reason,
         clientId,
-        // @ts-expect-error private field
         numClients: (this.io.engine.clientsCount ?? 0) - 1, // number hasn't decremented at this point for this client
       });
     });

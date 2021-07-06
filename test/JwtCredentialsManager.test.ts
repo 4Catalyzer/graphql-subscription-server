@@ -63,7 +63,7 @@ describe('JwtCredentialsManager', () => {
       expect.objectContaining({ sub: 'hey!' }),
     );
 
-    jest.runTimersToTime(50000);
+    jest.advanceTimersByTime(50000);
 
     expect(await manager.getCredentials()).toEqual(null);
 
@@ -100,7 +100,7 @@ describe('JwtCredentialsManager', () => {
       expect.objectContaining({ sub: 'hey!' }),
     );
 
-    jest.runTimersToTime(50000);
+    jest.advanceTimersByTime(50000);
 
     expect(await manager.getCredentials()).toEqual(null);
 
@@ -137,7 +137,7 @@ describe('JwtCredentialsManager', () => {
 
     expect(await manager.getCredentials()).toHaveProperty('count', 1);
 
-    jest.runTimersToTime(40000);
+    jest.advanceTimersByTime(40000);
 
     // check that the update logic was run again
     expect(await manager.getCredentials()).toHaveProperty('count', 2);
@@ -195,7 +195,7 @@ describe('JwtCredentialsManager', () => {
 
     await manager.getCredentials();
 
-    jest.runTimersToTime(50000);
+    jest.advanceTimersByTime(50000);
 
     await manager.getCredentials();
 
@@ -211,7 +211,7 @@ describe('JwtCredentialsManager', () => {
 
     await manager.getCredentials();
 
-    jest.runTimersToTime(50000);
+    jest.advanceTimersByTime(50000);
 
     await manager.getCredentials();
 
