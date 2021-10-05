@@ -1,6 +1,3 @@
-// import { RedisClient } from 'redis';
-// import type { Socket } from 'socket.io-client';
-// import socketio from 'socket.io-client';
 import { EventEmitter } from 'events';
 import http from 'http';
 
@@ -70,8 +67,8 @@ export async function startServer(
     httpServer,
     subscriber,
     async close() {
-      httpServer.close();
       await server.close();
+      httpServer.close();
     },
   };
 }

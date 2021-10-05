@@ -1,5 +1,9 @@
+export type SupportedProtocols =
+  | 'graphql-transport-ws'
+  | '4c-subscription-server';
+
 export interface WebSocket {
-  protocol: string;
+  protocol: SupportedProtocols;
   id?: string;
 
   close(code: number, reason: string): Promise<void> | void;

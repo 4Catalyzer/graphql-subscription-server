@@ -1,6 +1,5 @@
 import { Request } from 'express';
 import type { GraphQLSchema } from 'graphql';
-import type { Server, Socket } from 'socket.io';
 
 import AuthorizedSocketConnection from './AuthorizedSocketConnection';
 import type { CreateValidationRules } from './AuthorizedSocketConnection';
@@ -39,9 +38,7 @@ export default abstract class SubscriptionServer<TContext, TCredentials> {
 
   public abstract attach(httpServer: any): void;
 
-  protected opened(socket: WebSocket, request: Request) {
-    this.log('debug', 'new socket connection');
-
+  protected initConnection(socket: WebSocket, request: Request) {
     const { createContext } = this.config;
 
     // eslint-disable-next-line no-new

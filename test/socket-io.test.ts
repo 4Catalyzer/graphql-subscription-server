@@ -1,4 +1,5 @@
 /* eslint-disable no-underscore-dangle */
+
 import socketio from 'socket.io-client';
 
 import { CreateLogger } from '../src';

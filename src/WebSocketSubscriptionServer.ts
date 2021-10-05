@@ -8,8 +8,12 @@ import ws from 'ws';
 import SubscriptionServer, {
   SubscriptionServerConfig,
 } from './SubscriptionServer';
-import { MessageType } from './types';
+import { MessageType, SupportedProtocols } from './types';
 
+export type DisconnectReason =
+  | 'server disconnect'
+  | 'client disconnect'
+  | 'ping timeout';
 interface Message {
   type: MessageType;
   payload: any;
@@ -17,20 +21,24 @@ interface Message {
 }
 
 class GraphQLSocket extends EventEmitter {
-  protocol: 'graphql-transport-ws' | 'socket-io';
+  protocol: SupportedProtocols;
 
-  private pingHandle: NodeJS.Timeout | null;
+  isAlive = true;
 
-  private pongWait: NodeJS.Timeout | null;
-
-  constructor(private socket: ws, { keepAlive = 12 * 1000 } = {}) {
+  constructor(private socket: ws) {
     super();
+
     this.socket = socket;
+    this.isAlive = true;
 
     this.protocol =
       socket.protocol === 'graphql-transport-ws'
         ? socket.protocol
-        : 'socket-io';
+        : '4c-subscription-server';
+
+    socket.on('pong', () => {
+      this.isAlive = true;
+    });
 
     socket.on('message', (data) => {
       let msg: Message | null = null;
@@ -43,35 +51,16 @@ class GraphQLSocket extends EventEmitter {
     });
 
     socket.on('close', (code: number, reason: string) => {
-      clearTimeout(this.pongWait!);
-      clearInterval(this.pingHandle!);
-
+      this.isAlive = false;
+      super.emit('disconnect', 'client disconnect');
       super.emit('close', code, reason);
     });
+  }
 
-    // keep alive through ping-pong messages
-    this.pongWait = null;
-
-    this.pingHandle =
-      keepAlive > 0 && Number.isFinite(keepAlive)
-        ? setInterval(() => {
-            // ping pong on open sockets only
-            if (this.socket.readyState === this.socket.OPEN) {
-              // terminate the connection after pong wait has passed because the client is idle
-              this.pongWait = setTimeout(() => {
-                this.socket.terminate();
-              }, keepAlive);
-
-              // listen for client's pong and stop socket termination
-              this.socket.once('pong', () => {
-                clearTimeout(this.pongWait!);
-                this.pongWait = null;
-              });
-
-              this.socket.ping();
-            }
-          }, keepAlive)
-        : null;
+  disconnect(reason?: DisconnectReason) {
+    this.emit('disconnect', reason);
+    super.emit('disconnect', reason);
+    this.socket.terminate();
   }
 
   private ack(msg: { ackId?: number } | null) {
@@ -97,18 +86,39 @@ class GraphQLSocket extends EventEmitter {
   close(code: number, reason: string) {
     this.socket.close(code, reason);
   }
+
+  ping() {
+    if (this.socket.readyState === this.socket.OPEN) {
+      this.isAlive = false;
+      this.socket.ping();
+    }
+  }
 }
 
+export interface WebSocketSubscriptionServerConfig<TContext, TCredentials>
+  extends SubscriptionServerConfig<TContext, TCredentials> {
+  keepAlive?: number;
+}
 export default class WebSocketSubscriptionServer<
   TContext,
   TCredentials,
 > extends SubscriptionServer<TContext, TCredentials> {
   private ws: ws.Server;
 
-  constructor(config: SubscriptionServerConfig<TContext, TCredentials>) {
+  private gqlClients = new WeakMap<ws, GraphQLSocket>();
+
+  readonly keepAlive: number;
+
+  private pingHandle: NodeJS.Timeout | null = null;
+
+  constructor({
+    keepAlive = 15_000,
+    ...config
+  }: WebSocketSubscriptionServerConfig<TContext, TCredentials>) {
     super(config);
 
     this.ws = new ws.Server({ noServer: true });
+    this.keepAlive = keepAlive;
 
     this.ws.on('error', () => {
       // catch the first thrown error and re-throw it once all clients have been notified
@@ -126,14 +136,16 @@ export default class WebSocketSubscriptionServer<
       if (firstErr) throw firstErr;
     });
 
+    this.scheduleLivelinessCheck();
     this.ws.on('connection', (socket, request) => {
       const gqlSocket = new GraphQLSocket(socket);
+      this.gqlClients.set(socket, gqlSocket);
 
-      this.opened(gqlSocket, request as any);
+      this.initConnection(gqlSocket, request as any);
 
       // socket io clients do this behind the scenes
       // so we keep it out of the server logic
-      if (gqlSocket.protocol === 'socket-io') {
+      if (gqlSocket.protocol === '4c-subscription-server') {
         // inform the client they are good to go
         gqlSocket.emit('connect');
       }
@@ -158,6 +170,8 @@ export default class WebSocketSubscriptionServer<
   }
 
   async close() {
+    clearTimeout(this.pingHandle!);
+
     for (const client of this.ws.clients) {
       client.close(1001, 'Going away');
     }
@@ -166,5 +180,25 @@ export default class WebSocketSubscriptionServer<
     await new Promise<void>((resolve, reject) => {
       this.ws.close((err) => (err ? reject(err) : resolve()));
     });
+  }
+
+  private scheduleLivelinessCheck() {
+    clearTimeout(this.pingHandle!);
+    this.pingHandle = setTimeout(() => {
+      for (const socket of this.ws.clients) {
+        const gql = this.gqlClients.get(socket);
+        if (!gql) {
+          continue;
+        }
+        if (!gql.isAlive) {
+          gql.disconnect('ping timeout');
+          return;
+        }
+
+        gql.ping();
+      }
+
+      this.scheduleLivelinessCheck();
+    }, this.keepAlive);
   }
 }

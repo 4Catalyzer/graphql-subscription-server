@@ -42,15 +42,15 @@ export default class SocketIOSubscriptionServer<
       const request = Object.create((express as any).request);
       Object.assign(request, socket.request);
 
-      this.log('debug', 'SubscriptionServer: new socket connection', {
+      this.log('debug', 'new socket connection', {
         clientId,
         numClients: this.io.engine?.clientsCount ?? 0,
       });
 
-      this.opened(
+      this.initConnection(
         {
           id: clientId,
-          protocol: 'socket-io',
+          protocol: '4c-subscription-server',
           on: socket.on.bind(socket),
           emit(event: string, data: any) {
             socket.emit(event, data);
