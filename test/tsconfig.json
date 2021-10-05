@@ -1,9 +1,14 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "rootDir": "../",
     "noImplicitAny": false,
     "types": ["jest", "node"],
     "rootDir": ".."
   },
+<<<<<<< HEAD
   "include": ["**/*.ts", "../src"]
+=======
+  "include": ["./", "../src"]
+>>>>>>> ed71098... feat!: add websocket server option
 }

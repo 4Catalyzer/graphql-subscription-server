@@ -1,16 +1,14 @@
-import { promisify } from 'util';
-
-import express from 'express';
+import { Request } from 'express';
 import type { GraphQLSchema } from 'graphql';
-import type { Server, Socket } from 'socket.io';
 
 import AuthorizedSocketConnection from './AuthorizedSocketConnection';
 import type { CreateValidationRules } from './AuthorizedSocketConnection';
 import type { CredentialsManager } from './CredentialsManager';
 import { CreateLogger, Logger, noopCreateLogger } from './Logger';
 import type { Subscriber } from './Subscriber';
+import { WebSocket } from './types';
 
-export type SubscriptionServerConfig<TContext, TCredentials> = {
+export interface SubscriptionServerConfig<TContext, TCredentials> {
   path: string;
   schema: GraphQLSchema;
   subscriber: Subscriber<any>;
@@ -23,52 +21,24 @@ export type SubscriptionServerConfig<TContext, TCredentials> = {
   maxSubscriptionsPerConnection?: number;
   createValidationRules?: CreateValidationRules;
   createLogger?: CreateLogger;
-  socketIoServer?: Server;
-};
+}
 
-export default class SubscriptionServer<TContext, TCredentials> {
+export default abstract class SubscriptionServer<TContext, TCredentials> {
   config: SubscriptionServerConfig<TContext, TCredentials>;
 
   log: Logger;
 
-  io: Server;
-
   constructor(config: SubscriptionServerConfig<TContext, TCredentials>) {
     this.config = config;
 
-    const createLogger = config.createLogger || noopCreateLogger;
+    const createLogger: CreateLogger = config.createLogger || noopCreateLogger;
+
     this.log = createLogger('SubscriptionServer');
-
-    this.io = config.socketIoServer!;
-    if (!this.io) {
-      // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
-      const IoServer = require('socket.io').Server;
-      this.io = new IoServer({
-        serveClient: false,
-        path: this.config.path,
-        transports: ['websocket'],
-        allowEIO3: true,
-      });
-    }
-
-    this.io.on('connection', this.handleConnection);
   }
 
-  attach(httpServer: any) {
-    this.io.attach(httpServer);
-  }
+  public abstract attach(httpServer: any): void;
 
-  handleConnection = (socket: Socket) => {
-    const clientId = socket.id;
-
-    this.log('debug', 'new socket connection', {
-      clientId,
-      numClients: this.io.engine?.clientsCount ?? 0,
-    });
-
-    const request = Object.create((express as any).request);
-    Object.assign(request, socket.request);
-
+  protected initConnection(socket: WebSocket, request: Request) {
     const { createContext } = this.config;
 
     // eslint-disable-next-line no-new
@@ -85,19 +55,7 @@ export default class SubscriptionServer<TContext, TCredentials> {
       createValidationRules: this.config.createValidationRules,
       createLogger: this.config.createLogger || noopCreateLogger,
     });
-
-    // add after so the logs happen in order
-    socket.once('disconnect', (reason) => {
-      this.log('debug', 'socket disconnected', {
-        reason,
-        clientId,
-        numClients: (this.io.engine.clientsCount ?? 0) - 1, // number hasn't decremented at this point for this client
-      });
-    });
-  };
-
-  async close() {
-    // @ts-ignore
-    await promisify((...args) => this.io.close(...args))();
   }
+
+  abstract close(): void | Promise<void>;
 }

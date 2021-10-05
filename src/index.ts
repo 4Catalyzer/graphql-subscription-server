@@ -2,6 +2,8 @@ export { default as EventSubscriber } from './EventSubscriber';
 export { default as JwtCredentialsManager } from './JwtCredentialsManager';
 export { default as RedisSubscriber } from './RedisSubscriber';
 export { default as SubscriptionServer } from './SubscriptionServer';
+export { default as SocketIOSubscriptionServer } from './SocketIOSubscriptionServer';
+export { default as WebSocketSubscriptionServer } from './WebSocketSubscriptionServer';
 export { AsyncQueue } from './AsyncUtils';
 
 export type { CreateValidationRules } from './AuthorizedSocketConnection';
@@ -11,3 +13,4 @@ export type { Subscriber } from './Subscriber';
 export type { SubscriptionServerConfig } from './SubscriptionServer';
 
 export type { JwtCredentials } from './JwtCredentialsManager';
+export type { SocketIOSubscriptionServerConfig } from './SocketIOSubscriptionServer';

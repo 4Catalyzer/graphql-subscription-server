@@ -255,8 +255,6 @@ const GraphQLMutation = new GraphQLObjectType({
   },
 });
 
-// const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const GraphQLTodoUpdatedSubscription = subscriptionWithClientId({
   name: 'TodoUpdatedSubscription',
 
