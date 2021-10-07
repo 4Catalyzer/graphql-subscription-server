@@ -83,7 +83,7 @@
     "graphql": "^15.5.1",
     "graphql-relay": "^0.8.0",
     "graphql-relay-subscription": "^0.3.1",
-    "hookem": "^1.0.8",
+    "hookem": "^2.0.1",
     "jest": "^27.0.6",
     "jsonwebtoken": "^8.5.1",
     "lint-staged": "^11.1.2",
