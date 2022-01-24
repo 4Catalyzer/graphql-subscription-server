@@ -125,7 +125,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
       });
 
       await this.config.credentialsManager.authenticate(authorization);
-    } catch (error) {
+    } catch (error: any) {
       this.log('error', error.message, { error, clientId: this.clientId });
       this.emitError({ code: 'invalid_authorization' });
     }
@@ -274,13 +274,13 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
 
       let response;
       try {
-        response = await execute(
-          this.config.schema,
+        response = await execute({
+          schema: this.config.schema,
           document,
-          payload,
-          this.config.createContext && this.config.createContext(credentials),
-          variables,
-        );
+          rootValue: payload,
+          contextValue: this.config.createContext?.(credentials),
+          variableValues: variables,
+        });
       } catch (e) {
         if (e instanceof GraphQLError) {
           response = { errors: [e] };

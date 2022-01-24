@@ -1,3 +1,4 @@
+import { subscriptionWithClientId } from '@4c/graphql-relay-subscription';
 import {
   GraphQLBoolean,
   GraphQLID,
@@ -19,7 +20,6 @@ import {
   nodeDefinitions,
   toGlobalId,
 } from 'graphql-relay';
-import { subscriptionWithClientId } from 'graphql-relay-subscription';
 
 import {
   Todo,
