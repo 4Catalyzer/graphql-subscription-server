@@ -89,7 +89,7 @@
     "lint-staged": "^12.5.0",
     "prettier": "^2.6.2",
     "redis-mock": "^0.56.3",
-    "semantic-release": "^19.0.2",
+    "semantic-release": "^19.0.3",
     "socket.io": "^4.5.1",
     "socket.io-client": "^4.5.1",
     "travis-deploy-once": "^5.0.11",
