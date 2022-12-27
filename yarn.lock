@@ -125,7 +125,6 @@ __metadata:
     "@types/express": ^4.17.14
     "@types/jest": ^27.5.2
     "@types/jsonwebtoken": ^9.0.0
-    "@types/redis": ^4.0.10
     "@typescript-eslint/eslint-plugin": ^5.46.0
     "@typescript-eslint/parser": ^5.46.0
     babel-jest: ^27.5.1
@@ -3120,15 +3119,6 @@ __metadata:
   version: 1.2.3
   resolution: "@types/range-parser@npm:1.2.3"
   checksum: a0a4218214d2c599e2128a8965e9183d1f0b8fc614def43a2183cf80534d10fcf86357c823c7907e779df0ab048fd1fa3818b4c8f0f6f99ba150a3f99df7d03d
-  languageName: node
-  linkType: hard
-
-"@types/redis@npm:^4.0.10":
-  version: 4.0.11
-  resolution: "@types/redis@npm:4.0.11"
-  dependencies:
-    redis: "*"
-  checksum: 4b2d252368a7dc78738a98a8bcc817f92ca097511a901427628566f24f53998a2b1b524a85dea6a19307d4a95b55bd7d5a6ad7cc944ae8f39e54ca2f28ddf893
   languageName: node
   linkType: hard
 
@@ -13852,7 +13842,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redis@npm:*, redis@npm:^4.5.1":
+"redis@npm:^4.5.1":
   version: 4.5.1
   resolution: "redis@npm:4.5.1"
   dependencies:
