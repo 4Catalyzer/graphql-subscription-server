@@ -1,6 +1,6 @@
 import { promisify } from 'util';
 
-import redis, { RedisClientOptions } from 'redis';
+import redis from 'redis';
 
 import { AsyncQueue, map } from './AsyncUtils';
 import { CreateLogger, Logger, noopCreateLogger } from './Logger';
@@ -8,7 +8,7 @@ import type { Subscriber } from './Subscriber';
 
 type Channel = string;
 
-export type RedisConfigOptions = RedisClientOptions & {
+export type RedisConfigOptions = redis.RedisClientOptions & {
   parseMessage?: (msg: string) => any;
   createLogger?: CreateLogger;
 };
