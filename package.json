@@ -43,7 +43,7 @@
     "conventionalCommits": true
   },
   "dependencies": {
-    "express": "^4.17.2",
+    "express": "^4.17.3",
     "redis": "^3.1.2"
   },
   "peerDependencies": {
