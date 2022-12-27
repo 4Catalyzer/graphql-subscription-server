@@ -1,6 +1,6 @@
 import { promisify } from 'util';
 
-import redis from 'redis';
+import redis, { RedisClientOptions } from 'redis';
 
 import { AsyncQueue, map } from './AsyncUtils';
 import { CreateLogger, Logger, noopCreateLogger } from './Logger';
@@ -8,7 +8,7 @@ import type { Subscriber } from './Subscriber';
 
 type Channel = string;
 
-export type RedisConfigOptions = redis.ClientOpts & {
+export type RedisConfigOptions = RedisClientOptions & {
   parseMessage?: (msg: string) => any;
   createLogger?: CreateLogger;
 };
@@ -21,7 +21,7 @@ export default class RedisSubscriber<
   TOptions extends RedisSubscriberOptions = RedisSubscriberOptions,
 > implements Subscriber<TOptions>
 {
-  redis: redis.RedisClient;
+  redis: ReturnType<typeof redis.createClient>;
 
   _parseMessage: ((msg: string) => any) | null | undefined;
 
@@ -42,7 +42,7 @@ export default class RedisSubscriber<
     this._channels = new Set();
     this._parseMessage = parseMessage;
 
-    this.redis.on('message', (channel, message) => {
+    this.redis.on('message', (channel: string, message: any) => {
       this.log('silly', 'message received', { channel, message });
       const queues = this._queues.get(channel);
       if (!queues) {
