@@ -138,7 +138,7 @@ describe('RedisSubscriber', () => {
           "message": "closed",
           "meta": Object {
             "numChannels": 0,
-            "numQueus": 0,
+            "numQueues": 0,
           },
         },
       ]
