@@ -1,14 +1,14 @@
 import { promisify } from 'util';
 
-import redis from 'redis';
 
 import { AsyncQueue, map } from './AsyncUtils';
 import { CreateLogger, Logger, noopCreateLogger } from './Logger';
 import type { Subscriber } from './Subscriber';
+import { createClient, RedisClientOptions } from '@redis/client';
 
 type Channel = string;
 
-export type RedisConfigOptions = redis.RedisClientOptions & {
+export type RedisConfigOptions = RedisClientOptions & {
   parseMessage?: (msg: string) => any;
   createLogger?: CreateLogger;
 };
@@ -21,7 +21,7 @@ export default class RedisSubscriber<
   TOptions extends RedisSubscriberOptions = RedisSubscriberOptions,
 > implements Subscriber<TOptions>
 {
-  redis: ReturnType<typeof redis.createClient>;
+  redis: ReturnType<typeof createClient>;
 
   _parseMessage: ((msg: string) => any) | null | undefined;
 
@@ -37,7 +37,7 @@ export default class RedisSubscriber<
     ...redisConfig
   }: RedisConfigOptions = {}) {
     this.log = createLogger('RedisSubscriber');
-    this.redis = redis.createClient(redisConfig);
+    this.redis = createClient(redisConfig);
     this._queues = new Map();
     this._channels = new Set();
     this._parseMessage = parseMessage;
@@ -114,7 +114,7 @@ export default class RedisSubscriber<
   async close() {
     await promisify(this.redis.quit).call(this.redis);
     this.log('silly', 'closed', {
-      numQueus: this._queues.size,
+      numQueues: this._queues.size,
       numChannels: this._channels.size,
     });
   }
