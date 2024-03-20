@@ -93,7 +93,7 @@
     "socket.io": "^4.5.4",
     "socket.io-client": "^4.5.4",
     "travis-deploy-once": "^5.0.11",
-    "typescript": "^4.9.4",
+    "typescript": "^5.4.3",
     "utility-types": "^3.10.0"
   },
   "engines": {
