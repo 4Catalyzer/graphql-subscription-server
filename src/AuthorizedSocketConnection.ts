@@ -289,12 +289,6 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
         }
       }
 
-      this.log('info', 'emit', {
-        response,
-        credentials,
-        clientId: this.clientId,
-      });
-
       this.socket.emit('subscription update', { id, ...response });
     }
   };
