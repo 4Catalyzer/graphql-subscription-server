@@ -1,104 +1,76 @@
 ## [3.0.4](https://github.com/4Catalyzer/graphql-subscription-server/compare/v3.0.3...v3.0.4) (2021-06-10)
 
-
-
-
-
 ## [3.0.3](https://github.com/4Catalyzer/graphql-subscription-server/compare/v3.0.2...v3.0.3) (2021-06-09)
-
 
 ### Bug Fixes
 
-* use old message names ([8dc6a1d](https://github.com/4Catalyzer/graphql-subscription-server/commit/8dc6a1ddb59a569001415ccad7ec0b2753695c48))
-
-
-
-
+- use old message names ([8dc6a1d](https://github.com/4Catalyzer/graphql-subscription-server/commit/8dc6a1ddb59a569001415ccad7ec0b2753695c48))
 
 ## [3.0.2](https://github.com/4Catalyzer/graphql-subscription-server/compare/v3.0.1...v3.0.2) (2021-06-09)
 
-
 ### Bug Fixes
 
-* race condition causing memory leak ([#417](https://github.com/4Catalyzer/graphql-subscription-server/issues/417)) ([8a5675c](https://github.com/4Catalyzer/graphql-subscription-server/commit/8a5675ce0dfd0852c955655d473c78ebd7d725ea))
-
-
-
-
+- race condition causing memory leak ([#417](https://github.com/4Catalyzer/graphql-subscription-server/issues/417)) ([8a5675c](https://github.com/4Catalyzer/graphql-subscription-server/commit/8a5675ce0dfd0852c955655d473c78ebd7d725ea))
 
 ## [3.0.1](https://github.com/4Catalyzer/graphql-subscription-server/compare/v3.0.0...v3.0.1) (2021-05-25)
 
-
 ### Bug Fixes
 
-* build ([60a1224](https://github.com/4Catalyzer/graphql-subscription-server/commit/60a1224778eb2e83c62e9bfdf7e9026fee9d8392))
-
-
-
-
+- build ([60a1224](https://github.com/4Catalyzer/graphql-subscription-server/commit/60a1224778eb2e83c62e9bfdf7e9026fee9d8392))
 
 # [2.0.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v1.2.1...v2.0.0) (2020-11-25)
 
-
-* fix!: socket io v3 update (#392) ([0c4ff42](https://github.com/4Catalyzer/graphql-subscription-server/commit/0c4ff42a0ac43650d99b8dbdf94247dca6204f13)), closes [#392](https://github.com/4Catalyzer/graphql-subscription-server/issues/392)
-
+- fix!: socket io v3 update (#392) ([0c4ff42](https://github.com/4Catalyzer/graphql-subscription-server/commit/0c4ff42a0ac43650d99b8dbdf94247dca6204f13)), closes [#392](https://github.com/4Catalyzer/graphql-subscription-server/issues/392)
 
 ### BREAKING CHANGES
 
-* socket io v3 update
+- socket io v3 update
 
-* add a manual releases file for staging manual releases
+- add a manual releases file for staging manual releases
 
-* Revert "BREAKING CHANGE: socket io v3 update"
+- Revert "BREAKING CHANGE: socket io v3 update"
 
 This reverts commit 236ee123139744c17f83a170860bd4b3e4089f1e.
 
-* linting
+- linting
 
 ## [1.2.1](https://github.com/4Catalyzer/graphql-subscription-server/compare/v1.2.0...v1.2.1) (2020-11-23)
 
-
 ### Bug Fixes
 
-* force patch release ([67f5b63](https://github.com/4Catalyzer/graphql-subscription-server/commit/67f5b63eed00ff85692dcc88a35a6c74b65d5360))
+- force patch release ([67f5b63](https://github.com/4Catalyzer/graphql-subscription-server/commit/67f5b63eed00ff85692dcc88a35a6c74b65d5360))
 
 # [1.2.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v1.1.0...v1.2.0) (2020-11-16)
 
-
 ### Features
 
-* log connect and subscribed events ([#354](https://github.com/4Catalyzer/graphql-subscription-server/issues/354)) ([b9a109c](https://github.com/4Catalyzer/graphql-subscription-server/commit/b9a109c7b27159cd024ab4a31e0f6d1f6ecf81a0))
+- log connect and subscribed events ([#354](https://github.com/4Catalyzer/graphql-subscription-server/issues/354)) ([b9a109c](https://github.com/4Catalyzer/graphql-subscription-server/commit/b9a109c7b27159cd024ab4a31e0f6d1f6ecf81a0))
 
 # [1.1.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v1.0.1...v1.1.0) (2020-07-21)
 
-
 ### Features
 
-* Acknowledge unsubscribe requests ([#367](https://github.com/4Catalyzer/graphql-subscription-server/issues/367)) ([a2c24a8](https://github.com/4Catalyzer/graphql-subscription-server/commit/a2c24a8530c97f6fdbb51220d95f0c81e7deeb0a))
+- Acknowledge unsubscribe requests ([#367](https://github.com/4Catalyzer/graphql-subscription-server/issues/367)) ([a2c24a8](https://github.com/4Catalyzer/graphql-subscription-server/commit/a2c24a8530c97f6fdbb51220d95f0c81e7deeb0a))
 
 ## [1.0.1](https://github.com/4Catalyzer/graphql-subscription-server/compare/v1.0.0...v1.0.1) (2020-06-08)
 
-
 ### Bug Fixes
 
-* await credentials when subscribing ([#351](https://github.com/4Catalyzer/graphql-subscription-server/issues/351)) ([df9f3a8](https://github.com/4Catalyzer/graphql-subscription-server/commit/df9f3a85047c78eabaaa0a0562a3dfce5bdcdbb2))
+- await credentials when subscribing ([#351](https://github.com/4Catalyzer/graphql-subscription-server/issues/351)) ([df9f3a8](https://github.com/4Catalyzer/graphql-subscription-server/commit/df9f3a85047c78eabaaa0a0562a3dfce5bdcdbb2))
 
 # [1.0.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.11.0...v1.0.0) (2020-05-18)
 
-
-* fix!: improve exports and abstract class (#346) ([c86d4e0](https://github.com/4Catalyzer/graphql-subscription-server/commit/c86d4e08b324d4c31c3f7350c4395f98bad87bfe)), closes [#346](https://github.com/4Catalyzer/graphql-subscription-server/issues/346)
-
+- fix!: improve exports and abstract class (#346) ([c86d4e0](https://github.com/4Catalyzer/graphql-subscription-server/commit/c86d4e08b324d4c31c3f7350c4395f98bad87bfe)), closes [#346](https://github.com/4Catalyzer/graphql-subscription-server/issues/346)
 
 ### BREAKING CHANGES
 
-* convert to typescript
+- convert to typescript
 
 # [0.11.0](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.10.1...v0.11.0) (2020-05-18)
 
-
 ### Features
 
-* convert to typescript ([#344](https://github.com/4Catalyzer/graphql-subscription-server/issues/344)) ([d70ff30](https://github.com/4Catalyzer/graphql-subscription-server/commit/d70ff30))
+- convert to typescript ([#344](https://github.com/4Catalyzer/graphql-subscription-server/issues/344)) ([d70ff30](https://github.com/4Catalyzer/graphql-subscription-server/commit/d70ff30))
 
 ## [0.10.1](https://github.com/4Catalyzer/graphql-subscription-server/compare/v0.10.0...v0.10.1) (2020-05-04)
 

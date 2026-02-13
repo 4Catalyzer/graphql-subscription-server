@@ -4,11 +4,20 @@ import express from 'express';
 import type { GraphQLSchema } from 'graphql';
 import type { Server, Socket } from 'socket.io';
 
-import AuthorizedSocketConnection from './AuthorizedSocketConnection';
-import type { CreateValidationRules } from './AuthorizedSocketConnection';
-import type { CredentialsManager } from './CredentialsManager';
-import { CreateLogger, Logger, noopCreateLogger } from './Logger';
-import type { Subscriber } from './Subscriber';
+import AuthorizedSocketConnection from './AuthorizedSocketConnection.js';
+import type { CreateValidationRules } from './AuthorizedSocketConnection.js';
+import type { CredentialsManager } from './CredentialsManager.js';
+import { CreateLogger, Logger, noopCreateLogger } from './Logger.js';
+import type { Subscriber } from './Subscriber.js';
+
+let IoServerConstructor: typeof Server | null = null;
+
+try {
+  const socketIoModule = await import('socket.io');
+  IoServerConstructor = socketIoModule.Server;
+} catch {
+  IoServerConstructor = null;
+}
 
 export type SubscriptionServerConfig<TContext, TCredentials> = {
   path: string;
@@ -41,9 +50,13 @@ export default class SubscriptionServer<TContext, TCredentials> {
 
     this.io = config.socketIoServer!;
     if (!this.io) {
-      // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
-      const IoServer = require('socket.io').Server;
-      this.io = new IoServer({
+      if (!IoServerConstructor) {
+        throw new Error(
+          'socket.io is required when socketIoServer is not provided',
+        );
+      }
+
+      this.io = new IoServerConstructor({
         serveClient: false,
         path: this.config.path,
         transports: ['websocket'],
