@@ -23,6 +23,8 @@ jobs:
       - run: yarn install --immutable
       - run: yarn test --coverage
       - name: Upload coverage to Codecov
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         if: matrix.node-version == '24'
         uses: codecov/codecov-action@v4
         with:
