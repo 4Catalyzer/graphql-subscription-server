@@ -1,4 +1,4 @@
-import { AsyncQueue, map } from '../src/AsyncUtils';
+import { AsyncQueue, map } from '../src/AsyncUtils.js';
 
 describe('AsyncQueue', () => {
   it('should push to queue', async () => {

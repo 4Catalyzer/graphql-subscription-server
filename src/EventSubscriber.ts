@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 
-import { AsyncQueue } from './AsyncUtils';
-import { Subscriber } from './Subscriber';
+import { AsyncQueue } from './AsyncUtils.js';
+import { Subscriber } from './Subscriber.js';
 
 /**
  * A subscriber over a standard EventEmitter. Events are pushed as

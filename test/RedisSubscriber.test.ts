@@ -1,6 +1,6 @@
-import { CreateLogger } from '../src';
-import RedisSubscriber from '../src/RedisSubscriber';
-import SubscriptionContext from '../src/SubscriptionContext';
+import RedisSubscriber from '../src/RedisSubscriber.js';
+import SubscriptionContext from '../src/SubscriptionContext.js';
+import { CreateLogger } from '../src/index.js';
 
 describe('RedisSubscriber', () => {
   it('should subscribe for messages', async () => {
@@ -97,51 +97,60 @@ describe('RedisSubscriber', () => {
     await client.close();
 
     expect(logs).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "group": "RedisSubscriber",
-          "level": "debug",
-          "message": "Channel subscribed",
-          "meta": Object {
-            "channel": "A redis topic",
-          },
-        },
-        Object {
-          "group": "RedisSubscriber",
-          "level": "debug",
-          "message": "Channel already subscribed to",
-          "meta": Object {
-            "channel": "A redis topic",
-          },
-        },
-        Object {
-          "group": "RedisSubscriber",
-          "level": "debug",
-          "message": "Channel subscriber unsubscribed",
-          "meta": Object {
-            "channel": "A redis topic",
-            "numSubscribersForChannelRemaining": 1,
-          },
-        },
-        Object {
-          "group": "RedisSubscriber",
-          "level": "debug",
-          "message": "Channel subscriber unsubscribed",
-          "meta": Object {
-            "channel": "A redis topic",
-            "numSubscribersForChannelRemaining": 0,
-          },
-        },
-        Object {
-          "group": "RedisSubscriber",
-          "level": "silly",
-          "message": "closed",
-          "meta": Object {
-            "numChannels": 0,
-            "numQueus": 0,
-          },
-        },
-      ]
+     [
+       {
+         "group": "RedisSubscriber",
+         "level": "debug",
+         "message": "Channel subscribed",
+         "meta": {
+           "channel": "A redis topic",
+         },
+       },
+       {
+         "group": "RedisSubscriber",
+         "level": "debug",
+         "message": "Channel already subscribed to",
+         "meta": {
+           "channel": "A redis topic",
+         },
+       },
+       {
+         "group": "RedisSubscriber",
+         "level": "silly",
+         "message": "message received",
+         "meta": {
+           "channel": "A redis topic",
+           "message": "hey",
+         },
+       },
+       {
+         "group": "RedisSubscriber",
+         "level": "debug",
+         "message": "Channel subscriber unsubscribed",
+         "meta": {
+           "channel": "A redis topic",
+           "numSubscribersForChannelRemaining": 1,
+         },
+       },
+       {
+         "group": "RedisSubscriber",
+         "level": "debug",
+         "message": "Channel subscriber unsubscribed",
+         "meta": {
+           "channel": "A redis topic",
+           "numSubscribersForChannelRemaining": 0,
+         },
+       },
+       {
+         "group": "RedisSubscriber",
+         "level": "silly",
+         "message": "closed",
+         "meta": {
+           "numChannels": 0,
+           "numQueus": 0,
+         },
+       },
+     ]
     `);
   });
 });

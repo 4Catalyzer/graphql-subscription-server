@@ -1,6 +1,6 @@
-import { createAsyncIterable } from './AsyncUtils';
-import { Logger } from './Logger';
-import { Subscriber } from './Subscriber';
+import { createAsyncIterable } from './AsyncUtils.js';
+import { Logger } from './Logger.js';
+import { Subscriber } from './Subscriber.js';
 
 function emptySubscription() {
   return Promise.resolve(createAsyncIterable([]));

@@ -1,6 +1,11 @@
 {
   "extends": "@4c/tsconfig/node",
   "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "lib",
     "rootDir": "src"
   },
   "include": ["src/**/*.ts"]

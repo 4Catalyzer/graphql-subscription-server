@@ -1,5 +1,5 @@
-import { CredentialsManager } from './CredentialsManager';
-import { CreateLogger, Logger, noopCreateLogger } from './Logger';
+import { CredentialsManager } from './CredentialsManager.js';
+import { CreateLogger, Logger, noopCreateLogger } from './Logger.js';
 
 const SECONDS_TO_MS = 1000;
 
