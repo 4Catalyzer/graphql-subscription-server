@@ -2,9 +2,9 @@ import http from 'http';
 
 import socketio, { Socket } from 'socket.io-client';
 
-import { CredentialsManager } from '../src/CredentialsManager';
-import RedisSubscriber from '../src/RedisSubscriber';
-import type SubscriptionServer from '../src/SubscriptionServer';
+import { CredentialsManager } from '../src/CredentialsManager.js';
+import RedisSubscriber from '../src/RedisSubscriber.js';
+import type SubscriptionServer from '../src/SubscriptionServer.js';
 
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 

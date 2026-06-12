@@ -1,14 +1,14 @@
-import { promisify } from 'util';
-
 import redis from 'redis';
 
-import { AsyncQueue, map } from './AsyncUtils';
-import { CreateLogger, Logger, noopCreateLogger } from './Logger';
-import type { Subscriber } from './Subscriber';
+import { AsyncQueue, map } from './AsyncUtils.js';
+import { CreateLogger, Logger, noopCreateLogger } from './Logger.js';
+import type { Subscriber } from './Subscriber.js';
 
 type Channel = string;
 
-export type RedisConfigOptions = redis.ClientOpts & {
+type RedisClient = ReturnType<typeof redis.createClient>;
+
+export type RedisConfigOptions = redis.RedisClientOptions & {
   parseMessage?: (msg: string) => any;
   createLogger?: CreateLogger;
 };
@@ -21,7 +21,7 @@ export default class RedisSubscriber<
   TOptions extends RedisSubscriberOptions = RedisSubscriberOptions,
 > implements Subscriber<TOptions>
 {
-  redis: redis.RedisClient;
+  redis: RedisClient;
 
   _parseMessage: ((msg: string) => any) | null | undefined;
 
@@ -31,18 +31,37 @@ export default class RedisSubscriber<
 
   private readonly log: Logger;
 
+  private readonly subscriptionRedis: RedisClient;
+
+  private readonly ready: Promise<void>;
+
   constructor({
     parseMessage,
     createLogger = noopCreateLogger,
     ...redisConfig
   }: RedisConfigOptions = {}) {
     this.log = createLogger('RedisSubscriber');
-    this.redis = redis.createClient(redisConfig);
+    this.redis = redis.createClient(redisConfig as any);
     this._queues = new Map();
     this._channels = new Set();
     this._parseMessage = parseMessage;
+    this.subscriptionRedis = this.redis.duplicate();
+    this.ready = Promise.all([
+      this.redis.connect(),
+      this.subscriptionRedis.connect(),
+    ]).then(() => undefined);
+  }
 
-    this.redis.on('message', (channel, message) => {
+  async _subscribeToChannel(channel: string) {
+    if (this._channels.has(channel)) {
+      this.log('debug', 'Channel already subscribed to', { channel });
+      return;
+    }
+
+    await this.ready;
+
+    this._channels.add(channel);
+    await this.subscriptionRedis.subscribe(channel, (message) => {
       this.log('silly', 'message received', { channel, message });
       const queues = this._queues.get(channel);
       if (!queues) {
@@ -53,17 +72,6 @@ export default class RedisSubscriber<
         queue.push(message);
       });
     });
-  }
-
-  async _subscribeToChannel(channel: string) {
-    if (this._channels.has(channel)) {
-      this.log('debug', 'Channel already subscribed to', { channel });
-      return;
-    }
-
-    this._channels.add(channel);
-    // @ts-ignore
-    await promisify(this.redis.subscribe).call(this.redis, channel);
     this.log('debug', 'Channel subscribed', { channel });
   }
 
@@ -83,7 +91,7 @@ export default class RedisSubscriber<
         innerQueues.delete(queue);
 
         if (!innerQueues.size) {
-          this.redis.unsubscribe(channel);
+          this.ready.then(() => this.subscriptionRedis.unsubscribe(channel));
           this._channels.delete(channel);
           this._queues.delete(channel);
         }
@@ -112,7 +120,8 @@ export default class RedisSubscriber<
   }
 
   async close() {
-    await promisify(this.redis.quit).call(this.redis);
+    await this.ready;
+    await Promise.all([this.subscriptionRedis.quit(), this.redis.quit()]);
     this.log('silly', 'closed', {
       numQueus: this._queues.size,
       numChannels: this._channels.size,

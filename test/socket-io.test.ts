@@ -1,17 +1,17 @@
 /* eslint-disable no-underscore-dangle */
 import socketio from 'socket.io-client';
 
-import { CreateLogger } from '../src';
-import SubscriptionServer from '../src/SubscriptionServer';
-import { maskNonDeterministicValues } from '../src/Testing';
-import schema from './data/schema';
 import {
   TestClient,
   TestCredentialsManager,
   delay,
   graphql,
   startServer,
-} from './helpers';
+} from './helpers.js';
+import SubscriptionServer from '../src/SubscriptionServer.js';
+import { maskNonDeterministicValues } from '../src/Testing.js';
+import { CreateLogger } from '../src/index.js';
+import schema from './data/schema.js';
 
 const sleep = () => new Promise((resolve) => process.nextTick(resolve));
 
@@ -99,19 +99,19 @@ describe('socket-io client', () => {
         },
       }),
     ).toMatchInlineSnapshot(`
-      Object {
-        "event": "subscription update",
-        "payload": Object {
-          "data": Object {
-            "todoUpdated": Object {
-              "todo": Object {
-                "text": "Buy a unicorn",
-              },
-            },
-          },
-          "id": "foo",
-        },
-      }
+     {
+       "event": "subscription update",
+       "payload": {
+         "data": {
+           "todoUpdated": {
+             "todo": {
+               "text": "Buy a unicorn",
+             },
+           },
+         },
+         "id": "foo",
+       },
+     }
     `);
   });
 
@@ -293,105 +293,105 @@ describe('socket-io client logging', () => {
     await delay(50);
 
     expect(logs).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "group": "SubscriptionServer",
-          "level": "debug",
-          "message": "new socket connection",
-          "meta": Object {
-            "clientId": "<ClientId:1>",
-            "numClients": 1,
-          },
-        },
-        Object {
-          "group": "AuthorizedSocket",
-          "level": "debug",
-          "message": "authenticating connection",
-          "meta": Object {
-            "clientId": "<ClientId:1>",
-          },
-        },
-        Object {
-          "group": "AuthorizedSocket",
-          "level": "debug",
-          "message": "client subscribed",
-          "meta": Object {
-            "clientId": "<ClientId:1>",
-            "id": "foo",
-            "query": "
-              subscription TestTodoUpdatedSubscription(
-                $input: TodoUpdatedSubscriptionInput!
-              ) {
-                todoUpdated(input: $input) {
-                  todo {
-                    text
-                  }
-                }
-              }
-            ",
-            "variables": Object {
-              "input": Object {
-                "id": "1",
-              },
-            },
-          },
-        },
-        Object {
-          "group": "AuthorizedSocket",
-          "level": "info",
-          "message": "emit",
-          "meta": Object {
-            "clientId": "<ClientId:1>",
-            "credentials": Object {},
-            "response": Object {
-              "data": Object {
-                "todoUpdated": Object {
-                  "todo": Object {
-                    "text": "Buy a unicorn",
-                  },
-                },
-              },
-            },
-          },
-        },
-        Object {
-          "group": "AuthorizedSocket",
-          "level": "debug",
-          "message": "duplicate subscription attempted",
-          "meta": Object {
-            "clientId": "<ClientId:1>",
-            "id": "foo",
-          },
-        },
-        Object {
-          "group": "AuthorizedSocket",
-          "level": "debug",
-          "message": "client unsubscribed",
-          "meta": Object {
-            "clientId": "<ClientId:1>",
-            "id": "foo",
-          },
-        },
-        Object {
-          "group": "AuthorizedSocket",
-          "level": "debug",
-          "message": "client disconnected",
-          "meta": Object {
-            "clientId": "<ClientId:1>",
-            "reason": "client namespace disconnect",
-          },
-        },
-        Object {
-          "group": "SubscriptionServer",
-          "level": "debug",
-          "message": "socket disconnected",
-          "meta": Object {
-            "clientId": "<ClientId:1>",
-            "numClients": 0,
-            "reason": "client namespace disconnect",
-          },
-        },
-      ]
+     [
+       {
+         "group": "SubscriptionServer",
+         "level": "debug",
+         "message": "new socket connection",
+         "meta": {
+           "clientId": "<ClientId:1>",
+           "numClients": 1,
+         },
+       },
+       {
+         "group": "AuthorizedSocket",
+         "level": "debug",
+         "message": "authenticating connection",
+         "meta": {
+           "clientId": "<ClientId:1>",
+         },
+       },
+       {
+         "group": "AuthorizedSocket",
+         "level": "debug",
+         "message": "client subscribed",
+         "meta": {
+           "clientId": "<ClientId:1>",
+           "id": "foo",
+           "query": "
+             subscription TestTodoUpdatedSubscription(
+               $input: TodoUpdatedSubscriptionInput!
+             ) {
+               todoUpdated(input: $input) {
+                 todo {
+                   text
+                 }
+               }
+             }
+           ",
+           "variables": {
+             "input": {
+               "id": "1",
+             },
+           },
+         },
+       },
+       {
+         "group": "AuthorizedSocket",
+         "level": "info",
+         "message": "emit",
+         "meta": {
+           "clientId": "<ClientId:1>",
+           "credentials": {},
+           "response": {
+             "data": {
+               "todoUpdated": {
+                 "todo": {
+                   "text": "Buy a unicorn",
+                 },
+               },
+             },
+           },
+         },
+       },
+       {
+         "group": "AuthorizedSocket",
+         "level": "debug",
+         "message": "duplicate subscription attempted",
+         "meta": {
+           "clientId": "<ClientId:1>",
+           "id": "foo",
+         },
+       },
+       {
+         "group": "AuthorizedSocket",
+         "level": "debug",
+         "message": "client unsubscribed",
+         "meta": {
+           "clientId": "<ClientId:1>",
+           "id": "foo",
+         },
+       },
+       {
+         "group": "AuthorizedSocket",
+         "level": "debug",
+         "message": "client disconnected",
+         "meta": {
+           "clientId": "<ClientId:1>",
+           "reason": "client namespace disconnect",
+         },
+       },
+       {
+         "group": "SubscriptionServer",
+         "level": "debug",
+         "message": "socket disconnected",
+         "meta": {
+           "clientId": "<ClientId:1>",
+           "numClients": 0,
+           "reason": "client namespace disconnect",
+         },
+       },
+     ]
     `);
   });
 });

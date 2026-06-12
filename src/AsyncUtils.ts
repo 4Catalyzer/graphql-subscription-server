@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 
-import { Logger } from './Logger';
+import { Logger } from './Logger.js';
 
 export async function* createAsyncIterable<T>(values: T[]) {
   for (const value of values) yield value;

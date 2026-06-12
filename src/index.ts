@@ -1,13 +1,13 @@
-export { default as EventSubscriber } from './EventSubscriber';
-export { default as JwtCredentialsManager } from './JwtCredentialsManager';
-export { default as RedisSubscriber } from './RedisSubscriber';
-export { default as SubscriptionServer } from './SubscriptionServer';
-export { AsyncQueue } from './AsyncUtils';
+export { default as EventSubscriber } from './EventSubscriber.js';
+export { default as JwtCredentialsManager } from './JwtCredentialsManager.js';
+export { default as RedisSubscriber } from './RedisSubscriber.js';
+export { default as SubscriptionServer } from './SubscriptionServer.js';
+export { AsyncQueue } from './AsyncUtils.js';
 
-export type { CreateValidationRules } from './AuthorizedSocketConnection';
-export type { CredentialsManager } from './CredentialsManager';
-export type { Logger, CreateLogger, LogLevels } from './Logger';
-export type { Subscriber } from './Subscriber';
-export type { SubscriptionServerConfig } from './SubscriptionServer';
+export type { CreateValidationRules } from './AuthorizedSocketConnection.js';
+export type { CredentialsManager } from './CredentialsManager.js';
+export type { Logger, CreateLogger, LogLevels } from './Logger.js';
+export type { Subscriber } from './Subscriber.js';
+export type { SubscriptionServerConfig } from './SubscriptionServer.js';
 
-export type { JwtCredentials } from './JwtCredentialsManager';
+export type { JwtCredentials } from './JwtCredentialsManager.js';

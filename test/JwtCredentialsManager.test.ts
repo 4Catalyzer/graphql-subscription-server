@@ -2,8 +2,8 @@ import jwt from 'jsonwebtoken';
 
 import LazyJwtCredentialsManager, {
   JwtCredentials,
-} from '../src/JwtCredentialsManager';
-import { CreateLogger } from '../src/Logger';
+} from '../src/JwtCredentialsManager.js';
+import { CreateLogger } from '../src/Logger.js';
 
 function createToken<T extends JwtCredentials>(claims: T) {
   return jwt.sign(claims, 'secretfoo');
@@ -48,7 +48,7 @@ describe('JwtCredentialsManager', () => {
       }
     }
 
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
 
     const claims = {
       exp: Date.now() / 1000 + 30,
@@ -85,7 +85,7 @@ describe('JwtCredentialsManager', () => {
       }
     }
 
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
 
     const claims = {
       exp: Date.now() / 1000 + 30,
@@ -126,7 +126,7 @@ describe('JwtCredentialsManager', () => {
 
     const manager = new TestCredentialsManager();
 
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
 
     manager.authenticate(
       createToken({
@@ -171,7 +171,7 @@ describe('JwtCredentialsManager', () => {
   });
 
   it('should use provided logger', async () => {
-    jest.useFakeTimers('modern');
+    jest.useFakeTimers();
     jest.setSystemTime(1623242506 * 1000);
     const TOKEN =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjMyNDI1MzYuNjM3LCJzdWIiOiJoZXkhIiwiaWF0IjoxNjIzMjQyNTA2fQ.AttvLUmHSC9vIeESZYPZ8zLhdbOeSUs-Giwei2uKGJs';
@@ -218,47 +218,47 @@ describe('JwtCredentialsManager', () => {
     manager.unauthenticate();
 
     expect(logs).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "group": "JwtCredentialsManager",
-          "level": "debug",
-          "message": "request for expired credentials",
-          "meta": Object {
-            "expiredCredentials": Object {
-              "exp": 1623242536.637,
-              "iat": 1623242506,
-              "sub": "hey!",
-            },
-            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjMyNDI1MzYuNjM3LCJzdWIiOiJoZXkhIiwiaWF0IjoxNjIzMjQyNTA2fQ.AttvLUmHSC9vIeESZYPZ8zLhdbOeSUs-Giwei2uKGJs",
-          },
-        },
-        Object {
-          "group": "JwtCredentialsManager",
-          "level": "silly",
-          "message": "credentials expired: refreshing from token",
-          "meta": Object {
-            "expiredCredentials": Object {
-              "exp": 1623242536.637,
-              "iat": 1623242506,
-              "sub": "hey!",
-            },
-            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjMyNDI1MzYuNjM3LCJzdWIiOiJoZXkhIiwiaWF0IjoxNjIzMjQyNTA2fQ.AttvLUmHSC9vIeESZYPZ8zLhdbOeSUs-Giwei2uKGJs",
-          },
-        },
-        Object {
-          "group": "JwtCredentialsManager",
-          "level": "silly",
-          "message": "credentials expired after update",
-          "meta": Object {
-            "credentials": Object {
-              "exp": 1623242536.637,
-              "iat": 1623242506,
-              "sub": "hey!",
-            },
-            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjMyNDI1MzYuNjM3LCJzdWIiOiJoZXkhIiwiaWF0IjoxNjIzMjQyNTA2fQ.AttvLUmHSC9vIeESZYPZ8zLhdbOeSUs-Giwei2uKGJs",
-          },
-        },
-      ]
+     [
+       {
+         "group": "JwtCredentialsManager",
+         "level": "debug",
+         "message": "request for expired credentials",
+         "meta": {
+           "expiredCredentials": {
+             "exp": 1623242536.637,
+             "iat": 1623242506,
+             "sub": "hey!",
+           },
+           "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjMyNDI1MzYuNjM3LCJzdWIiOiJoZXkhIiwiaWF0IjoxNjIzMjQyNTA2fQ.AttvLUmHSC9vIeESZYPZ8zLhdbOeSUs-Giwei2uKGJs",
+         },
+       },
+       {
+         "group": "JwtCredentialsManager",
+         "level": "silly",
+         "message": "credentials expired: refreshing from token",
+         "meta": {
+           "expiredCredentials": {
+             "exp": 1623242536.637,
+             "iat": 1623242506,
+             "sub": "hey!",
+           },
+           "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjMyNDI1MzYuNjM3LCJzdWIiOiJoZXkhIiwiaWF0IjoxNjIzMjQyNTA2fQ.AttvLUmHSC9vIeESZYPZ8zLhdbOeSUs-Giwei2uKGJs",
+         },
+       },
+       {
+         "group": "JwtCredentialsManager",
+         "level": "silly",
+         "message": "credentials expired after update",
+         "meta": {
+           "credentials": {
+             "exp": 1623242536.637,
+             "iat": 1623242506,
+             "sub": "hey!",
+           },
+           "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjMyNDI1MzYuNjM3LCJzdWIiOiJoZXkhIiwiaWF0IjoxNjIzMjQyNTA2fQ.AttvLUmHSC9vIeESZYPZ8zLhdbOeSUs-Giwei2uKGJs",
+         },
+       },
+     ]
     `);
   });
 });

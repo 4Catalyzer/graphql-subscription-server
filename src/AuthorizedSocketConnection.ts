@@ -1,4 +1,5 @@
 import {
+  ExecutionResult,
   GraphQLError,
   GraphQLSchema,
   ValidationContext,
@@ -8,14 +9,13 @@ import {
   specifiedRules,
   validate,
 } from 'graphql';
-import { ExecutionResult } from 'graphql/execution/execute';
-import io from 'socket.io';
+import { Socket } from 'socket.io';
 
-import * as AsyncUtils from './AsyncUtils';
-import { CredentialsManager } from './CredentialsManager';
-import { CreateLogger, Logger } from './Logger';
-import { Subscriber } from './Subscriber';
-import SubscriptionContext from './SubscriptionContext';
+import * as AsyncUtils from './AsyncUtils.js';
+import { CredentialsManager } from './CredentialsManager.js';
+import { CreateLogger, Logger } from './Logger.js';
+import { Subscriber } from './Subscriber.js';
+import SubscriptionContext from './SubscriptionContext.js';
 
 export type CreateValidationRules = ({
   query,
@@ -62,7 +62,7 @@ const acknowledge = (cb?: () => void) => {
  * - Rudimentary connection constraints (max connections)
  */
 export default class AuthorizedSocketConnection<TContext, TCredentials> {
-  socket: io.Socket;
+  socket: Socket;
 
   config: AuthorizedSocketOptions<TContext, TCredentials>;
 
@@ -76,7 +76,7 @@ export default class AuthorizedSocketConnection<TContext, TCredentials> {
   readonly clientId: string;
 
   constructor(
-    socket: io.Socket,
+    socket: Socket,
     config: AuthorizedSocketOptions<TContext, TCredentials>,
   ) {
     this.socket = socket;

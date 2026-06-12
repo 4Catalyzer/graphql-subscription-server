@@ -34,7 +34,7 @@ import {
   removeCompletedTodos,
   removeTodo,
   renameTodo,
-} from './database';
+} from './database.js';
 
 /* eslint-disable no-use-before-define */
 
